@@ -110,6 +110,74 @@
   .copy{background:none;color:var(--acc);font-weight:600;font-size:13px;padding:0 0 0 8px}
   .toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:#fff;color:#0D1226;padding:10px 18px;border-radius:20px;font-weight:600;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9}
   .toast.on{opacity:1}
+  /* simple screens */
+  .pg{display:none} .pg.on{display:block}
+  .top{display:flex;align-items:center;gap:6px;margin:6px 0 10px}
+  .back{background:none;color:var(--acc);font-size:17px;font-weight:600;padding:10px 8px 10px 0}
+  .ttl{font-size:26px;font-weight:600;margin:4px 8px 14px}
+  .big{display:block;width:100%;height:60px;border-radius:30px;font-size:18px;font-weight:600;margin-top:14px}
+  .big.acc{background:var(--acc);color:#0D1226}
+  .big.ghost{background:var(--seg);color:#fff}
+  .textbtn{display:block;margin:22px auto 0;background:none;color:var(--sub);font-size:16px;font-weight:600;padding:10px}
+  .arow{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--line);width:100%;background:none;color:#fff;text-align:left;font:inherit}
+  .arow:last-child{border-bottom:0}
+  .aic{width:44px;height:44px;border-radius:12px;flex:none;background:linear-gradient(45deg,#2F80ED,#3FCFB7) center/cover;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px}
+  .aic.img{background-color:transparent}
+  .arow .tx{flex:1;min-width:0} .arow .tx div:first-child{font-size:17px;font-weight:500}
+  .arow .tx div+div{font-size:14px;color:var(--sub);margin-top:3px}
+  .chev{color:var(--sub);font-size:24px}
+  .tick{width:28px;height:28px;border-radius:14px;border:2px solid var(--off);flex:none;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#0D1226}
+  .tick.on{background:var(--acc);border-color:var(--acc)}
+  .empty{color:var(--sub);font-size:16px;padding:18px 0;text-align:center}
+  .opt{display:flex;gap:12px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--line);width:100%;background:none;color:#fff;text-align:left;font:inherit}
+  .opt:last-child{border-bottom:0}
+  .opt .dot{width:24px;height:24px;border-radius:12px;border:2px solid var(--off);flex:none;margin-top:1px}
+  .opt.sel .dot{border:7px solid var(--acc)}
+  .opt .tx div:first-child{font-size:17px;font-weight:600} .opt .tx div+div{font-size:14px;color:var(--sub);margin-top:3px;line-height:1.4}
+  .head{display:flex;align-items:center;gap:14px;margin:6px 8px 16px} .head .aic{width:56px;height:56px;border-radius:15px;font-size:22px} .head b{font-size:26px;font-weight:600}
+  .stick{position:sticky;bottom:0;padding:10px 0 16px;background:linear-gradient(to bottom,rgba(13,18,38,0),var(--bg) 30%)}
+  .warn{color:#FF8A8A}
+  /* modern look */
+  .glowbg{position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(90% 45% at 50% -8%,rgba(63,207,183,.22),rgba(63,207,183,0) 70%),radial-gradient(70% 40% at 100% 100%,rgba(47,128,237,.14),rgba(47,128,237,0) 70%)}
+  #settings .card{border:1px solid rgba(255,255,255,.06);border-radius:24px;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+  .big.acc{background:linear-gradient(135deg,#6EE7D2,#3FCFB7);box-shadow:0 10px 28px rgba(63,207,183,.28)}
+  .big:disabled{opacity:.4;box-shadow:none}
+  .hello{font-size:15px;color:var(--sub);margin:16px 8px 0}
+  #home h1{margin-top:2px}
+  .hero{display:flex;align-items:center;gap:16px;padding:18px 18px!important;background:linear-gradient(140deg,#1B2650,#141B36)!important}
+  .hero .n{font-size:44px;font-weight:200;line-height:1}
+  .hero .l{font-size:14px;color:var(--sub);margin-top:6px}
+  .hero .ring2{width:64px;height:64px;flex:none}
+  .tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+  .tile{background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:22px;padding:16px;color:#fff;text-align:left;min-height:104px;display:flex;flex-direction:column;justify-content:space-between}
+  .tile svg{width:28px;height:28px;color:var(--glow)}
+  .tile b{font-size:16px;font-weight:600}
+  .offcard{display:flex;align-items:center;gap:12px;padding:14px 16px!important;border:1px solid rgba(255,138,138,.5)!important;margin-bottom:6px}
+  .offcard .t{flex:1} .offcard .t div:first-child{font-weight:600;font-size:16px} .offcard .t div+div{font-size:13px;color:var(--sub);margin-top:3px}
+  /* setup */
+  #setupPg{padding-top:8px}
+  .dots{display:flex;gap:6px;justify-content:center;margin:10px 0 22px}
+  .dots i{width:8px;height:8px;border-radius:4px;background:var(--off);transition:all .2s}
+  .dots i.on{width:26px;background:var(--acc)}
+  .sv{display:flex;justify-content:center;margin:18px 0 8px}
+  .sbig{font-size:34px;line-height:1.15;text-align:center;margin:10px 8px 10px}
+  .ssub{font-size:16px;line-height:1.5;color:var(--sub);text-align:center;margin:0 12px 22px}
+  .step{font-size:13px;font-weight:600;letter-spacing:1.2px;color:var(--acc);text-align:center;text-transform:uppercase}
+  .nlist{counter-reset:n;margin:0;padding:6px 0}
+  .nlist div{display:flex;gap:14px;align-items:flex-start;padding:12px 0;font-size:16px;line-height:1.4;border-bottom:1px solid var(--line)}
+  .nlist div:last-child{border-bottom:0}
+  .nlist div::before{counter-increment:n;content:counter(n);width:28px;height:28px;border-radius:14px;flex:none;background:rgba(63,207,183,.16);color:var(--glow);font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center}
+  .mock{background:#F3F4F8;color:#1B1F2E;border-radius:18px;padding:12px 14px;width:100%;max-width:300px;box-shadow:0 14px 40px rgba(0,0,0,.35)}
+  .mock .r{display:flex;align-items:center;gap:10px}
+  .mock .r .mi{width:34px;height:34px;border-radius:10px;background:#0D1226;display:flex;align-items:center;justify-content:center}
+  .mock .r b{flex:1;font-size:16px;font-weight:600}
+  .mock .sw{width:44px;height:26px;border-radius:13px;background:#3FCFB7;position:relative} .mock .sw i{position:absolute;right:3px;top:3px;width:20px;height:20px;border-radius:10px;background:#fff}
+  .okbadge{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--glow);font-weight:600;font-size:17px;margin:4px 0 0}
+  .lens{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .lens button{background:var(--card);border:2px solid rgba(255,255,255,.06);border-radius:22px;height:120px;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .lens button b{font-size:40px;font-weight:200;line-height:1} .lens button span{font-size:13px;color:var(--sub);margin-top:6px}
+  .lens button.sel{border-color:var(--acc);background:rgba(63,207,183,.12)}
+  .linkbtn{background:none;color:var(--sub);font-size:14px;text-decoration:underline;display:block;margin:16px auto 0;padding:8px}
 </style>
 </head>
 <body>
@@ -160,45 +228,58 @@
 
 <!-- 4. settings -->
 <main id="settings">
+ <div class="glowbg"></div>
+ <div class="pg" id="home">
+  <div class="hello" id="hello"></div>
   <h1 class="serif">Pause</h1>
-  <div class="card" id="natOff" style="display:none;padding:14px 16px;border:1px solid var(--acc)">
-    <div style="font-size:16px;font-weight:600">Turn on Pause</div>
-    <div class="help" style="margin:6px 0 12px">Pause needs Accessibility to see when you open an app. In the list, tap Pause and turn it on.</div>
-    <button class="small" id="natOn" style="width:100%">Open Accessibility</button>
-    <div class="help" style="margin:10px 0 0">If Android says it's a restricted setting: open App info, tap the ⋮ menu, Allow restricted settings, then try again.</div>
-    <button class="small ghost" id="natInfo" style="width:100%;margin-top:10px">Open App info</button>
+  <div class="card offcard" id="natOff" style="display:none">
+    <div class="t"><div>Pause is off</div><div>Turn it on so your apps get paused.</div></div>
+    <button class="small" id="natOn">Turn on</button>
   </div>
-
-  <div class="cap">Apps to pause</div>
-  <div class="card">
-    <div id="apps"></div>
-    <div class="add"><input id="newApp" placeholder="App name, like YouTube"><button class="small" id="addApp">Add</button></div>
+  <div class="card hero" id="hero">
+    <svg class="ring2" viewBox="0 0 64 64"><circle cx="32" cy="32" r="27" fill="none" stroke="#2E3858" stroke-width="5"/><circle cx="32" cy="32" r="27" fill="none" stroke="#6EE7D2" stroke-width="5" stroke-linecap="round" stroke-dasharray="120 170" transform="rotate(-90 32 32)"/><rect x="25" y="23" width="5" height="18" rx="2.5" fill="#fff"/><rect x="34" y="23" width="5" height="18" rx="2.5" fill="#fff"/></svg>
+    <div><div class="n" id="heroN">0</div><div class="l" id="heroL">pauses today</div></div>
   </div>
-
-  <div class="cap">Websites to pause</div>
-  <div class="card">
-    <div id="sites"></div>
-    <div class="add"><input id="newSite" placeholder="Website, like youtube.com" inputmode="url" autocapitalize="off"><button class="small" id="addSite">Add</button></div>
+  <div class="card" id="breakOn" style="display:none;padding:16px;margin-bottom:6px;border:1px solid var(--glow)">
+    <div style="font-size:18px;font-weight:600">On a break until <span id="breakTxt"></span></div>
+    <div class="help" style="margin:6px 0 0">Your paused apps stay closed until then.</div>
   </div>
-  <div class="help" id="siteHelp" style="display:none">Caught in Chrome, Samsung Internet, Brave, Edge and Firefox once the address shows.</div>
+  <div class="cap">Paused apps</div>
+  <div class="card" id="apps"></div>
+  <button class="big acc" id="addApp">Choose apps to pause</button>
+  <div class="tiles">
+    <button class="tile" id="breakBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg><b id="breakLbl">Take a break</b></button>
+    <button class="tile" id="moreBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg><b>Settings</b></button>
+  </div>
+ </div>
 
+ <div class="pg" id="setupPg"><div id="setupBody"></div></div>
+
+ <div class="pg" id="pickPg">
+  <div class="top"><button class="back" data-back>‹ Back</button></div>
+  <div class="ttl">Choose apps to pause</div>
+  <input id="pickQ" placeholder="Search your apps" autocomplete="off">
+  <div class="card" id="pickList" style="margin-top:12px"></div>
+  <div class="stick"><button class="big acc" id="pickDone" style="margin:0">Done</button></div>
+ </div>
+
+ <div class="pg" id="appPg">
+  <div class="top"><button class="back" data-back>‹ Back</button></div>
+  <div id="appBody"></div>
+ </div>
+
+ <div class="pg" id="morePg">
+  <div class="top"><button class="back" data-back>‹ Back</button></div>
+  <div class="ttl">Settings</div>
   <div class="cap">Pause length</div>
   <div class="seg" id="len">
     <button data-s="1">1 sec</button><button data-s="2">2 sec</button><button data-s="3">3 sec</button>
   </div>
 
-  <div class="cap">Block until</div>
-  <div class="card">
-    <div class="blk">
-      <div class="t"><div id="blkTitle">All your paused apps</div><div id="blkSub">Pick any time</div></div>
-      <input type="time" id="blkTime" value="20:30">
-    </div>
-    <div class="blk" style="padding-top:0">
-      <button class="small" id="blkStart" style="flex:1">Start block</button>
-
-    </div>
+  <div class="cap">When I tap Open it, let me in for</div>
+  <div class="seg" id="letin">
+    <button data-m="5">5 min</button><button data-m="10">10 min</button><button data-m="15">15 min</button>
   </div>
-
   <div class="cap">After the pause, show</div>
   <div class="card">
     <div class="blk" style="border-bottom:1px solid var(--line)">
@@ -222,14 +303,15 @@
     <div style="padding:12px 0 14px"><input id="askIn" placeholder="Why are you going on {app} now?"></div>
   </div>
 
-  <div class="cap">When I tap Open it, let me in for</div>
-  <div class="seg" id="letin">
-    <button data-m="5">5 min</button><button data-m="10">10 min</button><button data-m="15">15 min</button>
+
+  <div class="cap">Websites to pause</div>
+  <div class="card">
+    <div id="sites"></div>
+    <div class="add"><input id="newSite" placeholder="Website, like youtube.com" inputmode="url" autocapitalize="off"><button class="small" id="addSite">Add</button></div>
   </div>
+  <div class="help" id="siteHelp" style="display:none">Caught in Chrome, Samsung Internet, Brave, Edge and Firefox once the address shows.</div>
 
-  <div class="help">Tap the chip on an app or site to set closed hours and how hard it is to change. Normal: change any time outside a block. Hard: to loosen it you type a long code from the screen. Strict: its closed hours and the app itself can never be loosened here.</div>
-
-  <div class="cap">Hard apps</div>
+  <div class="cap">Apps set to Hard</div>
   <div class="card" style="padding:12px 16px 14px">
     <div class="help" style="margin:0 0 10px" id="hSub"></div>
     <div style="font-size:15px;font-weight:500;margin-bottom:8px">Wait after the code</div>
@@ -237,7 +319,7 @@
     <div style="font-size:15px;font-weight:500;margin:14px 0 8px">Changes allowed</div>
     <div class="sline"><span>From</span><input type="time" id="hFrom"><span>to</span><input type="time" id="hTo"></div>
     <button class="small ghost" id="hSave" style="width:100%;margin-top:12px">Save hours</button>
-    <div class="help" style="margin:10px 0 0">Making these easier is a Hard change too.</div>
+    <div class="help" style="margin:10px 0 0">Making these easier takes the code too.</div>
   </div>
 
   <div id="pendWrap" style="display:none">
@@ -253,14 +335,22 @@
   </div>
   </div>
   <div class="help">Changes save by themselves.</div>
+ </div>
 </main>
 
 <div class="toast" id="toast"></div>
-<div class="sheet" id="picker"><div class="box" style="max-height:80vh;display:flex;flex-direction:column">
-  <div style="font-size:17px;font-weight:600;margin-bottom:10px">Choose an app</div>
-  <input id="pickQ" placeholder="Search" autocomplete="off">
-  <div id="pickList" style="overflow:auto;margin:8px 0 12px;flex:1"></div>
-  <button class="small ghost" id="pickX" style="width:100%">Never mind</button>
+<div class="sheet" id="breakSh"><div class="box">
+  <div style="font-size:20px;font-weight:600">Take a break</div>
+  <div class="help" style="margin:6px 0 14px" id="blkTitle">All your paused apps stay closed until:</div>
+  <input type="time" id="blkTime" value="20:30" style="width:100%;font-size:22px;padding:14px">
+  <div class="help" style="margin:10px 0 0" id="blkSub"></div>
+  <button class="big acc" id="blkStart">Start break</button>
+  <button class="big ghost" id="breakX" style="margin-top:10px">Never mind</button>
+</div></div>
+<div class="sheet" id="askSh"><div class="box">
+  <div style="font-size:18px;font-weight:600;line-height:1.4" id="askTxt"></div>
+  <button class="big acc" id="askYes"></button>
+  <button class="big ghost" id="askNo" style="margin-top:10px">Never mind</button>
 </div></div>
 <div class="sheet" id="hard"><div class="box">
   <div style="font-size:17px;font-weight:600" id="hardT">Type this to change it</div>
@@ -274,8 +364,9 @@
 <script>
 (function(){
   var KEY = "pause.v1";
+  var LVN={normal:"Easy", hard:"Hard", strict:"Locked"}, ICONS={}, ALLAPPS=null;
   var NAT = !!(window.Android && window.Android.save);
-  var DEF = {apps:["Instagram","YouTube"], sites:[], allow:{}, seconds:3, letin:10, log:{}, shuffle:true, askOn:false, askQ:"Why are you going on {app} now?", messages:["Remember why\nyou put it down."], block:null, hook:"", closed:{}, level:{}, hardCool:15, hardFrom:"09:00", hardTo:"21:00", pending:[], pkgs:{}};
+  var DEF = {apps:NAT?[]:["Instagram","YouTube"], sites:[], allow:{}, seconds:3, letin:10, log:{}, shuffle:true, askOn:false, askQ:"Why are you going on {app} now?", messages:["Remember why\nyou put it down."], block:null, hook:"", closed:{}, level:{}, hardCool:15, hardFrom:"09:00", hardTo:"21:00", pending:[], pkgs:{}};
   function load(){ try{ var s=JSON.parse(localStorage.getItem(KEY)); return Object.assign({},DEF,s||{}); }catch(e){ return Object.assign({},DEF); } }
   function save(){ var j=JSON.stringify(S); try{ localStorage.setItem(KEY, j); }catch(e){} if(NAT){ try{ Android.save(j); }catch(e){} } }
   var S = load();
@@ -326,7 +417,7 @@
   // an item getting easier, by its level
   function itemLoosen(key, name, what, fn, op){
     var L=lv(key);
-    if(L==="strict"){ toast("Locked: "+name+" is Strict"); return false; }
+    if(L==="strict"){ toast(name+" is Locked"); return false; }
     if(blockOn()){ toast("Locked until "+untilTxt()); return false; }
     if(L==="hard"){ hardGate(what, op); return false; }
     fn(); return true;
@@ -404,7 +495,7 @@
     var stat = ord(times)+" time today" + (spent>=0 ? " \u00b7 "+(spent>=60? Math.floor(spent/60)+" h "+(spent%60)+" min" : spent+" min")+" in "+name+" today" : "");
     document.title = "Pause · "+name;
     var key = (site?"site:":"app:")+(site||slug(p)), cl = S.closed[key];
-    if(closedAt(cl, new Date())){ return showBlocked(name, span(cl), lv(key)==="strict" ? "Strict" : "Closed hours"); }
+    if(closedAt(cl, new Date())){ return showBlocked(name, span(cl), lv(key)==="strict" ? "Locked" : "Closed hours"); }
     if(S.block && Date.now() < S.block.until){ return showBlocked(name, S.block); }
     $("before").textContent = "before "+name;
     $("open").textContent = "Open it";
@@ -453,124 +544,234 @@
   }
 
   // ---------- settings
+  function iconFor(name, pkg){ var d=document.createElement("div"); d.className="aic"; d.textContent=String(name).charAt(0).toUpperCase();
+    if(NAT && pkg){ var u=ICONS[pkg]; if(u===undefined){ try{ u=ICONS[pkg]=Android.icon(pkg)||""; }catch(e){ u=ICONS[pkg]=""; } }
+      if(u){ d.className="aic img"; d.textContent=""; d.style.backgroundImage="url("+u+")"; } }
+    return d; }
+  function pkgOf(key){ return key.indexOf("app:")===0 ? (S.pkgs||{})[key.slice(4)] : ""; }
+  function nameOf(key){ if(key.indexOf("site:")===0) return key.slice(5); var sl=key.slice(4); return S.apps.filter(function(a){ return slug(a)===sl; })[0]||sl; }
+  function rmOpOf(key){ return key.indexOf("site:")===0 ? {k:"rm", kind:"site", v:key.slice(5), key:key} : {k:"rm", kind:"app", v:nameOf(key), key:key}; }
+  function describe(key){ var cl=S.closed[key]||[], L=lv(key), out=[];
+    if(cl.length) out.push(cl.length===1 ? "Closed "+t12(cl[0].from)+" to "+t12(cl[0].to)+(cl[0].days&&cl[0].days.length<7?", "+daysTxt(cl[0].days):"") : "Closed hours: "+cl.length+" times");
+    else out.push("Pauses "+S.seconds+" sec first");
+    if(L!=="normal") out.push(LVN[L]);
+    return out.join(" · "); }
+  function ask(text, yes, cb){ $("askTxt").textContent=text; $("askYes").textContent=yes; $("askSh").classList.add("on");
+    $("askYes").onclick=function(){ $("askSh").classList.remove("on"); cb(); }; $("askNo").onclick=function(){ $("askSh").classList.remove("on"); }; }
+
+  function route(){ var h=location.hash.slice(1), pg="home";
+    if(NAT && !S.setupDone && h.indexOf("setup/")!==0) h="setup/0";
+    if(h==="more") pg="morePg"; else if(h==="pick") pg="pickPg"; else if(h.indexOf("app/")===0){ pg="appPg"; drawApp(decodeURIComponent(h.slice(4))); }
+    else if(h.indexOf("setup/")===0){ pg="setupPg"; drawSetup(+h.slice(6)||0); }
+    if(pg==="pickPg") drawPick();
+    if(pg==="home") renderApps();
+    ["home","setupPg","pickPg","appPg","morePg"].forEach(function(x){ $(x).classList.toggle("on", x===pg); });
+    window.scrollTo(0,0); }
+  function go(h){ location.hash=h; }
+
   function runSettings(){
     $("settings").classList.add("on");
-    renderApps(); renderLen(); renderLet(); renderBlock();
-    renderMsgs(); renderShuf(); renderHard(); renderPending();
-    window.__rerender=function(){ renderApps(); renderHard(); renderPending(); };
-    setInterval(function(){ if(applyDue()){ renderApps(); renderHard(); } renderPending(); renderBlock(); }, 30000);
+    if(NAT){ var before=S.apps.length; S.apps=S.apps.filter(function(x){ var k="app:"+slug(x); return (S.pkgs||{})[slug(x)] || lv(k)!=="normal"; }); if(S.apps.length!==before) save(); }
+    renderLen(); renderLet(); renderBlock();
+    renderMsgs(); renderShuf(); renderHard(); renderPending(); renderSites();
+    window.__rerender=function(){ renderApps(); renderSites(); renderHard(); renderPending(); if(location.hash.indexOf("#app/")===0) route(); };
+    setInterval(function(){ if(applyDue()){ window.__rerender(); } renderPending(); renderBlock(); }, 30000);
+    [].forEach.call(document.querySelectorAll("[data-back]"),function(b){ b.onclick=function(){ history.back(); }; });
+    $("addApp").onclick=function(){ go("pick"); };
+    $("moreBtn").onclick=function(){ go("more"); };
+    $("breakBtn").onclick=function(){ renderBlock(); $("breakSh").classList.add("on"); };
+    $("breakX").onclick=function(){ $("breakSh").classList.remove("on"); };
+    $("pickDone").onclick=function(){ history.back(); };
+    $("pickQ").oninput=drawPick;
     $("addMsg").onclick = function(){ S.messages.push(""); save(); renderMsgs(); var t=$("msgs").querySelectorAll("textarea"); t[t.length-1].focus(); };
     $("askIn").value = S.askQ; $("askIn").oninput = function(){ S.askQ=this.value; save(); };
     $("askTog").classList.toggle("on", !!S.askOn); $("askTog").onclick = function(){ if(S.askOn){ var el=this; globalLoosen(function(){ S.askOn=false; el.classList.toggle("on", false); }); return; } S.askOn=true; save(); this.classList.toggle("on", true); };
     $("shuf").onclick = function(){ S.shuffle=!S.shuffle; save(); renderShuf(); };
-    $("hook").value = S.hook; $("hook").oninput = function(){ S.hook=this.value.trim(); save(); renderApps(); };
-    $("addApp").onclick = function(){ var v=$("newApp").value.trim(); if(!v) return; if(S.apps.some(function(a){return slug(a)===slug(v)})) return toast("Already added"); S.apps.push(v); save(); $("newApp").value=""; renderApps(); };
-    $("addSite").onclick = function(){ var v=host($("newSite").value); if(!v || v.indexOf(".")<0) return toast("Type a website, like youtube.com"); S.sites=S.sites||[]; if(S.sites.indexOf(v)>=0) return toast("Already added"); S.sites.push(v); save(); $("newSite").value=""; renderApps(); };
+    $("hook").value = S.hook; $("hook").oninput = function(){ S.hook=this.value.trim(); save(); };
+    $("addSite").onclick = function(){ var v=host($("newSite").value); if(!v || v.indexOf(".")<0) return toast("Type a website, like youtube.com"); S.sites=S.sites||[]; if(S.sites.indexOf(v)>=0) return toast("Already added"); S.sites.push(v); save(); $("newSite").value=""; renderSites(); };
     $("newSite").onkeydown = function(e){ if(e.key==="Enter") $("addSite").click(); };
-    $("newApp").onkeydown = function(e){ if(e.key==="Enter") $("addApp").click(); };
     $("picIn").onchange = function(){ var fs=[].slice.call(this.files), el=this; if(!fs.length) return;
       fs.reduce(function(pr,f){ return pr.then(function(){ return shrink(f); }).then(addPic); }, Promise.resolve()).then(function(){ el.value=""; renderPic(); toast(fs.length>1? fs.length+" pictures saved" : "Picture saved"); }); };
-    $("blkStart").onclick = startBlock;
+    $("blkStart").onclick = function(){ startBlock(); $("breakSh").classList.remove("on"); };
     renderPic();
-    if(NAT) natSetup();
+    if(NAT) natSetup(); else $("siteHelp") && ($("siteHelp").style.display="none");
+    window.addEventListener("hashchange", route); route();
   }
 
   function natSetup(){
     save();
     $("hookWrap").style.display="none"; $("siteHelp").style.display="";
-    $("newApp").style.display="none"; $("addApp").textContent="+ Choose an app"; $("addApp").style.flex="1";
-    window.__natCheck=function(){ try{ $("natOff").style.display = Android.serviceOn() ? "none" : ""; }catch(e){} };
+    window.__natCheck=function(){ var on=false; try{ on=Android.serviceOn(); }catch(e){} $("natOff").style.display = on ? "none" : ""; if(location.hash==="#setup/1") drawSetup(1); };
     window.__natCheck();
     document.addEventListener("visibilitychange", function(){ if(!document.hidden) window.__natCheck(); });
-    $("natOn").onclick=function(){ Android.openAccessibility(); };
-    $("natInfo").onclick=function(){ Android.openAppInfo(); };
-    var all=null;
-    function draw(){ var q=$("pickQ").value.trim().toLowerCase(), box=$("pickList"); box.innerHTML="";
-      all.filter(function(x){ return !q || x.label.toLowerCase().indexOf(q)>=0; }).forEach(function(x){
-        var r=document.createElement("button"); r.className="approw"; r.style.cssText="width:100%;background:none;color:#fff;text-align:left;border-left:0;border-right:0;border-top:0";
-        var ic=document.createElement("div"); ic.className="ic"; ic.textContent=x.label.charAt(0).toUpperCase();
-        var nm=document.createElement("div"); nm.className="nm"; nm.textContent=x.label; r.append(ic,nm);
-        r.onclick=function(){ if(S.apps.some(function(a){ return slug(a)===slug(x.label); })){ toast("Already added"); return; }
-          S.apps.push(x.label); S.pkgs=S.pkgs||{}; S.pkgs[slug(x.label)]=x.pkg; save(); $("picker").classList.remove("on"); renderApps(); toast(x.label+" added"); };
-        box.appendChild(r); }); }
-    $("addApp").onclick=function(){ if(!all){ try{ all=JSON.parse(Android.apps()); }catch(e){ all=[]; } } $("pickQ").value=""; draw(); $("picker").classList.add("on"); };
-    $("pickQ").oninput=draw;
-    $("pickX").onclick=function(){ $("picker").classList.remove("on"); };
+    $("natOn").onclick=function(){ go("setup/1"); };
   }
 
+  // home: the paused apps
   function renderApps(){
     var box=$("apps"); box.innerHTML="";
-    var base = location.origin + location.pathname.replace(/index\.html$/,"");
-    S.apps.forEach(function(a){ var key="app:"+slug(a); box.appendChild(row(a, base+"?app="+slug(a), key, {k:"rm", kind:"app", v:a, key:key})); });
-    var sb=$("sites"); sb.innerHTML="";
-    (S.sites||[]).forEach(function(h){ var key="site:"+h; sb.appendChild(row(h, base+"?site="+encodeURIComponent(h), key, {k:"rm", kind:"site", v:h, key:key})); });
-    var all = S.apps.concat(S.sites||[]);
-    $("blkTitle").textContent = all.length ? all.join(", ") : "All your paused apps and sites";
+    if(!S.apps.length){ var e=document.createElement("div"); e.className="empty"; e.textContent="No apps yet. Tap the button below to choose."; box.appendChild(e); }
+    S.apps.forEach(function(a){ var key="app:"+slug(a); box.appendChild(itemRow(a, key, pkgOf(key))); });
+    var hr=new Date().getHours(); $("hello").textContent = hr<5?"Good night":hr<12?"Good morning":hr<17?"Good afternoon":hr<21?"Good evening":"Good night";
+    var L=S.log||{}, n=0; if(L.day===today()) for(var k in L.n) n+=L.n[k];
+    $("heroN").textContent=n; $("heroL").textContent=(n===1?"pause":"pauses")+" today · "+S.apps.length+" app"+(S.apps.length===1?"":"s")+" watched";
+    var all=S.apps.concat(S.sites||[]);
+    $("blkTitle").textContent = (all.length? "Your paused apps" : "All your paused apps")+" stay closed until:";
+  }
+  function itemRow(name, key, pkg){
+    var r=document.createElement("button"); r.className="arow";
+    var tx=document.createElement("div"); tx.className="tx"; var n=document.createElement("div"); n.textContent=name; var d=document.createElement("div"); d.textContent=describe(key); tx.append(n,d);
+    var c=document.createElement("span"); c.className="chev"; c.textContent="›";
+    r.append(iconFor(name,pkg),tx,c); r.onclick=function(){ go("app/"+encodeURIComponent(key)); }; return r; }
+  function renderSites(){ var sb=$("sites"); sb.innerHTML=""; (S.sites||[]).forEach(function(h){ sb.appendChild(itemRow(h, "site:"+h, "")); }); }
+
+  // choose apps: every app on the phone, tick to pause
+  function drawPick(){ fillPick($("pickList"), $("pickQ").value, function(){}); }
+  function fillPick(box, qv, changed){
+    box.innerHTML="";
+    if(!NAT){ var e=document.createElement("div"); e.className="add"; var inp=document.createElement("input"); inp.placeholder="App name, like YouTube"; var b=document.createElement("button"); b.className="small"; b.textContent="Add";
+      b.onclick=function(){ var v=inp.value.trim(); if(!v) return; if(S.apps.some(function(a){return slug(a)===slug(v)})) return toast("Already added"); S.apps.push(v); save(); inp.value=""; toast(v+" added"); }; e.append(inp,b); box.appendChild(e); return; }
+    if(!ALLAPPS){ try{ ALLAPPS=JSON.parse(Android.apps()); }catch(e){ ALLAPPS=[]; } }
+    var q=String(qv||"").trim().toLowerCase(), list=ALLAPPS.filter(function(x){ return !q || x.label.toLowerCase().indexOf(q)>=0; });
+    if(!list.length){ var em=document.createElement("div"); em.className="empty"; em.textContent="No app called that"; box.appendChild(em); }
+    list.forEach(function(x, idx){
+      var sl=slug(x.label), key="app:"+sl;
+      var r=document.createElement("button"); r.className="arow";
+      var ic=document.createElement("div"); ic.className="aic"; ic.textContent=x.label.charAt(0).toUpperCase();
+      var tx=document.createElement("div"); tx.className="tx"; var n=document.createElement("div"); n.textContent=x.label; tx.appendChild(n);
+      var tk=document.createElement("span"); tk.className="tick";
+      function on(){ return S.apps.some(function(a){ return slug(a)===sl; }); }
+      function paint(){ var o=on(); tk.classList.toggle("on", o); tk.textContent=o?"✓":""; }
+      paint();
+      r.onclick=function(){
+        if(!on()){ S.apps.push(x.label); S.pkgs=S.pkgs||{}; S.pkgs[sl]=x.pkg; save(); paint(); changed(); return; }
+        itemLoosen(key, x.label, "Type this to stop pausing "+x.label, function(){ applyOp(rmOpOf(key)); save(); paint(); changed(); }, rmOpOf(key));
+      };
+      r.append(ic,tx,tk); box.appendChild(r);
+      // icons load a few at a time so the list opens fast
+      setTimeout(function(){ var u=iconFor(x.label,x.pkg); if(u.className.indexOf("img")>=0){ ic.className=u.className; ic.textContent=""; ic.style.backgroundImage=u.style.backgroundImage; } }, 20+idx*8);
+    });
   }
 
-  function row(a, url, key, rmOp){
-    var r=document.createElement("div"); r.className="approw";
-    var ic=document.createElement("div"); ic.className="ic"; ic.textContent=a.charAt(0).toUpperCase();
-    var col=document.createElement("div"); col.style.flex="1"; col.style.minWidth="0";
-    var nm=document.createElement("div"); nm.className="nm"; nm.textContent=a;
-    var ln=document.createElement("div"); ln.className="link"; ln.style.padding="4px 0 0";
-    var code=document.createElement("code"); code.textContent=url;
-    var cp=document.createElement("button"); cp.className="copy"; cp.textContent="Copy";
-    cp.onclick=function(){ (navigator.clipboard? navigator.clipboard.writeText(url): Promise.reject()).then(function(){toast("Link copied")},function(){toast(url)}); };
-    ln.append(code,cp); col.append(nm,ln);
-    if(NAT){ ln.style.display="none"; if(key.indexOf("app:")===0 && !(S.pkgs||{})[key.slice(4)]){ var nf=document.createElement("div"); nf.className="link"; nf.style.padding="2px 0 0"; nf.style.color="#FFB86B"; nf.textContent="Not linked to an app yet: remove it and choose it again"; col.append(nf); } }
-    var x=document.createElement("button"); x.className="x"; x.textContent="×"; x.setAttribute("aria-label","Remove "+a);
-    x.onclick=function(){ itemLoosen(key, a, "Type this to remove "+a, function(){ applyOp(rmOp); save(); renderApps(); toast(a+" removed"); }, rmOp); };
-    var L=lv(key), cl=S.closed[key]||[];
-    var st=document.createElement("button"); st.className="chip"+(L==="strict"?" on":L==="hard"?" hard":""); st.textContent=L==="strict"?"Strict":L==="hard"?"Hard":"Normal";
-    if(cl.length){ var sub=document.createElement("div"); sub.className="link"; sub.style.padding="2px 0 0"; sub.style.color=L==="strict"?"#FFB86B":L==="hard"?"#8FA8FF":"";
-      sub.textContent = cl.length===1 ? "Closed "+winTxt(cl[0]) : "Closed hours: "+cl.length+" times"; col.insertBefore(sub, ln); }
-    var ed=document.createElement("div"); ed.className="sed"; ed.style.display="none";
-    st.onclick=function(){ if(ed.style.display==="none"){ build(); ed.style.display=""; } else ed.style.display="none"; };
-    function build(){
-      var draft=JSON.parse(JSON.stringify(cl)), lvl=L; ed.innerHTML="";
-      var cap=document.createElement("div"); cap.style.cssText="font-size:15px;font-weight:500;padding:6px 0 4px"; cap.textContent="Closed hours"; ed.appendChild(cap);
-      var hint=document.createElement("div"); hint.className="help"; hint.style.margin="0 0 6px"; hint.textContent="In these hours "+a+" won't open at all."; ed.appendChild(hint);
-      var list=document.createElement("div"); ed.appendChild(list);
-      function drawList(){ list.innerHTML=""; draft.forEach(function(w,i){
-        var wb=document.createElement("div"); wb.className="win";
-        var line=document.createElement("div"); line.className="sline";
-        var f1=document.createElement("input"); f1.type="time"; f1.value=w.from; f1.oninput=function(){ w.from=this.value; };
-        var f2=document.createElement("input"); f2.type="time"; f2.value=w.to; f2.oninput=function(){ w.to=this.value; };
-        var l1=document.createElement("span"); l1.textContent="From"; var l2=document.createElement("span"); l2.textContent="to";
-        var rx=document.createElement("button"); rx.className="x"; rx.textContent="×"; rx.setAttribute("aria-label","Remove these hours"); rx.onclick=function(){ draft.splice(i,1); drawList(); };
-        line.append(l1,f1,l2,f2,rx);
-        var dd=document.createElement("div"); dd.className="days";
-        "SMTWTFS".split("").forEach(function(ch,d){ var b=document.createElement("button"); b.textContent=ch; b.setAttribute("aria-label",DN[d]); b.classList.toggle("sel", w.days.indexOf(d)>=0);
-          b.onclick=function(){ var k=w.days.indexOf(d); if(k>=0) w.days.splice(k,1); else w.days.push(d); b.classList.toggle("sel", k<0); }; dd.appendChild(b); });
-        wb.append(line,dd); list.appendChild(wb); }); }
-      drawList();
-      var add=document.createElement("button"); add.className="copy"; add.style.padding="10px 0"; add.textContent="+ Add closed hours";
-      add.onclick=function(){ draft.push({from:"22:00",to:"10:00",days:ALL.slice()}); drawList(); }; ed.appendChild(add);
-      var cap2=document.createElement("div"); cap2.style.cssText="font-size:15px;font-weight:500;padding:8px 0 0;border-top:1px solid var(--line)"; cap2.textContent="How hard to change"; ed.appendChild(cap2);
-      var seg=document.createElement("div"); seg.className="seg lvl";
-      var lh=document.createElement("div"); lh.className="help"; lh.style.margin="0 0 12px";
-      var LH={normal:"Change it any time outside a block.", hard:"To loosen it, type a 150-letter code from the screen, only "+t12(S.hardFrom)+" to "+t12(S.hardTo)+". The change then waits "+S.hardCool+" min. Making it stricter is instant.", strict:"Its closed hours can only get longer, and it can't be removed or made easier here. No undo."};
-      ["normal","hard","strict"].forEach(function(v){ var b=document.createElement("button"); b.textContent=v.charAt(0).toUpperCase()+v.slice(1); b.dataset.v=v; b.onclick=function(){ lvl=v; paintSeg(); }; seg.appendChild(b); });
-      function paintSeg(){ [].forEach.call(seg.children,function(b){ b.classList.toggle("sel", b.dataset.v===lvl); }); lh.textContent=LH[lvl]; }
-      paintSeg(); ed.append(seg,lh);
-      var go=document.createElement("button"); go.className="small"; go.style.width="100%"; go.textContent="Save";
-      go.onclick=function(){
-        for(var i=0;i<draft.length;i++){ var w=draft[i]; if(!w.from||!w.to||w.from===w.to) return toast("Pick two different times"); if(!w.days.length) return toast("Pick at least one day"); }
-        var looser = RANK[lvl]<RANK[L] || !coversAll(draft, cl);
-        var setOp={k:"set", key:key, closed:draft, level:lvl};
-        function apply(){ applyOp(setOp); save(); renderApps(); toast("Saved"); }
-        if(lvl==="strict" && L!=="strict"){
-          if(!confirm("Make "+a+" Strict?\n\n"+(draft.length? "In its closed hours it won't open at all. ":"")+"You won't be able to shorten or remove its closed hours, make it easier or remove "+a+" in this app. You can only make the hours longer. There is no undo.")) return;
-        }
-        if(!looser) return apply();
-        if(L==="strict") return toast(RANK[lvl]<RANK[L] ? "Strict can't be made easier" : "Strict: closed hours can only get longer");
-        itemLoosen(key, a, "Type this to loosen "+a, apply, setOp);
-      };
-      ed.appendChild(go);
+
+  // ---------- first-time setup
+  function el(tag, cls, txt){ var e=document.createElement(tag); if(cls) e.className=cls; if(txt!=null) e.textContent=txt; return e; }
+  function drawSetup(n){
+    var body=$("setupBody"); body.innerHTML="";
+    var again=!!S.setupDone;
+    function to(k){ location.replace("#setup/"+k); }
+    function finish(){ S.setupDone=true; save(); if(again) history.back(); else location.replace("#"); }
+    if(!again){ var dots=el("div","dots"); for(var i=0;i<5;i++){ var d=el("i"); if(i===n) d.className="on"; dots.appendChild(d); } body.appendChild(dots); }
+    if(n>0 && !again){ var bk=el("button","back","‹ Back"); bk.onclick=function(){ to(n-1); }; body.insertBefore(bk, body.firstChild); }
+    var svOn=false; try{ svOn=Android.serviceOn(); }catch(e){}
+    if(n===0){
+      var v=el("div","sv"); v.innerHTML='<svg width="150" height="150" viewBox="0 0 150 150"><defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6EE7D2"/><stop offset="1" stop-color="#2F80ED"/></linearGradient></defs><circle cx="75" cy="75" r="66" fill="none" stroke="#1F2847" stroke-width="9"/><circle cx="75" cy="75" r="66" fill="none" stroke="url(#sg)" stroke-width="9" stroke-linecap="round" stroke-dasharray="300 415" transform="rotate(-90 75 75)"/><rect x="58" y="52" width="11" height="46" rx="5.5" fill="#fff"/><rect x="81" y="52" width="11" height="46" rx="5.5" fill="#fff"/></svg>';
+      body.appendChild(v);
+      body.appendChild(el("div","sbig serif","Take a moment before you scroll"));
+      body.appendChild(el("div","ssub","Pause puts a short breath between you and the apps you open too often. Setup takes about a minute."));
+      var g=el("button","big acc","Get started"); g.onclick=function(){ to(1); }; body.appendChild(g);
     }
-    r.append(ic,col,st,x);
-    var wrap=document.createElement("div"); wrap.append(r,ed); return wrap;
+    if(n===1){
+      body.appendChild(el("div","step", again?"Turn on Pause":"Step 1 of 3"));
+      body.appendChild(el("div","sbig serif", svOn?"Pause is on":"Let Pause see when an app opens"));
+      if(svOn){
+        var ok=el("div","sv"); ok.innerHTML='<svg width="96" height="96" viewBox="0 0 96 96"><circle cx="48" cy="48" r="44" fill="rgba(63,207,183,.16)"/><path d="M30 49l12 12 24-26" fill="none" stroke="#6EE7D2" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>'; body.appendChild(ok);
+        body.appendChild(el("div","ssub","Nice. Pause can now step in when you open an app you picked."));
+        var nx=el("button","big acc", again?"Done":"Next"); nx.onclick=function(){ if(again) finish(); else to(2); }; body.appendChild(nx);
+        return;
+      }
+      var mv=el("div","sv"), mk=el("div","mock"); mk.innerHTML='<div class="r"><span class="mi"><svg width="18" height="18" viewBox="0 0 18 18"><rect x="5" y="4" width="3" height="10" rx="1.5" fill="#6EE7D2"/><rect x="10" y="4" width="3" height="10" rx="1.5" fill="#6EE7D2"/></svg></span><b>Pause</b><span class="sw"><i></i></span></div>'; mv.appendChild(mk); body.appendChild(mv);
+      var c=el("div","card"), nl=el("div","nlist");
+      ["Tap the button below.","Tap Installed apps (or Downloaded apps), then Pause.","Turn it on, tap Allow, then come back here."].forEach(function(t){ nl.appendChild(el("div",null,t)); });
+      c.appendChild(nl); body.appendChild(c);
+      var t=el("button","big acc","Turn it on"); t.onclick=function(){ try{ Android.openAccessibility(); }catch(e){} }; body.appendChild(t);
+      var hb=el("button","linkbtn","It says “Restricted setting”?"), hp=el("div","card"); hp.style.display="none"; hp.style.marginTop="8px";
+      var hl=el("div","nlist"); ["Tap Open App info below.","Tap the ⋮ menu at the top right.","Tap Allow restricted settings, then try Turn it on again."].forEach(function(x){ hl.appendChild(el("div",null,x)); }); hp.appendChild(hl);
+      var ai=el("button","big ghost","Open App info"); ai.style.margin="4px 0 12px"; ai.onclick=function(){ try{ Android.openAppInfo(); }catch(e){} }; hp.appendChild(ai);
+      hb.onclick=function(){ hp.style.display = hp.style.display==="none" ? "" : "none"; };
+      body.appendChild(hb); body.appendChild(hp);
+      if(!again){ var sk=el("button","linkbtn","Do this later"); sk.onclick=function(){ to(2); }; body.appendChild(sk); }
+    }
+    if(n===2){
+      body.appendChild(el("div","step","Step 2 of 3"));
+      body.appendChild(el("div","sbig serif","Which apps take too much of your time?"));
+      body.appendChild(el("div","ssub","Tap to tick them. You can add more later."));
+      var q=el("input"); q.placeholder="Search your apps"; q.autocomplete="off"; body.appendChild(q);
+      var lc=el("div","card"); lc.style.marginTop="12px"; body.appendChild(lc);
+      var st=el("div","stick"), nb=el("button","big acc"); nb.style.margin="0"; st.appendChild(nb); body.appendChild(st);
+      function lbl(){ var k=S.apps.length; nb.textContent = k ? "Next ("+k+" picked)" : "Pick at least one"; nb.disabled=!k; }
+      nb.onclick=function(){ to(3); };
+      fillPick(lc, "", lbl); lbl();
+      q.oninput=function(){ fillPick(lc, q.value, lbl); };
+    }
+    if(n===3){
+      body.appendChild(el("div","step","Step 3 of 3"));
+      body.appendChild(el("div","sbig serif","How long a pause?"));
+      body.appendChild(el("div","ssub","Before the app opens, you'll see a calm screen for this long."));
+      var g3=el("div","lens");
+      [1,2,3].forEach(function(v){ var b=el("button"); b.appendChild(el("b",null,String(v))); b.appendChild(el("span",null,v===1?"second":"seconds")); b.classList.toggle("sel", S.seconds===v);
+        b.onclick=function(){ if(v<S.seconds){ globalLoosen(function(){ S.seconds=v; }); drawSetup(3); return; } S.seconds=v; save(); drawSetup(3); }; g3.appendChild(b); });
+      body.appendChild(g3);
+      var f=el("button","big acc","Finish"); f.style.marginTop="26px"; f.onclick=function(){ to(4); }; body.appendChild(f);
+    }
+    if(n===4){
+      var dv=el("div","sv"); dv.innerHTML='<svg width="120" height="120" viewBox="0 0 96 96"><circle cx="48" cy="48" r="44" fill="rgba(63,207,183,.16)"/><path d="M30 49l12 12 24-26" fill="none" stroke="#6EE7D2" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>'; body.appendChild(dv);
+      body.appendChild(el("div","sbig serif","You're all set"));
+      var first=S.apps[0];
+      body.appendChild(el("div","ssub", first ? "Next time you open "+first+", Pause will be there first. Take a breath." : "Pick your apps any time from the main screen."));
+      if(!svOn) body.appendChild(el("div","ssub warn","Pause is still off. Turn it on from the main screen."));
+      var gd=el("button","big acc","Go to Pause"); gd.onclick=finish; body.appendChild(gd);
+    }
+  }
+
+  // one app: closed hours and how locked
+  function drawApp(key){
+    var body=$("appBody"); body.innerHTML="";
+    var name=nameOf(key), L=lv(key), cl=S.closed[key]||[];
+    var isSite=key.indexOf("site:")===0;
+    if(!isSite && !S.apps.some(function(a){ return "app:"+slug(a)===key; }) || isSite && (S.sites||[]).indexOf(key.slice(5))<0){ var g=document.createElement("div"); g.className="empty"; g.textContent="This one isn't paused any more."; body.appendChild(g); return; }
+    var hd=document.createElement("div"); hd.className="head"; var b=document.createElement("b"); b.textContent=name; hd.append(iconFor(name,pkgOf(key)),b); body.appendChild(hd);
+    var w0=cl[0]?JSON.parse(JSON.stringify(cl[0])):{from:"22:00",to:"07:00",days:ALL.slice()}, hasHours=cl.length>0, lvl=L;
+
+    var c1=document.createElement("div"); c1.className="cap"; c1.textContent="Closed hours"; body.appendChild(c1);
+    var k1=document.createElement("div"); k1.className="card";
+    var t1=document.createElement("div"); t1.className="blk"; var tt=document.createElement("div"); tt.className="t"; var ta=document.createElement("div"); ta.textContent="Don't let it open at certain times"; var tb=document.createElement("div"); tb.textContent="Like at night"; tt.append(ta,tb);
+    var tg=document.createElement("button"); tg.className="tog"+(hasHours?" on":""); tg.setAttribute("aria-label","Closed hours"); tg.innerHTML="<i></i>"; t1.append(tt,tg); k1.appendChild(t1);
+    var hrs=document.createElement("div"); hrs.style.padding="0 0 14px";
+    var line=document.createElement("div"); line.className="sline"; line.style.fontSize="16px";
+    var f1=document.createElement("input"); f1.type="time"; f1.value=w0.from; f1.oninput=function(){ w0.from=this.value; };
+    var f2=document.createElement("input"); f2.type="time"; f2.value=w0.to; f2.oninput=function(){ w0.to=this.value; };
+    var l1=document.createElement("span"); l1.textContent="From"; var l2=document.createElement("span"); l2.textContent="to"; line.append(l1,f1,l2,f2);
+    var dd=document.createElement("div"); dd.className="days"; dd.style.marginTop="12px";
+    "SMTWTFS".split("").forEach(function(ch,d){ var bb=document.createElement("button"); bb.textContent=ch; bb.setAttribute("aria-label",DN[d]); bb.classList.toggle("sel", w0.days.indexOf(d)>=0);
+      bb.onclick=function(){ var k=w0.days.indexOf(d); if(k>=0) w0.days.splice(k,1); else w0.days.push(d); bb.classList.toggle("sel", k<0); }; dd.appendChild(bb); });
+    hrs.append(line,dd); if(cl.length>1){ var more=document.createElement("div"); more.className="help"; more.style.margin="10px 0 0"; more.textContent="Plus "+(cl.length-1)+" more closed time"+(cl.length>2?"s":"")+", kept as they are."; hrs.appendChild(more); }
+    hrs.style.display=hasHours?"":"none"; k1.appendChild(hrs); body.appendChild(k1);
+    tg.onclick=function(){ hasHours=!hasHours; tg.classList.toggle("on",hasHours); hrs.style.display=hasHours?"":"none"; };
+
+    var c2=document.createElement("div"); c2.className="cap"; c2.textContent="How locked?"; body.appendChild(c2);
+    var k2=document.createElement("div"); k2.className="card";
+    var OPT={normal:["Easy","You can change it any time."], hard:["Hard","To change it, you type a long code from the screen. Then it waits "+S.hardCool+" min."], strict:["Locked","It can never be made easier, only stricter. No undo."]};
+    var opts={};
+    ["normal","hard","strict"].forEach(function(v){ var o=document.createElement("button"); o.className="opt"; var dt=document.createElement("span"); dt.className="dot"; var tx=document.createElement("div"); tx.className="tx"; var x1=document.createElement("div"); x1.textContent=OPT[v][0]; var x2=document.createElement("div"); x2.textContent=OPT[v][1]; tx.append(x1,x2); o.append(dt,tx); o.onclick=function(){ lvl=v; paint(); }; opts[v]=o; k2.appendChild(o); });
+    function paint(){ for(var v in opts) opts[v].classList.toggle("sel", v===lvl); }
+    paint(); body.appendChild(k2);
+
+    var st=document.createElement("div"); st.className="stick"; var sv=document.createElement("button"); sv.className="big acc"; sv.style.margin="0"; sv.textContent="Save"; st.appendChild(sv); body.appendChild(st);
+    var rm=document.createElement("button"); rm.className="textbtn warn"; rm.textContent="Stop pausing "+name; body.appendChild(rm);
+    rm.onclick=function(){ itemLoosen(key, name, "Type this to stop pausing "+name, function(){ applyOp(rmOpOf(key)); save(); toast(name+" removed"); history.back(); }, rmOpOf(key)); };
+
+    sv.onclick=function(){
+      var draft = hasHours ? [w0].concat(cl.slice(1)) : [];
+      if(hasHours){ if(!w0.from||!w0.to||w0.from===w0.to) return toast("Pick two different times"); if(!w0.days.length) return toast("Pick at least one day"); }
+      var looser = RANK[lvl]<RANK[L] || !coversAll(draft, cl);
+      var setOp={k:"set", key:key, closed:draft, level:lvl};
+      function apply(){ applyOp(setOp); save(); toast("Saved"); history.back(); }
+      if(!looser && lvl==="strict" && L!=="strict") return ask("Lock "+name+" for good? You won't be able to make it easier, remove it, or shorten its closed hours. There is no undo.", "Yes, lock it", apply);
+      if(!looser) return apply();
+      if(L==="strict") return toast(RANK[lvl]<RANK[L] ? "Locked can't be made easier" : "Locked: closed hours can only get longer");
+      itemLoosen(key, name, "Type this to change "+name, apply, setOp);
+    };
   }
 
   function renderHard(){
@@ -600,16 +801,18 @@
     var v=$("blkTime").value; if(!v) return;
     var hm=v.split(":"), now=new Date(), u=new Date(); u.setHours(+hm[0],+hm[1],0,0);
     if(u<=now) u.setDate(u.getDate()+1);
-    if(blockOn()){ if(u.getTime()<=S.block.until) return toast("A block can only be made longer"); S.block.until=u.getTime(); save(); renderBlock(); var g=fmt(u); return toast("Now blocked until "+g.t+" "+g.ap); }
+    if(blockOn()){ if(u.getTime()<=S.block.until) return toast("A break can only be made longer"); S.block.until=u.getTime(); save(); renderBlock(); var g=fmt(u); return toast("Break now until "+g.t+" "+g.ap); }
     S.block={from:now.getTime(), until:u.getTime()}; save(); renderBlock();
-    var f=fmt(u); toast("Blocked until "+f.t+" "+f.ap);
+    var f=fmt(u); toast("Break until "+f.t+" "+f.ap);
   }
   function renderBlock(){
     var on = S.block && Date.now() < S.block.until;
     if(S.block && !on){ S.block=null; save(); }
-    $("blkStart").textContent = on?"Make it longer":"Start block";
-    if(on){ var f=fmt(new Date(S.block.until)); $("blkSub").textContent="Blocked until "+f.t+" "+f.ap+". It can't end early."; }
-    else $("blkSub").textContent="Pick any time";
+    $("blkStart").textContent = on?"Make it longer":"Start break";
+    $("breakOn").style.display = on?"":"none";
+    $("breakLbl").textContent = on?"Make break longer":"Take a break";
+    if(on){ var f=fmt(new Date(S.block.until)); $("breakTxt").textContent=f.t+" "+f.ap; $("blkSub").textContent="On a break until "+f.t+" "+f.ap+". It can't end early."; }
+    else $("blkSub").textContent="A break can't be ended early.";
   }
 
   function renderPic(){ listPics().then(function(list){ var box=$("pics"); box.innerHTML="";

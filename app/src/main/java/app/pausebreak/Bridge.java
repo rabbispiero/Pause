@@ -47,6 +47,25 @@ final class Bridge {
         return out.toString();
     }
 
+    /** The app's own icon as a small PNG data URL, or "" if it can't be read. */
+    @JavascriptInterface
+    public String icon(String pkg) {
+        try {
+            android.graphics.drawable.Drawable d = a.getPackageManager().getApplicationIcon(pkg);
+            int px = 96;
+            android.graphics.Bitmap b = android.graphics.Bitmap.createBitmap(px, px, android.graphics.Bitmap.Config.ARGB_8888);
+            android.graphics.Canvas c = new android.graphics.Canvas(b);
+            d.setBounds(0, 0, px, px);
+            d.draw(c);
+            java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
+            b.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, out);
+            b.recycle();
+            return "data:image/png;base64," + android.util.Base64.encodeToString(out.toByteArray(), android.util.Base64.NO_WRAP);
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
     /** Let an app in until the given time, then open it. */
     @JavascriptInterface
     public void open(String slug, double until) {
