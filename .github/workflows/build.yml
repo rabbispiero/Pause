@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    # once a week, so GitHub keeps the saved signing key (it drops unused ones after 7 days)
+    - cron: "17 9 * * 1"
 
 permissions:
   contents: write
@@ -23,29 +26,53 @@ jobs:
         with:
           gradle-version: "8.10.2"
 
-      - name: Signing key
-        env:
-          KEY_B64: ${{ secrets.PAUSE_KEYSTORE_B64 }}
+      # The signing key is made once and kept in GitHub's cache, so every new
+      # version installs over the old one and keeps your settings.
+      - name: Get the saved signing key
+        id: key
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.pause-key
+          key: pause-signing-key-v1
+
+      - name: Make the signing key (first build only)
+        if: steps.key.outputs.cache-hit != 'true'
         run: |
-          if [ -n "$KEY_B64" ]; then
-            echo "$KEY_B64" | base64 -d > "$RUNNER_TEMP/pause.jks"
-            echo "PAUSE_KEYSTORE=$RUNNER_TEMP/pause.jks" >> "$GITHUB_ENV"
-          fi
+          mkdir -p ~/.pause-key
+          python3 -c "import secrets;print(secrets.token_urlsafe(24))" > ~/.pause-key/pass
+          keytool -genkeypair -keystore ~/.pause-key/pause.jks -storetype PKCS12 -alias pause \
+            -keyalg RSA -keysize 2048 -validity 10000 -storepass "$(cat ~/.pause-key/pass)" -dname "CN=Pause"
+
+      - name: Save the signing key
+        if: steps.key.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ~/.pause-key
+          key: pause-signing-key-v1
+
+      - name: Use the signing key
+        if: github.event_name != 'schedule'
+        run: |
+          echo "::add-mask::$(cat ~/.pause-key/pass)"
+          echo "PAUSE_KEYSTORE=$HOME/.pause-key/pause.jks" >> "$GITHUB_ENV"
+          echo "PAUSE_KEYSTORE_PASSWORD=$(cat ~/.pause-key/pass)" >> "$GITHUB_ENV"
 
       - name: Build
-        env:
-          PAUSE_KEYSTORE_PASSWORD: ${{ secrets.PAUSE_KEYSTORE_PASSWORD }}
+        if: github.event_name != 'schedule'
         run: gradle --no-daemon assembleRelease
 
       - name: Name the file
+        if: github.event_name != 'schedule'
         run: cp app/build/outputs/apk/release/*.apk Pause.apk
 
       - uses: actions/upload-artifact@v4
+        if: github.event_name != 'schedule'
         with:
           name: Pause
           path: Pause.apk
 
       - name: Put it on the Latest release
+        if: github.event_name != 'schedule'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
