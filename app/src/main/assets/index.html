@@ -115,6 +115,15 @@
   .pg{display:none} .pg.on{display:block}
   .top{display:flex;align-items:center;gap:6px;margin:6px 0 10px}
   .back{background:none;color:var(--acc);font-size:17px;font-weight:600;padding:10px 8px 10px 0}
+  .grp{font-size:13px;color:var(--sub);margin:-6px 8px 14px;line-height:1.45}
+  .srow{padding:14px 0;border-bottom:1px solid var(--line)} .srow:last-child{border-bottom:0}
+  .srow .lb{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:16px;font-weight:500;margin-bottom:10px}
+  .srow .lb span{font-size:13px;color:var(--sub);font-weight:500;text-align:right}
+  .srow.flat{display:flex;align-items:center;gap:12px} .srow.flat .t{flex:1;min-width:0} .srow.flat .t div:first-child{font-size:16px;font-weight:500} .srow.flat .t div+div{font-size:13px;color:var(--sub);margin-top:3px}
+  button.srow{width:100%;background:none;border:0;border-bottom:1px solid var(--line);color:var(--fg);text-align:left;font:inherit;cursor:pointer} button.srow:last-child{border-bottom:0}
+  .seg.sm button{font-size:14px;height:32px}
+  .sicon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(63,207,183,.14);color:var(--glow);flex:none}
+  .sicon svg{width:18px;height:18px}
   .ttl{font-size:26px;font-weight:600;margin:4px 8px 14px}
   .big{display:block;width:100%;height:60px;border-radius:30px;font-size:18px;font-weight:600;margin-top:14px}
   .big.acc{background:var(--acc);color:#0D1226}
@@ -293,64 +302,31 @@
  <div class="pg" id="morePg">
   <div class="top"><button class="back" data-back>‹ Back</button></div>
   <div class="ttl">Settings</div>
-  <div class="cap">Look</div>
-  <div class="seg" id="look">
-    <button data-v="day">Day</button><button data-v="night">Night</button>
-  </div>
-  <div class="cap">Pause length</div>
-  <div class="seg" id="len">
-    <button data-s="1">1 sec</button><button data-s="2">2 sec</button><button data-s="3">3 sec</button>
-  </div>
-
-  <div class="cap">When I tap Open it, let me in for</div>
-  <div class="seg" id="letin">
-    <button data-m="5">5 min</button><button data-m="10">10 min</button><button data-m="15">15 min</button>
-  </div>
-  <div class="cap">After the pause, show</div>
+  <div class="grp">These are your defaults for every app. You can change any of them for one app on that app’s page.</div>
+  <div class="cap">Every pause</div>
   <div class="card">
-    <div class="blk" style="border-bottom:1px solid var(--line)">
-      <div class="t"><div>Shuffle</div><div>A different picture and message each time</div></div>
-      <button class="tog" id="shuf" aria-label="Shuffle"><i></i></button>
-    </div>
-    <div style="font-size:15px;font-weight:500;padding:14px 0 0">Pictures</div>
-    <div class="thumbs" id="pics" style="flex-wrap:wrap"></div>
-    <input type="file" id="picIn" accept="image/*" multiple hidden>
-    <div style="font-size:15px;font-weight:500;padding:4px 0 10px;border-top:1px solid var(--line);padding-top:14px">Messages</div>
-    <div id="msgs"></div>
-    <button class="copy" id="addMsg" style="padding:4px 0 16px">+ Add a message</button>
+    <div class="srow"><div class="lb">Pause length</div>
+      <div class="seg" id="len"><button data-s="1">1 sec</button><button data-s="2">2 sec</button><button data-s="3">3 sec</button></div></div>
+    <div class="srow"><div class="lb">Open it lets you in for</div>
+      <div class="seg" id="letin"><button data-m="5">5 min</button><button data-m="10">10 min</button><button data-m="15">15 min</button></div></div>
+    <div class="srow flat"><div class="t"><div>Ask a question first</div><div>You answer before Open it works</div></div><button class="tog" id="askTog" aria-label="Ask a question"><i></i></button></div>
+    <div class="srow" id="askRow"><div class="lb">Your question <span>Use {app} for the app’s name</span></div><input id="askIn" placeholder="Why are you going on {app} now?"></div>
   </div>
-
-  <div class="cap">Ask me a question first</div>
+  <div class="cap">More</div>
   <div class="card">
-    <div class="blk" style="border-bottom:1px solid var(--line)">
-      <div class="t"><div>Answer before Open it works</div><div>Use {app} for the app's name</div></div>
-      <button class="tog" id="askTog" aria-label="Ask a question"><i></i></button>
-    </div>
-    <div style="padding:12px 0 14px"><input id="askIn" placeholder="Why are you going on {app} now?"></div>
-  </div>
-
-
-  <div class="cap">Websites to pause</div>
-  <div class="card">
-    <div id="sites"></div>
-    <div class="add"><input id="newSite" placeholder="Website, like youtube.com" inputmode="url" autocapitalize="off"><button class="small" id="addSite">Add</button></div>
-  </div>
-  <div class="help" id="siteHelp" style="display:none">Caught in Chrome, Samsung Internet, Brave, Edge and Firefox once the address shows.</div>
-
-  <div class="cap">Apps set to Hard</div>
-  <div class="card" style="padding:12px 16px 14px">
-    <div class="help" style="margin:0 0 10px" id="hSub"></div>
-    <div style="font-size:15px;font-weight:500;margin-bottom:8px">Wait after the code</div>
-    <div class="seg" id="cool"><button data-m="15">15 min</button><button data-m="30">30 min</button><button data-m="60">1 hour</button></div>
-    <div style="font-size:15px;font-weight:500;margin:14px 0 8px">Changes allowed</div>
-    <div class="sline"><span>From</span><input type="time" id="hFrom"><span>to</span><input type="time" id="hTo"></div>
-    <button class="small ghost" id="hSave" style="width:100%;margin-top:12px">Save hours</button>
-    <div class="help" style="margin:10px 0 0">Making these easier takes the code too.</div>
+    <button class="srow flat" id="navPics" data-go="pics"><span class="sicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg></span><div class="t"><div>Pictures and messages</div><div id="navPicsSub"></div></div><span class="chev">›</span></button>
+    <button class="srow flat" id="navSites" data-go="sites"><span class="sicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg></span><div class="t"><div>Websites to pause</div><div id="navSitesSub"></div></div><span class="chev">›</span></button>
+    <button class="srow flat" id="navHard" data-go="hard"><span class="sicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span><div class="t"><div>Hard apps</div><div id="navHardSub"></div></div><span class="chev">›</span></button>
   </div>
 
   <div id="pendWrap" style="display:none">
     <div class="cap">Waiting to happen</div>
     <div class="card" id="pend"></div>
+  </div>
+
+  <div class="cap">Look</div>
+  <div class="seg" id="look">
+    <button data-v="day">Day</button><button data-v="night">Night</button>
   </div>
 
   <div id="hookWrap">
@@ -360,7 +336,50 @@
     <div class="help" style="margin:10px 0 0">Lets "Open it" open the app and "Never mind" go to your home screen.</div>
   </div>
   </div>
-  <div class="help">Changes save by themselves.</div>
+  <div class="help" style="margin-top:18px">Your changes save by themselves.</div>
+ </div>
+
+ <div class="pg" id="picsPg">
+  <div class="top"><button class="back" data-back>‹ Back</button></div>
+  <div class="ttl" id="picsTtl">Pictures and messages</div>
+  <div class="grp" id="picsGrp">What you see after the pause. You can give one app its own on that app’s page.</div>
+  <div class="card">
+    <div class="srow flat" id="shufRow"><div class="t"><div>Shuffle</div><div>A different picture and message each time</div></div><button class="tog" id="shuf" aria-label="Shuffle"><i></i></button></div>
+    <div class="srow flat" id="ownRow"><div class="t"><div>Use its own</div><div>When off, you see your default pictures and messages</div></div><button class="tog" id="ownTog" aria-label="Use its own"><i></i></button></div>
+    <div id="picsBody">
+      <div class="srow"><div class="lb">Pictures</div><div class="thumbs" id="pics" style="flex-wrap:wrap;padding:0"></div>
+        <input type="file" id="picIn" accept="image/*" multiple hidden></div>
+      <div class="srow"><div class="lb">Messages</div><div id="msgs"></div>
+        <button class="copy" id="addMsg" style="padding:4px 0 0">+ Add a message</button></div>
+    </div>
+  </div>
+  <div class="help" style="margin-top:18px">Your changes save by themselves.</div>
+ </div>
+
+ <div class="pg" id="sitesPg">
+  <div class="top"><button class="back" data-back>‹ Back</button></div>
+  <div class="ttl">Websites to pause</div>
+  <div class="grp">Pause shows up before these sites too. Tap one to give it its own settings.</div>
+  <div class="card">
+    <div id="sites"></div>
+    <div class="add"><input id="newSite" placeholder="Website, like youtube.com" inputmode="url" autocapitalize="off"><button class="small" id="addSite">Add</button></div>
+  </div>
+  <div class="help" id="siteHelp" style="display:none">You'll see the pause in Chrome, Samsung Internet, Brave, Edge and Firefox once the address shows.</div>
+ </div>
+
+ <div class="pg" id="hardPg">
+  <div class="top"><button class="back" data-back>‹ Back</button></div>
+  <div class="ttl">Hard apps</div>
+  <div class="grp">For apps you set to Hard. To make one easier, you type a long code, then wait.</div>
+  <div class="card">
+    <div class="srow"><div class="lb">Wait after the code</div>
+      <div class="seg" id="cool"><button data-m="15">15 min</button><button data-m="30">30 min</button><button data-m="60">1 hour</button></div></div>
+    <div class="srow"><div class="lb">Changes allowed</div>
+      <div class="sline" style="font-size:16px"><span>From</span><input type="time" id="hFrom"><span>to</span><input type="time" id="hTo"></div></div>
+  </div>
+  <button class="big ghost" id="hSave">Save hours</button>
+  <div class="help" style="margin-top:12px" id="hSub"></div>
+  <div class="help">To make these easier, you type the code too.</div>
  </div>
 </main>
 
@@ -392,7 +411,7 @@
   var KEY = "pause.v1";
   var LVN={normal:"Easy", hard:"Hard", strict:"Locked"}, ICONS={}, ALLAPPS=null;
   var NAT = !!(window.Android && window.Android.save);
-  var DEF = {apps:NAT?[]:["Instagram","YouTube"], sites:[], allow:{}, seconds:3, letin:10, log:{}, shuffle:true, askOn:false, askQ:"Why are you going on {app} now?", messages:["Remember why\nyou put it down."], block:null, hook:"", closed:{}, level:{}, hardCool:15, hardFrom:"09:00", hardTo:"21:00", pending:[], pkgs:{}};
+  var DEF = {apps:NAT?[]:["Instagram","YouTube"], sites:[], allow:{}, seconds:3, letin:10, log:{}, shuffle:true, askOn:false, askQ:"Why are you going on {app} now?", messages:["Remember why\nyou put it down."], block:null, hook:"", closed:{}, level:{}, hardCool:15, hardFrom:"09:00", hardTo:"21:00", pending:[], pkgs:{}, per:{}};
   function load(){ try{ var s=JSON.parse(localStorage.getItem(KEY)); return Object.assign({},DEF,s||{}); }catch(e){ return Object.assign({},DEF); } }
   function save(){ var j=JSON.stringify(S); try{ localStorage.setItem(KEY, j); }catch(e){} if(NAT){ try{ Android.save(j); }catch(e){} } }
   var S = load();
@@ -400,9 +419,9 @@
   var $ = function(id){ return document.getElementById(id); };
   function applyLook(){ var day=S.look!=="night"; document.documentElement.classList.toggle("day", day); var m=document.querySelector('meta[name="theme-color"]'); if(m) m.setAttribute("content", day?"#F4F6FB":"#0D1226"); if(NAT){ try{ Android.look(day?"day":"night"); }catch(e){} } }
   applyLook();
-  S.closed=S.closed||{}; S.level=S.level||{};
+  S.closed=S.closed||{}; S.level=S.level||{}; S.per=S.per||{};
   if(S.strict){ Object.keys(S.strict).forEach(function(k){ var w=S.strict[k]; if(w&&w.from){ S.closed[k]=(S.closed[k]||[]).concat([{from:w.from,to:w.to,days:[0,1,2,3,4,5,6]}]); } if(w) S.level[k]="strict"; }); delete S.strict; }
-  if(S.pending && S.pending.some(function(p){ return !p.op || !p.op.k || ["rm","set","hardCfg"].indexOf(p.op.k)<0; })) S.pending=[];
+  if(S.pending && S.pending.some(function(p){ return !p.op || !p.op.k || ["rm","set","hardCfg","per"].indexOf(p.op.k)<0; })) S.pending=[];
   S.pending=S.pending||[]; delete S.waitH; save();
   function slug(n){ return String(n).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""); }
   function toast(t){ var e=$("toast"); e.textContent=t; e.classList.add("on"); setTimeout(function(){e.classList.remove("on")},1600); }
@@ -410,8 +429,11 @@
 
   // picture in IndexedDB (too big for localStorage)
   function db(){ return new Promise(function(res,rej){ var r=indexedDB.open("pause",1); r.onupgradeneeded=function(){ r.result.createObjectStore("img"); }; r.onsuccess=function(){res(r.result)}; r.onerror=function(){rej(r.error)}; }); }
-  function listPics(){ return db().then(function(d){ return new Promise(function(res){ var out=[], q=d.transaction("img").objectStore("img").openCursor(); q.onsuccess=function(){ var c=q.result; if(c){ out.push({key:c.key, blob:c.value}); c.continue(); } else res(out); }; q.onerror=function(){res(out)}; }); }).catch(function(){return []}); }
-  function addPic(blob){ return db().then(function(d){ return new Promise(function(res){ var tx=d.transaction("img","readwrite"); tx.objectStore("img").put(blob,"p"+Date.now()); tx.oncomplete=res; tx.onerror=res; }); }); }
+  function inScope(k, sc){ k=String(k); return sc ? k.indexOf("a:"+sc+"|")===0 : k.indexOf("a:")!==0; }
+  function listPics(sc){ sc=sc||""; return db().then(function(d){ return new Promise(function(res){ var out=[], q=d.transaction("img").objectStore("img").openCursor(); q.onsuccess=function(){ var c=q.result; if(c){ if(inScope(c.key,sc)) out.push({key:c.key, blob:c.value}); c.continue(); } else res(out); }; q.onerror=function(){res(out)}; }); }).catch(function(){return []}); }
+  var PICN=0;
+  function addPic(blob, sc){ return db().then(function(d){ return new Promise(function(res){ var tx=d.transaction("img","readwrite"); tx.objectStore("img").put(blob,(sc?"a:"+sc+"|":"")+"p"+Date.now()+"-"+(PICN++)); tx.oncomplete=res; tx.onerror=res; }); }); }
+  function dropScope(sc){ if(!sc) return; listPics(sc).then(function(l){ l.forEach(function(p){ delPic(p.key); }); }); }
   function delPic(key){ return db().then(function(d){ return new Promise(function(res){ var tx=d.transaction("img","readwrite"); tx.objectStore("img").delete(key); tx.oncomplete=res; tx.onerror=res; }); }); }
   function pick(arr){ if(!arr.length) return null; return S.shuffle ? arr[Math.floor(Math.random()*arr.length)] : arr[0]; }
 
@@ -423,6 +445,13 @@
   var ALL=[0,1,2,3,4,5,6], RANK={normal:0,hard:1,strict:2};
   function blockOn(){ return !!(S.block && Date.now() < S.block.until); }
   function lv(key){ return S.level[key]||"normal"; }
+  // each app's own settings: a missing value means it uses your default
+  function per(key){ return S.per[key]||{}; }
+  function eff(key, f){ var p=S.per[key]; return p && p[f]!==undefined ? p[f] : S[f]; }
+  function setPer(key, f, v){ var p=S.per[key]||(S.per[key]={}); if(v===undefined||v===null) delete p[f]; else p[f]=v; if(!Object.keys(p).length) delete S.per[key]; }
+  function ownPics(key){ return !!per(key).own; }
+  function effMsgs(key){ return ownPics(key) ? (per(key).messages||[]) : (S.messages||[]); }
+  function effQ(key){ var q=per(key).askQ; return (q && q.trim()) ? q : S.askQ; }
   function mins(t){ var p=String(t).split(":"); return (+p[0])*60+(+p[1]); }
   function inW(w, d){ var m=d.getHours()*60+d.getMinutes(), dow=d.getDay(), a=mins(w.from), b=mins(w.to), ds=w.days||ALL;
     if(a===b) return false;
@@ -463,9 +492,10 @@
     });
   }
   function applyOp(op){
-    if(op.k==="rm"){ if(lv(op.key)==="strict") return; if(op.kind==="app") S.apps=S.apps.filter(function(x){ return slug(x)!==slug(op.v); }); else S.sites=(S.sites||[]).filter(function(x){ return x!==op.v; }); delete S.closed[op.key]; delete S.level[op.key]; }
+    if(op.k==="rm"){ if(lv(op.key)==="strict") return; if(op.kind==="app") S.apps=S.apps.filter(function(x){ return slug(x)!==slug(op.v); }); else S.sites=(S.sites||[]).filter(function(x){ return x!==op.v; }); delete S.closed[op.key]; delete S.level[op.key]; delete S.per[op.key]; dropScope(op.key); }
     if(op.k==="set"){ if(lv(op.key)==="strict") return; if(op.closed.length) S.closed[op.key]=op.closed; else delete S.closed[op.key]; if(op.level==="normal") delete S.level[op.key]; else S.level[op.key]=op.level; }
     if(op.k==="hardCfg"){ S.hardCool=op.cool; S.hardFrom=op.from; S.hardTo=op.to; }
+    if(op.k==="per"){ if(lv(op.key)==="strict") return; setPer(op.key, op.f, op.v); }
   }
   // due changes happen on their own; they wait while a block is on
   function applyDue(){ if(blockOn()) return false; var now=Date.now(), keep=[], did=false; (S.pending||[]).forEach(function(p){ if(p.due<=now){ applyOp(p.op); did=true; } else keep.push(p); }); if(did){ S.pending=keep; save(); } return did; }
@@ -527,27 +557,27 @@
     if(S.block && Date.now() < S.block.until){ return showBlocked(name, S.block); }
     $("before").textContent = "before "+name;
     $("open").textContent = "Open it";
-    var n = Math.max(1, Math.min(3, S.seconds|0)), arc=$("arc"), C=2*Math.PI*60;
+    var n = Math.max(1, Math.min(3, eff(key,"seconds")|0)), arc=$("arc"), C=2*Math.PI*60;
     arc.style.strokeDasharray = C; arc.style.strokeDashoffset = C; arc.style.transitionDuration = n+"s";
     $("count").textContent = n;
     show("pause");
     requestAnimationFrame(function(){ requestAnimationFrame(function(){ arc.style.strokeDashoffset = 0; }); });
-    var left = n, tick = setInterval(function(){ left--; if(left>0){ $("count").textContent=left; } else { clearInterval(tick); afterPause(name,id,site,stat); } }, 1000);
+    var left = n, tick = setInterval(function(){ left--; if(left>0){ $("count").textContent=left; } else { clearInterval(tick); afterPause(name,id,site,stat,key); } }, 1000);
   }
 
-  function afterPause(name,id,site,stat){
-    var msgs = (S.messages||[]).filter(function(m){ return m.trim(); });
+  function afterPause(name,id,site,stat,key){
+    var msgs = effMsgs(key).filter(function(m){ return m.trim(); });
     $("msg").textContent = pick(msgs) || "";
     $("stat").textContent = stat;
-    var mins = [5,10,15].indexOf(+S.letin)>=0 ? +S.letin : 10;
-    if(S.askOn){
+    var lt=+eff(key,"letin"), mins = [5,10,15].indexOf(lt)>=0 ? lt : 10;
+    if(eff(key,"askOn")){
       $("askBox").style.display="";
-      $("askQ").textContent = (S.askQ||"Why are you opening {app} now?").replace(/\{app\}/g, name);
+      $("askQ").textContent = (effQ(key)||"Why are you opening {app} now?").replace(/\{app\}/g, name);
       $("open").disabled = true;
       $("askA").oninput = function(){ $("open").disabled = this.value.trim().length < 3; };
     }
     $("letNote").textContent = "Lets you in for "+mins+" min";
-    listPics().then(function(list){ var p=pick(list); if(p){ $("afterImg").style.backgroundImage = "url("+URL.createObjectURL(p.blob)+")"; } show("after"); });
+    listPics(ownPics(key)?key:"").then(function(list){ var p=pick(list); if(p){ $("afterImg").style.backgroundImage = "url("+URL.createObjectURL(p.blob)+")"; } show("after"); });
     $("never").onclick = function(){ if(fire("pause-home")) { $("afterNote").textContent = "Good choice."; } else { $("afterNote").textContent = "Good choice. You can close this page."; } };
     if(NAT){ $("open").onclick = function(){ var u=capUntil((site?"site:"+site:"app:"+id), mins); $("afterNote").textContent = "Opening "+name+"…"; if(site){ S.allow[site]=u; save(); Android.openSite(site,u); } else Android.open(id,u); }; return; }
     if(site){ $("open").onclick = function(){ S.allow[site]=Date.now()+mins*60000; save(); $("afterNote").textContent = "Opening "+site+"…"; location.href="https://"+site; }; return; }
@@ -581,7 +611,7 @@
   function rmOpOf(key){ return key.indexOf("site:")===0 ? {k:"rm", kind:"site", v:key.slice(5), key:key} : {k:"rm", kind:"app", v:nameOf(key), key:key}; }
   function describe(key){ var cl=S.closed[key]||[], L=lv(key), out=[];
     if(cl.length) out.push(cl.length===1 ? "Closed "+t12(cl[0].from)+" to "+t12(cl[0].to)+(cl[0].days&&cl[0].days.length<7?", "+daysTxt(cl[0].days):"") : "Closed hours: "+cl.length+" times");
-    else out.push("Pauses "+S.seconds+" sec first");
+    else out.push("Pauses "+eff(key,"seconds")+" sec first");
     if(L!=="normal") out.push(LVN[L]);
     return out.join(" · "); }
   function ask(text, yes, cb){ $("askTxt").textContent=text; $("askYes").textContent=yes; $("askSh").classList.add("on");
@@ -589,11 +619,13 @@
 
   function route(){ var h=location.hash.slice(1), pg="home";
     if(NAT && !S.setupDone && h.indexOf("setup/")!==0) h="setup/0";
-    if(h==="more") pg="morePg"; else if(h==="pick") pg="pickPg"; else if(h.indexOf("app/")===0){ pg="appPg"; drawApp(decodeURIComponent(h.slice(4))); }
+    if(h==="more"){ pg="morePg"; drawMore(); } else if(h==="pick") pg="pickPg";
+    else if(h==="pics"||h.indexOf("pics/")===0){ pg="picsPg"; drawPics(h==="pics"?"":decodeURIComponent(h.slice(5))); }
+    else if(h==="sites") pg="sitesPg"; else if(h==="hard") pg="hardPg"; else if(h.indexOf("app/")===0){ pg="appPg"; drawApp(decodeURIComponent(h.slice(4))); }
     else if(h.indexOf("setup/")===0){ pg="setupPg"; drawSetup(+h.slice(6)||0); }
     if(pg==="pickPg") drawPick();
     if(pg==="home") renderApps();
-    ["home","setupPg","pickPg","appPg","morePg"].forEach(function(x){ $(x).classList.toggle("on", x===pg); });
+    ["home","setupPg","pickPg","appPg","morePg","picsPg","sitesPg","hardPg"].forEach(function(x){ $(x).classList.toggle("on", x===pg); });
     window.scrollTo(0,0); }
   function go(h){ location.hash=h; }
 
@@ -611,15 +643,18 @@
     $("breakX").onclick=function(){ $("breakSh").classList.remove("on"); };
     $("pickDone").onclick=function(){ history.back(); };
     $("pickQ").oninput=drawPick;
-    $("addMsg").onclick = function(){ S.messages.push(""); save(); renderMsgs(); var t=$("msgs").querySelectorAll("textarea"); t[t.length-1].focus(); };
+    $("addMsg").onclick = function(){ msgList(true).push(""); save(); renderMsgs(); var t=$("msgs").querySelectorAll("textarea"); t[t.length-1].focus(); };
+    [].forEach.call(document.querySelectorAll("[data-go]"),function(b){ b.onclick=function(){ go(b.dataset.go); }; });
+    $("ownTog").onclick = function(){ if(!PSCOPE) return; setPer(PSCOPE,"own", ownPics(PSCOPE)?undefined:true); if(ownPics(PSCOPE) && !per(PSCOPE).messages) setPer(PSCOPE,"messages",[]); save(); drawPics(PSCOPE); };
     $("askIn").value = S.askQ; $("askIn").oninput = function(){ S.askQ=this.value; save(); };
-    $("askTog").classList.toggle("on", !!S.askOn); $("askTog").onclick = function(){ if(S.askOn){ var el=this; globalLoosen(function(){ S.askOn=false; el.classList.toggle("on", false); }); return; } S.askOn=true; save(); this.classList.toggle("on", true); };
+    function askPaint(){ $("askTog").classList.toggle("on", !!S.askOn); $("askRow").style.display = S.askOn ? "" : "none"; }
+    askPaint(); $("askTog").onclick = function(){ if(S.askOn){ globalLoosen(function(){ S.askOn=false; }); askPaint(); return; } S.askOn=true; save(); askPaint(); };
     $("shuf").onclick = function(){ S.shuffle=!S.shuffle; save(); renderShuf(); };
     $("hook").value = S.hook; $("hook").oninput = function(){ S.hook=this.value.trim(); save(); };
     $("addSite").onclick = function(){ var v=host($("newSite").value); if(!v || v.indexOf(".")<0) return toast("Type a website, like youtube.com"); S.sites=S.sites||[]; if(S.sites.indexOf(v)>=0) return toast("Already added"); S.sites.push(v); save(); $("newSite").value=""; renderSites(); };
     $("newSite").onkeydown = function(e){ if(e.key==="Enter") $("addSite").click(); };
     $("picIn").onchange = function(){ var fs=[].slice.call(this.files), el=this; if(!fs.length) return;
-      fs.reduce(function(pr,f){ return pr.then(function(){ return shrink(f); }).then(addPic); }, Promise.resolve()).then(function(){ el.value=""; renderPic(); toast(fs.length>1? fs.length+" pictures saved" : "Picture saved"); }); };
+      var sc=PSCOPE; fs.reduce(function(pr,f){ return pr.then(function(){ return shrink(f); }).then(function(b){ return addPic(b, sc); }); }, Promise.resolve()).then(function(){ el.value=""; renderPic(); toast(fs.length>1? fs.length+" pictures saved" : "Picture saved"); }); };
     $("blkStart").onclick = function(){ startBlock(); $("breakSh").classList.remove("on"); };
     renderPic();
     if(NAT) natSetup(); else $("siteHelp") && ($("siteHelp").style.display="none");
@@ -760,6 +795,7 @@
     if(!isSite && !S.apps.some(function(a){ return "app:"+slug(a)===key; }) || isSite && (S.sites||[]).indexOf(key.slice(5))<0){ var g=document.createElement("div"); g.className="empty"; g.textContent="This one isn't paused any more."; body.appendChild(g); return; }
     var hd=document.createElement("div"); hd.className="head"; var b=document.createElement("b"); b.textContent=name; hd.append(iconFor(name,pkgOf(key)),b); body.appendChild(hd);
     var w0=cl[0]?JSON.parse(JSON.stringify(cl[0])):{from:"22:00",to:"07:00",days:ALL.slice()}, hasHours=cl.length>0, lvl=L;
+    var ob=el("div"); ob.id="ownBox"; body.appendChild(ob); drawOwn(key, name, ob);
 
     var c1=document.createElement("div"); c1.className="cap"; c1.textContent="Closed hours"; body.appendChild(c1);
     var k1=document.createElement("div"); k1.className="card";
@@ -802,6 +838,40 @@
     };
   }
 
+  // the app's own pause length, let-in time, question, pictures and messages
+  function drawOwn(key, name, body){
+    body.appendChild(el("div","cap",name+"’s pause"));
+    var g=el("div","grp","Default uses what you picked in Settings. Pick a value to give "+name+" its own."); g.style.marginTop="0"; body.appendChild(g);
+    var k=el("div","card"); body.appendChild(k);
+    function row(label, defTxt, opts, cur, f){
+      var r=el("div","srow"), lb=el("div","lb",label), sp=el("span",null,"Your default: "+defTxt); lb.appendChild(sp); r.appendChild(lb);
+      var sg=el("div","seg sm");
+      opts.forEach(function(o){ var b=el("button",null,o[0]); b.classList.toggle("sel", o[1]===cur); b.onclick=function(){ change(key, name, f, o[1]); }; sg.appendChild(b); });
+      r.appendChild(sg); k.appendChild(r); return r;
+    }
+    var p=per(key);
+    row("Pause length", S.seconds+" sec", [["Default",undefined],["1 sec",1],["2 sec",2],["3 sec",3]], p.seconds, "seconds");
+    row("Open it lets you in for", S.letin+" min", [["Default",undefined],["5 min",5],["10 min",10],["15 min",15]], p.letin, "letin");
+    var qr=row("Ask a question first", S.askOn?"on":"off", [["Default",undefined],["On",true],["Off",false]], p.askOn, "askOn");
+    if(p.askOn===true){ var qi=el("input"); qi.style.marginTop="10px"; qi.placeholder=String(S.askQ||"").replace(/\{app\}/g,name); qi.value=p.askQ||""; qi.oninput=function(){ setPer(key,"askQ", this.value.trim()?this.value:undefined); save(); }; qr.appendChild(qi); }
+    var nv=el("button","srow flat"), tx=el("div","t"), t1=el("div",null,"Pictures and messages"), t2=el("div",null, ownPics(key) ? "You gave it its own" : "Uses your default pictures and messages");
+    tx.append(t1,t2); nv.append(tx, el("span","chev","›")); nv.onclick=function(){ go("pics/"+encodeURIComponent(key)); }; k.appendChild(nv);
+    if(ownPics(key)){ var m=(per(key).messages||[]).filter(function(x){ return x.trim(); }).length; listPics(key).then(function(l){ t2.textContent="You gave it its own: "+plural(l.length,"picture")+", "+plural(m,"message"); }); }
+  }
+  // one change to an app's own settings; making it easier goes through its lock
+  function change(key, name, f, v){
+    var before=eff(key,f), after=(v===undefined?S[f]:v);
+    var looser = f==="seconds" ? after<before : f==="letin" ? after>before : (!!before && !after);
+    var op={k:"per", key:key, f:f, v:v};
+    function redo(){ var b=$("ownBox"); if(b){ b.innerHTML=""; drawOwn(key, name, b); } }
+    function apply(){ applyOp(op); save(); redo(); }
+    if(!looser){ setPer(key,f,v); save(); redo(); return; }
+    var what = f==="seconds" ? "change "+name+"’s pause to "+(v===undefined?"your default":v+" sec")
+             : f==="letin" ? "let you into "+name+" for "+(v===undefined?"your default time":v+" min")
+             : "stop asking a question before "+name;
+    itemLoosen(key, name, "Type this to "+what, apply, op);
+  }
+
   function renderHard(){
     [].forEach.call($("cool").children,function(b){ b.classList.toggle("sel", +b.dataset.m===+S.hardCool); b.onclick=function(){ var v=+b.dataset.m;
       if(v<S.hardCool) return hardGate("Type this to shorten the Hard wait to "+v+" min", {k:"hardCfg", cool:v, from:S.hardFrom, to:S.hardTo});
@@ -812,7 +882,7 @@
       for(var m=0;m<1440;m+=5){ var d=new Date(2000,0,1,0,m), dm=m, inOld=(mins(old.from)<mins(old.to))?(dm>=mins(old.from)&&dm<mins(old.to)):(dm>=mins(old.from)||dm<mins(old.to)), inNew=(mins(f)<mins(t))?(dm>=mins(f)&&dm<mins(t)):(dm>=mins(f)||dm<mins(t)); if(inNew&&!inOld){ wider=true; break; } }
       if(wider) return hardGate("Type this to allow Hard changes "+t12(f)+" to "+t12(t), {k:"hardCfg", cool:S.hardCool, from:f, to:t});
       S.hardFrom=f; S.hardTo=t; save(); renderHard(); toast("Saved"); };
-    $("hSub").textContent="Hard apps and sites can be changed "+t12(S.hardFrom)+" to "+t12(S.hardTo)+". Each change waits "+S.hardCool+" min after the code.";
+    $("hSub").textContent="You can change Hard apps and sites from "+t12(S.hardFrom)+" to "+t12(S.hardTo)+". Each change waits "+S.hardCool+" min after the code.";
   }
   function renderPending(){ var box=$("pend"), list=S.pending||[]; box.innerHTML=""; $("pendWrap").style.display=list.length?"":"none";
     list.forEach(function(p,i){ var r=document.createElement("div"); r.className="prow";
@@ -844,15 +914,38 @@
     else $("blkSub").textContent="A break can't be ended early.";
   }
 
-  function renderPic(){ listPics().then(function(list){ var box=$("pics"); box.innerHTML="";
+  // pictures and messages page: PSCOPE is "" for your defaults, or one app's key
+  var PSCOPE="";
+  function msgList(make){ if(!PSCOPE) return S.messages; var p=per(PSCOPE); if(!p.messages && make){ setPer(PSCOPE,"messages",[]); } return per(PSCOPE).messages||[]; }
+  function drawPics(sc){
+    PSCOPE=sc||"";
+    var app=!!PSCOPE, nm=app?nameOf(PSCOPE):"";
+    $("picsTtl").textContent = app ? nm+": pictures and messages" : "Pictures and messages";
+    $("picsGrp").textContent = app ? "Turn on Use its own to give "+nm+" different pictures and messages." : "What you see after the pause. You can give one app its own on that app’s page.";
+    $("shufRow").style.display = app ? "none" : "";
+    $("ownRow").style.display = app ? "" : "none";
+    var on = !app || ownPics(PSCOPE);
+    $("ownTog").classList.toggle("on", app && ownPics(PSCOPE));
+    $("picsBody").style.display = on ? "" : "none";
+    renderShuf(); renderPic(); renderMsgs();
+  }
+  function plural(n, w){ return n+" "+w+(n===1?"":"s"); }
+  function drawMore(){
+    var m=(S.messages||[]).filter(function(x){ return x.trim(); }).length;
+    listPics("").then(function(l){ $("navPicsSub").textContent = plural(l.length,"picture")+" · "+plural(m,"message")+" · Shuffle "+(S.shuffle?"on":"off"); });
+    var st=S.sites||[]; $("navSitesSub").textContent = !st.length ? "None yet" : st.length<=2 ? st.join(", ") : plural(st.length,"website");
+    $("navHardSub").textContent = "Changes "+t12(S.hardFrom)+" to "+t12(S.hardTo)+" · waits "+S.hardCool+" min";
+  }
+  function renderPic(){ var sc=PSCOPE; listPics(sc).then(function(list){ if(sc!==PSCOPE) return; var box=$("pics"); box.innerHTML="";
     list.forEach(function(p){ var t=document.createElement("div"); t.className="thumb has"; t.style.backgroundImage="url("+URL.createObjectURL(p.blob)+")";
       var x=document.createElement("button"); x.className="del"; x.textContent="×"; x.setAttribute("aria-label","Remove picture"); x.onclick=function(){ delPic(p.key).then(renderPic); };
       t.appendChild(x); box.appendChild(t); });
     var a=document.createElement("label"); a.className="thumb"; a.htmlFor="picIn"; a.textContent="+"; box.appendChild(a); }); }
   function renderMsgs(){ var box=$("msgs"); box.innerHTML="";
-    S.messages.forEach(function(m,i){ var r=document.createElement("div"); r.className="msgrow";
-      var t=document.createElement("textarea"); t.value=m; t.placeholder="Your message"; t.oninput=function(){ S.messages[i]=this.value; save(); };
-      var x=document.createElement("button"); x.className="x"; x.textContent="×"; x.setAttribute("aria-label","Remove message"); x.onclick=function(){ S.messages.splice(i,1); save(); renderMsgs(); };
+    var arr=msgList(false);
+    arr.forEach(function(m,i){ var r=document.createElement("div"); r.className="msgrow";
+      var t=document.createElement("textarea"); t.value=m; t.placeholder="Your message"; t.oninput=function(){ msgList(true)[i]=this.value; save(); };
+      var x=document.createElement("button"); x.className="x"; x.textContent="×"; x.setAttribute("aria-label","Remove message"); x.onclick=function(){ msgList(true).splice(i,1); save(); renderMsgs(); };
       r.append(t,x); box.appendChild(r); }); }
   function renderShuf(){ $("shuf").classList.toggle("on", !!S.shuffle); }
 
