@@ -98,6 +98,11 @@ final class Bridge {
     public boolean serviceOn() { return on(a); }
 
     @JavascriptInterface
+    public void look(final String v) {
+        a.runOnUiThread(new Runnable() { public void run() { Web.paint(a, !"night".equals(v)); } });
+    }
+
+    @JavascriptInterface
     public void openAccessibility() {
         a.startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }

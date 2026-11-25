@@ -6,7 +6,16 @@
         <item name="android:navigationBarColor">@color/night</item>
         <item name="android:colorAccent">@color/acc</item>
     </style>
+    <style name="Day" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/day</item>
+        <item name="android:statusBarColor">@color/day</item>
+        <item name="android:navigationBarColor">@color/day</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:colorAccent">@color/acc</item>
+    </style>
     <color name="night">#0D1226</color>
+    <color name="day">#F4F6FB</color>
     <color name="acc">#3FCFB7</color>
     <color name="iconbg">#F4F6FB</color>
 </resources>

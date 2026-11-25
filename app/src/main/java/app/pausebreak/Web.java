@@ -3,6 +3,11 @@ package app.pausebreak;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowInsetsController;
 import android.net.Uri;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
@@ -21,10 +26,36 @@ final class Web {
     static final int PICK = 41;
 
     static ValueCallback<Uri[]> pending;
+    static final String DAY = "#F4F6FB", NIGHT = "#0D1226";
+
+    /** Colors the window, status bar and navigation bar for the day or night look. */
+    @SuppressWarnings("deprecation")
+    static void paint(Activity a, boolean day) {
+        try {
+            Window win = a.getWindow();
+            int c = Color.parseColor(day ? DAY : NIGHT);
+            win.setBackgroundDrawable(new ColorDrawable(c));
+            win.setStatusBarColor(c);
+            win.setNavigationBarColor(c);
+            View d = win.getDecorView();
+            int f = d.getSystemUiVisibility();
+            int light = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+            d.setSystemUiVisibility(day ? (f | light) : (f & ~light));
+            if (Build.VERSION.SDK_INT >= 30) {
+                WindowInsetsController ic = win.getInsetsController();
+                if (ic != null) {
+                    int m = WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS | WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS;
+                    ic.setSystemBarsAppearance(day ? m : 0, m);
+                }
+            }
+        } catch (Exception ignored) { }
+    }
 
     static WebView make(final Activity a, String query) {
         WebView w = new WebView(a);
-        w.setBackgroundColor(Color.parseColor("#0D1226"));
+        boolean day = !"night".equals(Store.state(a).optString("look", "day"));
+        w.setBackgroundColor(Color.parseColor(day ? DAY : NIGHT));
+        paint(a, day);
         WebSettings s = w.getSettings();
         s.setJavaScriptEnabled(true);
         s.setDomStorageEnabled(true);
