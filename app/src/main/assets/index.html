@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0D1226">
+<title>Pause</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@200;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0D1226;--card:#161D38;--line:#232C4C;--seg:#1F2847;--glow:#6EE7D2;--acc:#3FCFB7;--sub:#8792B3;--off:#2E3858}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;background:var(--bg);color:#fff;font-family:Inter,system-ui,sans-serif}
+  body{overscroll-behavior:none}
+  .serif{font-family:"DM Serif Display",Georgia,serif;font-weight:400}
+  .screen{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;padding-bottom:max(24px,env(safe-area-inset-bottom))}
+  .screen.on{display:flex}
+  button{font:inherit;border:0;cursor:pointer}
+  .pill{height:56px;border-radius:28px;font-size:17px;font-weight:600}
+  /* pause */
+  .ring{position:relative;width:260px;height:260px}
+  .ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+  .ring .num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring .num b{font-size:96px;font-weight:200;line-height:1}
+  .ring .num span{font-size:13px;letter-spacing:2px;opacity:.5;margin-top:8px}
+  .halo{position:absolute;inset:-22px;border-radius:50%;box-shadow:0 0 60px 6px rgba(110,231,210,.18)}
+  #arc{transition:stroke-dashoffset linear}
+  .breath{margin-top:44px;font-size:26px}
+  .muted{opacity:.55;font-size:15px;margin-top:10px}
+  /* after */
+  #after{justify-content:flex-end;align-items:stretch;background:var(--bg)}
+  #afterImg{position:absolute;inset:0;background:linear-gradient(160deg,#2A3A6B,#0D1226 70%);background-size:cover;background-position:center}
+  #after::before{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(13,18,38,0) 30%,rgba(13,18,38,.93));z-index:1}
+  #after>.inner{position:relative;z-index:2;padding:0 4px 8px}
+  #msg{font-size:36px;line-height:1.12;margin:0 0 14px;white-space:pre-wrap;word-wrap:break-word}
+  .row{display:flex;gap:14px;margin-top:26px}
+  .row .pill{flex:1}
+  .white{background:#fff;color:var(--bg)}
+  .pill:disabled{opacity:.35}
+  .glass{background:rgba(255,255,255,.16);color:#fff;border:1px solid #fff}
+  .note{text-align:center;font-size:12px;opacity:.55;margin-top:14px;min-height:15px}
+  /* blocked */
+  #blocked .lbl{letter-spacing:3px;opacity:.6;font-size:18px;font-weight:500}
+  #bTime{font-size:120px;font-weight:200;line-height:1;margin:10px 0 6px}
+  #bAmpm{color:var(--glow);font-weight:600;letter-spacing:2px;font-size:16px}
+  .bar{width:100%;max-width:330px;height:6px;border-radius:3px;background:#24304F;margin-top:44px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--glow);border-radius:3px}
+  .barlbl{width:100%;max-width:330px;display:flex;justify-content:space-between;font-size:12px;opacity:.5;margin-top:10px}
+  #bApp{margin-top:50px;opacity:.5;font-size:14px;text-align:center;line-height:1.5}
+  .bottom{position:absolute;left:24px;right:24px;bottom:max(28px,env(safe-area-inset-bottom))}
+  .dim{background:rgba(255,255,255,.12);color:#fff;width:100%}
+  .stars i{position:absolute;width:2px;height:2px;border-radius:50%;background:#fff;opacity:.7}
+  /* settings */
+  #settings{display:none;position:static;min-height:100%;padding:28px 16px 60px;max-width:520px;margin:0 auto}
+  #settings.on{display:block}
+  h1{font-size:34px;margin:18px 8px 18px}
+  .cap{font-size:12px;font-weight:600;letter-spacing:1.2px;color:var(--sub);margin:22px 8px 8px;text-transform:uppercase}
+  .card{background:var(--card);border-radius:22px;padding:6px 16px}
+  .approw{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+  .approw:last-of-type{border-bottom:0}
+  .sed{padding:4px 0 14px;border-bottom:1px solid var(--line)}
+  .sline{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--sub)}
+  .sline input{flex:1;min-width:0}
+  .ic{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-weight:700;background:linear-gradient(45deg,#2F80ED,#3FCFB7)}
+  .approw .nm{flex:1;font-size:16px;font-weight:500}
+  .x{background:none;color:var(--sub);font-size:20px;padding:6px 8px}
+  .add{display:flex;gap:8px;padding:10px 0 12px}
+  input,textarea{font:inherit;color:#fff;background:var(--seg);border:1px solid var(--line);border-radius:12px;padding:10px 12px;outline:none;width:100%}
+  textarea{min-height:84px;resize:vertical}
+  input:focus,textarea:focus{border-color:var(--acc)}
+  .small{height:42px;border-radius:21px;padding:0 16px;font-weight:600;font-size:15px;background:var(--acc);color:#0D1226;white-space:nowrap}
+  .small.ghost{background:var(--seg);color:#fff}
+  .seg{display:flex;background:var(--seg);border-radius:20px;padding:3px}
+  .seg button{flex:1;height:34px;border-radius:17px;background:none;color:#fff;font-weight:600;font-size:15px}
+  .seg button.sel{background:var(--acc);color:#0D1226}
+  .blk{display:flex;align-items:center;gap:10px;padding:12px 0}
+  .blk .t{flex:1}
+  .blk .t div:first-child{font-size:15px;font-weight:500}
+  .blk .t div:last-child{font-size:13px;color:var(--sub);margin-top:3px}
+  input[type=time]{width:auto;color-scheme:dark}
+  .thumbs{display:flex;gap:10px;padding:14px 0;align-items:center}
+  .thumb{width:84px;height:84px;border-radius:14px;background:var(--seg) center/cover;border:3px solid transparent;display:flex;align-items:center;justify-content:center;color:var(--sub);font-size:28px;font-weight:300;flex:none}
+  .thumb.has{border-color:var(--acc);position:relative}
+  .thumb .del{position:absolute;top:-8px;right:-8px;width:24px;height:24px;border-radius:12px;background:#fff;color:#0D1226;font-size:15px;line-height:24px;text-align:center;font-weight:700;padding:0}
+  .msgrow{display:flex;gap:6px;align-items:flex-start;margin-bottom:10px}
+  .msgrow textarea{min-height:60px}
+  .tog{width:46px;height:28px;border-radius:14px;background:var(--off);position:relative;flex:none;padding:0}
+  .tog i{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:11px;background:#fff;transition:left .15s}
+  .tog.on{background:var(--acc)} .tog.on i{left:21px}
+  .help{font-size:13px;color:var(--sub);line-height:1.5;margin:8px 8px 0}
+  .link{font-size:13px;color:var(--sub);padding:10px 0;word-break:break-all}
+  .link code{color:#fff}
+  .chip{height:26px;border-radius:13px;padding:0 10px;font-size:12px;font-weight:600;background:var(--seg);color:var(--sub);margin-right:4px;flex:none}
+  .chip.on{background:#FFB86B;color:#0D1226}
+  .chip.hard{background:#8FA8FF;color:#0D1226}
+  .win{padding:10px 0;border-top:1px solid var(--line)}
+  .days{display:flex;gap:4px;margin-top:8px}
+  .days button{flex:1;height:30px;border-radius:15px;background:var(--seg);color:var(--sub);font-size:12px;font-weight:600}
+  .days button.sel{background:var(--acc);color:#0D1226}
+  .lvl{margin:12px 0 6px}
+  .sheet{position:fixed;inset:0;background:rgba(5,8,20,.88);display:none;align-items:center;justify-content:center;padding:16px;z-index:50}
+  .sheet.on{display:flex}
+  .sheet .box{background:var(--card);border-radius:22px;padding:18px 16px;width:100%;max-width:440px}
+  .passage{font-family:ui-monospace,Menlo,monospace;font-size:16px;line-height:1.7;letter-spacing:1px;margin:12px 0;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;word-spacing:6px}
+  .passage b{color:var(--acc);font-weight:600}
+  .prow{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line);font-size:14px}
+  .prow:last-child{border-bottom:0}
+  .prow .t{flex:1} .prow .t div:last-child{color:var(--sub);font-size:12px;margin-top:3px}
+  .copy{background:none;color:var(--acc);font-weight:600;font-size:13px;padding:0 0 0 8px}
+  .toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:#fff;color:#0D1226;padding:10px 18px;border-radius:20px;font-weight:600;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9}
+  .toast.on{opacity:1}
+</style>
+</head>
+<body>
+
+<!-- 1. the pause -->
+<section id="pause" class="screen">
+  <div class="ring">
+    <div class="halo"></div>
+    <svg viewBox="0 0 260 260" width="260" height="260">
+      <circle cx="130" cy="130" r="120" fill="none" stroke="#24304F" stroke-width="6"/>
+      <circle id="arc" cx="130" cy="130" r="120" fill="none" stroke="#6EE7D2" stroke-width="6" stroke-linecap="round"/>
+    </svg>
+    <div class="num"><b id="count">3</b><span>SECONDS</span></div>
+  </div>
+  <div class="breath serif">One slow breath</div>
+  <div class="muted" id="before">before Instagram</div>
+</section>
+
+<!-- 2. after the pause -->
+<section id="after" class="screen">
+  <div id="afterImg"></div>
+  <div class="inner">
+    <p id="msg" class="serif"></p>
+    <div id="stat" style="font-size:14px;opacity:.7"></div>
+    <div id="askBox" style="display:none;margin-top:22px">
+      <div id="askQ" style="font-size:16px;font-weight:600;margin-bottom:10px"></div>
+      <input id="askA" placeholder="Type your answer" autocomplete="off" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.35)">
+    </div>
+    <div class="row">
+      <button class="pill white" id="never">Never mind</button>
+      <button class="pill glass" id="open">Open it</button>
+    </div>
+    <div class="note" id="afterNote"><span id="letNote"></span></div>
+  </div>
+</section>
+
+<!-- 3. blocked -->
+<section id="blocked" class="screen">
+  <div class="stars" id="stars"></div>
+  <div class="lbl">Off until</div>
+  <div id="bTime">8:30</div>
+  <div id="bAmpm">PM TONIGHT</div>
+  <div class="bar"><i id="bBar"></i></div>
+  <div class="barlbl"><span id="bStart"></span><span id="bLeft"></span></div>
+  <div id="bApp"></div>
+  <div class="bottom"><button class="pill dim" id="bHome">Back to home</button><div class="note" id="bNote"></div></div>
+</section>
+
+<!-- 4. settings -->
+<main id="settings">
+  <h1 class="serif">Pause</h1>
+  <div class="card" id="natOff" style="display:none;padding:14px 16px;border:1px solid var(--acc)">
+    <div style="font-size:16px;font-weight:600">Turn on Pause</div>
+    <div class="help" style="margin:6px 0 12px">Pause needs Accessibility to see when you open an app. In the list, tap Pause and turn it on.</div>
+    <button class="small" id="natOn" style="width:100%">Open Accessibility</button>
+    <div class="help" style="margin:10px 0 0">If Android says it's a restricted setting: open App info, tap the ⋮ menu, Allow restricted settings, then try again.</div>
+    <button class="small ghost" id="natInfo" style="width:100%;margin-top:10px">Open App info</button>
+  </div>
+
+  <div class="cap">Apps to pause</div>
+  <div class="card">
+    <div id="apps"></div>
+    <div class="add"><input id="newApp" placeholder="App name, like YouTube"><button class="small" id="addApp">Add</button></div>
+  </div>
+
+  <div class="cap">Websites to pause</div>
+  <div class="card">
+    <div id="sites"></div>
+    <div class="add"><input id="newSite" placeholder="Website, like youtube.com" inputmode="url" autocapitalize="off"><button class="small" id="addSite">Add</button></div>
+  </div>
+  <div class="help" id="siteHelp" style="display:none">Caught in Chrome, Samsung Internet, Brave, Edge and Firefox once the address shows.</div>
+
+  <div class="cap">Pause length</div>
+  <div class="seg" id="len">
+    <button data-s="1">1 sec</button><button data-s="2">2 sec</button><button data-s="3">3 sec</button>
+  </div>
+
+  <div class="cap">Block until</div>
+  <div class="card">
+    <div class="blk">
+      <div class="t"><div id="blkTitle">All your paused apps</div><div id="blkSub">Pick any time</div></div>
+      <input type="time" id="blkTime" value="20:30">
+    </div>
+    <div class="blk" style="padding-top:0">
+      <button class="small" id="blkStart" style="flex:1">Start block</button>
+
+    </div>
+  </div>
+
+  <div class="cap">After the pause, show</div>
+  <div class="card">
+    <div class="blk" style="border-bottom:1px solid var(--line)">
+      <div class="t"><div>Shuffle</div><div>A different picture and message each time</div></div>
+      <button class="tog" id="shuf" aria-label="Shuffle"><i></i></button>
+    </div>
+    <div style="font-size:15px;font-weight:500;padding:14px 0 0">Pictures</div>
+    <div class="thumbs" id="pics" style="flex-wrap:wrap"></div>
+    <input type="file" id="picIn" accept="image/*" multiple hidden>
+    <div style="font-size:15px;font-weight:500;padding:4px 0 10px;border-top:1px solid var(--line);padding-top:14px">Messages</div>
+    <div id="msgs"></div>
+    <button class="copy" id="addMsg" style="padding:4px 0 16px">+ Add a message</button>
+  </div>
+
+  <div class="cap">Ask me a question first</div>
+  <div class="card">
+    <div class="blk" style="border-bottom:1px solid var(--line)">
+      <div class="t"><div>Answer before Open it works</div><div>Use {app} for the app's name</div></div>
+      <button class="tog" id="askTog" aria-label="Ask a question"><i></i></button>
+    </div>
+    <div style="padding:12px 0 14px"><input id="askIn" placeholder="Why are you going on {app} now?"></div>
+  </div>
+
+  <div class="cap">When I tap Open it, let me in for</div>
+  <div class="seg" id="letin">
+    <button data-m="5">5 min</button><button data-m="10">10 min</button><button data-m="15">15 min</button>
+  </div>
+
+  <div class="help">Tap the chip on an app or site to set closed hours and how hard it is to change. Normal: change any time outside a block. Hard: to loosen it you type a long code from the screen. Strict: its closed hours and the app itself can never be loosened here.</div>
+
+  <div class="cap">Hard apps</div>
+  <div class="card" style="padding:12px 16px 14px">
+    <div class="help" style="margin:0 0 10px" id="hSub"></div>
+    <div style="font-size:15px;font-weight:500;margin-bottom:8px">Wait after the code</div>
+    <div class="seg" id="cool"><button data-m="15">15 min</button><button data-m="30">30 min</button><button data-m="60">1 hour</button></div>
+    <div style="font-size:15px;font-weight:500;margin:14px 0 8px">Changes allowed</div>
+    <div class="sline"><span>From</span><input type="time" id="hFrom"><span>to</span><input type="time" id="hTo"></div>
+    <button class="small ghost" id="hSave" style="width:100%;margin-top:12px">Save hours</button>
+    <div class="help" style="margin:10px 0 0">Making these easier is a Hard change too.</div>
+  </div>
+
+  <div id="pendWrap" style="display:none">
+    <div class="cap">Waiting to happen</div>
+    <div class="card" id="pend"></div>
+  </div>
+
+  <div id="hookWrap">
+  <div class="cap">Phone link (MacroDroid)</div>
+  <div class="card" style="padding:14px 16px">
+    <input id="hook" placeholder="Paste a MacroDroid webhook link">
+    <div class="help" style="margin:10px 0 0">Lets "Open it" open the app and "Never mind" go to your home screen.</div>
+  </div>
+  </div>
+  <div class="help">Changes save by themselves.</div>
+</main>
+
+<div class="toast" id="toast"></div>
+<div class="sheet" id="picker"><div class="box" style="max-height:80vh;display:flex;flex-direction:column">
+  <div style="font-size:17px;font-weight:600;margin-bottom:10px">Choose an app</div>
+  <input id="pickQ" placeholder="Search" autocomplete="off">
+  <div id="pickList" style="overflow:auto;margin:8px 0 12px;flex:1"></div>
+  <button class="small ghost" id="pickX" style="width:100%">Never mind</button>
+</div></div>
+<div class="sheet" id="hard"><div class="box">
+  <div style="font-size:17px;font-weight:600" id="hardT">Type this to change it</div>
+  <div class="help" style="margin:6px 0 0">Type every letter and number below. Spaces don't matter. One wrong letter and you start over.</div>
+  <div class="passage" id="hardP"></div>
+  <textarea id="hardIn" rows="3" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Start typing…"></textarea>
+  <div class="help" style="margin:8px 0 12px" id="hardN"></div>
+  <button class="small ghost" id="hardX" style="width:100%">Never mind</button>
+</div></div>
+
+<script>
+(function(){
+  var KEY = "pause.v1";
+  var NAT = !!(window.Android && window.Android.save);
+  var DEF = {apps:["Instagram","YouTube"], sites:[], allow:{}, seconds:3, letin:10, log:{}, shuffle:true, askOn:false, askQ:"Why are you going on {app} now?", messages:["Remember why\nyou put it down."], block:null, hook:"", closed:{}, level:{}, hardCool:15, hardFrom:"09:00", hardTo:"21:00", pending:[], pkgs:{}};
+  function load(){ try{ var s=JSON.parse(localStorage.getItem(KEY)); return Object.assign({},DEF,s||{}); }catch(e){ return Object.assign({},DEF); } }
+  function save(){ var j=JSON.stringify(S); try{ localStorage.setItem(KEY, j); }catch(e){} if(NAT){ try{ Android.save(j); }catch(e){} } }
+  var S = load();
+  if(typeof S.message==="string"){ if(S.message && S.messages.indexOf(S.message)<0) S.messages=[S.message]; delete S.message; }
+  var $ = function(id){ return document.getElementById(id); };
+  S.closed=S.closed||{}; S.level=S.level||{};
+  if(S.strict){ Object.keys(S.strict).forEach(function(k){ var w=S.strict[k]; if(w&&w.from){ S.closed[k]=(S.closed[k]||[]).concat([{from:w.from,to:w.to,days:[0,1,2,3,4,5,6]}]); } if(w) S.level[k]="strict"; }); delete S.strict; }
+  if(S.pending && S.pending.some(function(p){ return !p.op || !p.op.k || ["rm","set","hardCfg"].indexOf(p.op.k)<0; })) S.pending=[];
+  S.pending=S.pending||[]; delete S.waitH; save();
+  function slug(n){ return String(n).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""); }
+  function toast(t){ var e=$("toast"); e.textContent=t; e.classList.add("on"); setTimeout(function(){e.classList.remove("on")},1600); }
+  function fmt(d){ var h=d.getHours(), m=d.getMinutes(); var ap=h<12?"AM":"PM"; h=h%12||12; return {t:h+":"+(m<10?"0":"")+m, ap:ap}; }
+
+  // picture in IndexedDB (too big for localStorage)
+  function db(){ return new Promise(function(res,rej){ var r=indexedDB.open("pause",1); r.onupgradeneeded=function(){ r.result.createObjectStore("img"); }; r.onsuccess=function(){res(r.result)}; r.onerror=function(){rej(r.error)}; }); }
+  function listPics(){ return db().then(function(d){ return new Promise(function(res){ var out=[], q=d.transaction("img").objectStore("img").openCursor(); q.onsuccess=function(){ var c=q.result; if(c){ out.push({key:c.key, blob:c.value}); c.continue(); } else res(out); }; q.onerror=function(){res(out)}; }); }).catch(function(){return []}); }
+  function addPic(blob){ return db().then(function(d){ return new Promise(function(res){ var tx=d.transaction("img","readwrite"); tx.objectStore("img").put(blob,"p"+Date.now()); tx.oncomplete=res; tx.onerror=res; }); }); }
+  function delPic(key){ return db().then(function(d){ return new Promise(function(res){ var tx=d.transaction("img","readwrite"); tx.objectStore("img").delete(key); tx.oncomplete=res; tx.onerror=res; }); }); }
+  function pick(arr){ if(!arr.length) return null; return S.shuffle ? arr[Math.floor(Math.random()*arr.length)] : arr[0]; }
+
+  // MacroDroid webhook: https://trigger.macrodroid.com/<device>/<anything>
+  function device(){ var m=String(S.hook||"").match(/trigger\.macrodroid\.com\/([^\/?#\s]+)/); return m?m[1]:""; }
+  function fire(id,q){ if(NAT){ if(id==="pause-home"){ Android.home(); return true; } return false; } var d=device(); if(!d) return false; var u="https://trigger.macrodroid.com/"+d+"/"+id+(q||""); try{ fetch(u,{mode:"no-cors",cache:"no-store"}); }catch(e){ new Image().src=u; } return true; }
+
+  // ---------- locks. Normal: change any time outside a block. Hard: type a long code to loosen. Strict: never loosens here.
+  var ALL=[0,1,2,3,4,5,6], RANK={normal:0,hard:1,strict:2};
+  function blockOn(){ return !!(S.block && Date.now() < S.block.until); }
+  function lv(key){ return S.level[key]||"normal"; }
+  function mins(t){ var p=String(t).split(":"); return (+p[0])*60+(+p[1]); }
+  function inW(w, d){ var m=d.getHours()*60+d.getMinutes(), dow=d.getDay(), a=mins(w.from), b=mins(w.to), ds=w.days||ALL;
+    if(a===b) return false;
+    return a<b ? (ds.indexOf(dow)>=0 && m>=a && m<b) : ((m>=a && ds.indexOf(dow)>=0) || (m<b && ds.indexOf((dow+6)%7)>=0)); }
+  function closedAt(list, d){ return (list||[]).some(function(w){ return inW(w,d); }); }
+  function span(list){ var now=new Date(), a=new Date(now), b=new Date(now); a.setSeconds(0,0); b.setSeconds(0,0);
+    for(var i=0;i<10080 && closedAt(list,new Date(a-60000));i++) a=new Date(a-60000);
+    for(var j=0;j<10080 && closedAt(list,b);j++) b=new Date(+b+60000);
+    return {from:a.getTime(), until:b.getTime()}; }
+  // true when newList is closed at every minute oldList is (checked over a week, every 5 min)
+  function coversAll(nw, old){ for(var m=0;m<10080;m+=5){ var d=new Date(2000,0,2,0,m); if(closedAt(old,d) && !closedAt(nw,d)) return false; } return true; }
+  function capUntil(key, m){ var now=Date.now(), end=now+m*60000, cl=S.closed[key]; if(cl&&cl.length){ for(var t=now+60000;t<end;t+=60000){ var d=new Date(t); d.setSeconds(0,0); if(closedAt(cl,d)) return Math.max(now+60000, d.getTime()); } } return end; }
+  function t12(t){ var p=String(t).split(":"), d=new Date(2000,0,1,+p[0],+p[1]), f=fmt(d); return f.t+" "+f.ap; }
+  function untilTxt(){ var f=fmt(new Date(S.block.until)); return f.t+" "+f.ap; }
+  var DN=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  function daysTxt(ds){ ds=(ds||ALL).slice().sort(); if(ds.length===7) return "every day"; if(ds.join()==="1,2,3,4,5") return "Mon to Fri"; if(ds.join()==="0,6") return "weekends"; return ds.map(function(d){return DN[d]}).join(", "); }
+  function winTxt(w){ return t12(w.from)+" to "+t12(w.to)+", "+daysTxt(w.days); }
+  // a global setting getting easier: only blocked during a block
+  function globalLoosen(fn){ if(blockOn()){ toast("Locked until "+untilTxt()); return false; } fn(); save(); return true; }
+  // an item getting easier, by its level
+  function itemLoosen(key, name, what, fn, op){
+    var L=lv(key);
+    if(L==="strict"){ toast("Locked: "+name+" is Strict"); return false; }
+    if(blockOn()){ toast("Locked until "+untilTxt()); return false; }
+    if(L==="hard"){ hardGate(what, op); return false; }
+    fn(); return true;
+  }
+  // Hard path: only in the allowed hours, then the code, then a cool-off before it happens
+  function inDay(now){ now=now||new Date(); var m=now.getHours()*60+now.getMinutes(), a=mins(S.hardFrom), b=mins(S.hardTo); return a<b ? (m>=a && m<b) : (m>=a || m<b); }
+  function hardGate(what, op){
+    op=JSON.parse(JSON.stringify(op));
+    if(!inDay()) return toast("Hard changes only "+t12(S.hardFrom)+" to "+t12(S.hardTo));
+    if((S.pending||[]).some(function(p){ return JSON.stringify(p.op)===JSON.stringify(op); })) return toast("Already waiting");
+    hardType(what, function(){
+      var c=+S.hardCool||15;
+      S.pending=(S.pending||[]).concat([{op:op, desc:what.replace(/^Type this to /,""), due:Date.now()+c*60000}]); save();
+      toast("Happens in "+c+" min"); if(window.__rerender) window.__rerender();
+    });
+  }
+  function applyOp(op){
+    if(op.k==="rm"){ if(lv(op.key)==="strict") return; if(op.kind==="app") S.apps=S.apps.filter(function(x){ return slug(x)!==slug(op.v); }); else S.sites=(S.sites||[]).filter(function(x){ return x!==op.v; }); delete S.closed[op.key]; delete S.level[op.key]; }
+    if(op.k==="set"){ if(lv(op.key)==="strict") return; if(op.closed.length) S.closed[op.key]=op.closed; else delete S.closed[op.key]; if(op.level==="normal") delete S.level[op.key]; else S.level[op.key]=op.level; }
+    if(op.k==="hardCfg"){ S.hardCool=op.cool; S.hardFrom=op.from; S.hardTo=op.to; }
+  }
+  // due changes happen on their own; they wait while a block is on
+  function applyDue(){ if(blockOn()) return false; var now=Date.now(), keep=[], did=false; (S.pending||[]).forEach(function(p){ if(p.due<=now){ applyOp(p.op); did=true; } else keep.push(p); }); if(did){ S.pending=keep; save(); } return did; }
+  applyDue();
+  // Hard: type a random code shown on screen, no paste, a typo starts over
+  function code(n){ var c="abcdefghjkmnpqrstuvwxyz23456789", o="", r=new Uint32Array(n); (window.crypto||{getRandomValues:function(a){for(var i=0;i<a.length;i++)a[i]=Math.random()*1e9;return a}}).getRandomValues(r); for(var i=0;i<n;i++) o+=c[r[i]%c.length]; return o; }
+  function hardType(what, fn){
+    var c=code(150), box=$("hard"), inp=$("hardIn"), P=$("hardP");
+    $("hardT").textContent = what;
+    function paint(k){ P.innerHTML=""; for(var i=0;i<c.length;i+=5){ var g=c.slice(i,i+5), sp=document.createElement("span");
+      if(i+5<=k){ var b=document.createElement("b"); b.textContent=g; sp.appendChild(b); } else if(i<k){ var b2=document.createElement("b"); b2.textContent=g.slice(0,k-i); sp.append(b2, g.slice(k-i)); } else sp.textContent=g;
+      P.append(sp," "); } $("hardN").textContent = k+" of "+c.length; }
+    paint(0); inp.value=""; box.classList.add("on"); setTimeout(function(){ inp.focus(); },50);
+    function stop(e){ e.preventDefault(); toast("No pasting. Type it."); }
+    inp.onpaste=stop; inp.ondrop=stop;
+    inp.onbeforeinput=function(e){ if(e.inputType==="insertFromPaste"||e.inputType==="insertFromDrop") stop(e); };
+    inp.oninput=function(){ var t=inp.value.toLowerCase().replace(/\s+/g,"");
+      if(c.indexOf(t)!==0 || t.length>c.length){ inp.value=""; paint(0); toast("Wrong letter. Start over."); return; }
+      paint(t.length);
+      if(t.length===c.length){ box.classList.remove("on"); inp.blur(); fn(); } };
+    $("hardX").onclick=function(){ box.classList.remove("on"); inp.value=""; inp.blur(); };
+  }
+
+  function show(id){ ["pause","after","blocked"].forEach(function(s){ $(s).classList.toggle("on", s===id); }); }
+
+  var params = new URLSearchParams(location.search);
+  var appParam = params.get("app"), siteParam = params.get("site");
+  function host(v){ return String(v||"").trim().toLowerCase().replace(/^[a-z]+:\/\//,"").replace(/^www\./,"").split(/[\/?#\s]/)[0]; }
+  function today(){ var d=new Date(); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
+  // count every time the pause page opens for an app or site, per day
+  function countOpen(id){
+    var L=S.log||{}; if(L.day!==today()) L={day:today(), n:{}, last:{}};
+    if(!(L.last[id] && Date.now()-L.last[id] < 4000)) L.n[id]=(L.n[id]||0)+1;
+    L.last[id]=Date.now(); S.log=L; save(); return L.n[id];
+  }
+  function ord(n){ var s=["th","st","nd","rd"], v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); }
+
+  if(siteParam && host(siteParam)){ runSite(host(siteParam)); } else if(appParam){ runPause(appParam); } else { runSettings(); }
+
+  function runSite(h){
+    S.allow = S.allow||{};
+    var blocked = S.block && Date.now() < S.block.until;
+    if(closedAt(S.closed["site:"+h], new Date())) blocked = true;
+    if(!blocked && S.allow[h] && Date.now() < S.allow[h]){ if(NAT){ Android.openSite(h, S.allow[h]); } else location.replace("https://"+h); return; }
+    runPause(h, h);
+  }
+
+  // ---------- pause flow
+  function appName(p){ var hit=S.apps.filter(function(a){ return slug(a)===slug(p); })[0]; return hit || p.charAt(0).toUpperCase()+p.slice(1); }
+
+  function runPause(p, site){
+    var name = site || appName(p), id = slug(p);
+    var times = countOpen(id);
+    var spent = parseInt(params.get("spent"),10);
+    var stat = ord(times)+" time today" + (spent>=0 ? " \u00b7 "+(spent>=60? Math.floor(spent/60)+" h "+(spent%60)+" min" : spent+" min")+" in "+name+" today" : "");
+    document.title = "Pause · "+name;
+    var key = (site?"site:":"app:")+(site||slug(p)), cl = S.closed[key];
+    if(closedAt(cl, new Date())){ return showBlocked(name, span(cl), lv(key)==="strict" ? "Strict" : "Closed hours"); }
+    if(S.block && Date.now() < S.block.until){ return showBlocked(name, S.block); }
+    $("before").textContent = "before "+name;
+    $("open").textContent = "Open it";
+    var n = Math.max(1, Math.min(3, S.seconds|0)), arc=$("arc"), C=2*Math.PI*120;
+    arc.style.strokeDasharray = C; arc.style.strokeDashoffset = C; arc.style.transitionDuration = n+"s";
+    $("count").textContent = n;
+    show("pause");
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ arc.style.strokeDashoffset = 0; }); });
+    var left = n, tick = setInterval(function(){ left--; if(left>0){ $("count").textContent=left; } else { clearInterval(tick); afterPause(name,id,site,stat); } }, 1000);
+  }
+
+  function afterPause(name,id,site,stat){
+    var msgs = (S.messages||[]).filter(function(m){ return m.trim(); });
+    $("msg").textContent = pick(msgs) || "";
+    $("stat").textContent = stat;
+    var mins = [5,10,15].indexOf(+S.letin)>=0 ? +S.letin : 10;
+    if(S.askOn){
+      $("askBox").style.display="";
+      $("askQ").textContent = (S.askQ||"Why are you opening {app} now?").replace(/\{app\}/g, name);
+      $("open").disabled = true;
+      $("askA").oninput = function(){ $("open").disabled = this.value.trim().length < 3; };
+    }
+    $("letNote").textContent = "Lets you in for "+mins+" min";
+    listPics().then(function(list){ var p=pick(list); if(p){ $("afterImg").style.backgroundImage = "url("+URL.createObjectURL(p.blob)+")"; } show("after"); });
+    $("never").onclick = function(){ if(fire("pause-home")) { $("afterNote").textContent = "Good choice."; } else { $("afterNote").textContent = "Good choice. You can close this page."; } };
+    if(NAT){ $("open").onclick = function(){ var u=capUntil((site?"site:"+site:"app:"+id), mins); $("afterNote").textContent = "Opening "+name+"…"; if(site){ S.allow[site]=u; save(); Android.openSite(site,u); } else Android.open(id,u); }; return; }
+    if(site){ $("open").onclick = function(){ S.allow[site]=Date.now()+mins*60000; save(); $("afterNote").textContent = "Opening "+site+"…"; location.href="https://"+site; }; return; }
+    $("open").onclick = function(){ if(fire("pause-open-"+id, "?minutes="+mins)) { $("afterNote").textContent = "Opening "+name+"…"; } else { $("afterNote").textContent = "Add your MacroDroid link in settings first."; } };
+  }
+
+  function showBlocked(name, B, auto){
+    var u = new Date(B.until), f = fmt(u), now = new Date();
+    $("bTime").textContent = f.t;
+    var tomorrow = u.toDateString() !== now.toDateString();
+    $("bAmpm").textContent = f.ap + (tomorrow ? " TOMORROW" : (f.ap==="PM" && u.getHours()>=17 ? " TONIGHT" : " TODAY"));
+    var tot = B.until - B.from, done = Date.now() - B.from;
+    $("bBar").style.width = Math.max(2, Math.min(100, done/tot*100)) + "%";
+    $("bStart").textContent = fmt(new Date(B.from)).t;
+    var mins = Math.ceil((B.until - Date.now())/60000), h = Math.floor(mins/60), m = mins%60;
+    $("bLeft").textContent = (h? h+" h ":"") + m + " min left";
+    $("bApp").innerHTML = ""; $("bApp").append(name+" has no open button", document.createElement("br"), "until then.");
+    var st=$("stars"); [[15,12],[82,18],[28,26],[74,10],[52,16],[10,36],[90,33]].forEach(function(p){ var i=document.createElement("i"); i.style.left=p[0]+"%"; i.style.top=p[1]+"%"; st.appendChild(i); });
+    $("bHome").onclick = function(){ if(!fire("pause-home")) $("bNote").textContent = "You can close this page."; };
+    if(auto){ $("bNote").textContent = auto+". Going back home…"; setTimeout(function(){ if(!fire("pause-home")) $("bNote").textContent = auto+". You can close this page."; }, 4000); }
+    show("blocked");
+  }
+
+  // ---------- settings
+  function runSettings(){
+    $("settings").classList.add("on");
+    renderApps(); renderLen(); renderLet(); renderBlock();
+    renderMsgs(); renderShuf(); renderHard(); renderPending();
+    window.__rerender=function(){ renderApps(); renderHard(); renderPending(); };
+    setInterval(function(){ if(applyDue()){ renderApps(); renderHard(); } renderPending(); renderBlock(); }, 30000);
+    $("addMsg").onclick = function(){ S.messages.push(""); save(); renderMsgs(); var t=$("msgs").querySelectorAll("textarea"); t[t.length-1].focus(); };
+    $("askIn").value = S.askQ; $("askIn").oninput = function(){ S.askQ=this.value; save(); };
+    $("askTog").classList.toggle("on", !!S.askOn); $("askTog").onclick = function(){ if(S.askOn){ var el=this; globalLoosen(function(){ S.askOn=false; el.classList.toggle("on", false); }); return; } S.askOn=true; save(); this.classList.toggle("on", true); };
+    $("shuf").onclick = function(){ S.shuffle=!S.shuffle; save(); renderShuf(); };
+    $("hook").value = S.hook; $("hook").oninput = function(){ S.hook=this.value.trim(); save(); renderApps(); };
+    $("addApp").onclick = function(){ var v=$("newApp").value.trim(); if(!v) return; if(S.apps.some(function(a){return slug(a)===slug(v)})) return toast("Already added"); S.apps.push(v); save(); $("newApp").value=""; renderApps(); };
+    $("addSite").onclick = function(){ var v=host($("newSite").value); if(!v || v.indexOf(".")<0) return toast("Type a website, like youtube.com"); S.sites=S.sites||[]; if(S.sites.indexOf(v)>=0) return toast("Already added"); S.sites.push(v); save(); $("newSite").value=""; renderApps(); };
+    $("newSite").onkeydown = function(e){ if(e.key==="Enter") $("addSite").click(); };
+    $("newApp").onkeydown = function(e){ if(e.key==="Enter") $("addApp").click(); };
+    $("picIn").onchange = function(){ var fs=[].slice.call(this.files), el=this; if(!fs.length) return;
+      fs.reduce(function(pr,f){ return pr.then(function(){ return shrink(f); }).then(addPic); }, Promise.resolve()).then(function(){ el.value=""; renderPic(); toast(fs.length>1? fs.length+" pictures saved" : "Picture saved"); }); };
+    $("blkStart").onclick = startBlock;
+    renderPic();
+    if(NAT) natSetup();
+  }
+
+  function natSetup(){
+    save();
+    $("hookWrap").style.display="none"; $("siteHelp").style.display="";
+    $("newApp").style.display="none"; $("addApp").textContent="+ Choose an app"; $("addApp").style.flex="1";
+    window.__natCheck=function(){ try{ $("natOff").style.display = Android.serviceOn() ? "none" : ""; }catch(e){} };
+    window.__natCheck();
+    document.addEventListener("visibilitychange", function(){ if(!document.hidden) window.__natCheck(); });
+    $("natOn").onclick=function(){ Android.openAccessibility(); };
+    $("natInfo").onclick=function(){ Android.openAppInfo(); };
+    var all=null;
+    function draw(){ var q=$("pickQ").value.trim().toLowerCase(), box=$("pickList"); box.innerHTML="";
+      all.filter(function(x){ return !q || x.label.toLowerCase().indexOf(q)>=0; }).forEach(function(x){
+        var r=document.createElement("button"); r.className="approw"; r.style.cssText="width:100%;background:none;color:#fff;text-align:left;border-left:0;border-right:0;border-top:0";
+        var ic=document.createElement("div"); ic.className="ic"; ic.textContent=x.label.charAt(0).toUpperCase();
+        var nm=document.createElement("div"); nm.className="nm"; nm.textContent=x.label; r.append(ic,nm);
+        r.onclick=function(){ if(S.apps.some(function(a){ return slug(a)===slug(x.label); })){ toast("Already added"); return; }
+          S.apps.push(x.label); S.pkgs=S.pkgs||{}; S.pkgs[slug(x.label)]=x.pkg; save(); $("picker").classList.remove("on"); renderApps(); toast(x.label+" added"); };
+        box.appendChild(r); }); }
+    $("addApp").onclick=function(){ if(!all){ try{ all=JSON.parse(Android.apps()); }catch(e){ all=[]; } } $("pickQ").value=""; draw(); $("picker").classList.add("on"); };
+    $("pickQ").oninput=draw;
+    $("pickX").onclick=function(){ $("picker").classList.remove("on"); };
+  }
+
+  function renderApps(){
+    var box=$("apps"); box.innerHTML="";
+    var base = location.origin + location.pathname.replace(/index\.html$/,"");
+    S.apps.forEach(function(a){ var key="app:"+slug(a); box.appendChild(row(a, base+"?app="+slug(a), key, {k:"rm", kind:"app", v:a, key:key})); });
+    var sb=$("sites"); sb.innerHTML="";
+    (S.sites||[]).forEach(function(h){ var key="site:"+h; sb.appendChild(row(h, base+"?site="+encodeURIComponent(h), key, {k:"rm", kind:"site", v:h, key:key})); });
+    var all = S.apps.concat(S.sites||[]);
+    $("blkTitle").textContent = all.length ? all.join(", ") : "All your paused apps and sites";
+  }
+
+  function row(a, url, key, rmOp){
+    var r=document.createElement("div"); r.className="approw";
+    var ic=document.createElement("div"); ic.className="ic"; ic.textContent=a.charAt(0).toUpperCase();
+    var col=document.createElement("div"); col.style.flex="1"; col.style.minWidth="0";
+    var nm=document.createElement("div"); nm.className="nm"; nm.textContent=a;
+    var ln=document.createElement("div"); ln.className="link"; ln.style.padding="4px 0 0";
+    var code=document.createElement("code"); code.textContent=url;
+    var cp=document.createElement("button"); cp.className="copy"; cp.textContent="Copy";
+    cp.onclick=function(){ (navigator.clipboard? navigator.clipboard.writeText(url): Promise.reject()).then(function(){toast("Link copied")},function(){toast(url)}); };
+    ln.append(code,cp); col.append(nm,ln);
+    if(NAT){ ln.style.display="none"; if(key.indexOf("app:")===0 && !(S.pkgs||{})[key.slice(4)]){ var nf=document.createElement("div"); nf.className="link"; nf.style.padding="2px 0 0"; nf.style.color="#FFB86B"; nf.textContent="Not linked to an app yet: remove it and choose it again"; col.append(nf); } }
+    var x=document.createElement("button"); x.className="x"; x.textContent="×"; x.setAttribute("aria-label","Remove "+a);
+    x.onclick=function(){ itemLoosen(key, a, "Type this to remove "+a, function(){ applyOp(rmOp); save(); renderApps(); toast(a+" removed"); }, rmOp); };
+    var L=lv(key), cl=S.closed[key]||[];
+    var st=document.createElement("button"); st.className="chip"+(L==="strict"?" on":L==="hard"?" hard":""); st.textContent=L==="strict"?"Strict":L==="hard"?"Hard":"Normal";
+    if(cl.length){ var sub=document.createElement("div"); sub.className="link"; sub.style.padding="2px 0 0"; sub.style.color=L==="strict"?"#FFB86B":L==="hard"?"#8FA8FF":"";
+      sub.textContent = cl.length===1 ? "Closed "+winTxt(cl[0]) : "Closed hours: "+cl.length+" times"; col.insertBefore(sub, ln); }
+    var ed=document.createElement("div"); ed.className="sed"; ed.style.display="none";
+    st.onclick=function(){ if(ed.style.display==="none"){ build(); ed.style.display=""; } else ed.style.display="none"; };
+    function build(){
+      var draft=JSON.parse(JSON.stringify(cl)), lvl=L; ed.innerHTML="";
+      var cap=document.createElement("div"); cap.style.cssText="font-size:15px;font-weight:500;padding:6px 0 4px"; cap.textContent="Closed hours"; ed.appendChild(cap);
+      var hint=document.createElement("div"); hint.className="help"; hint.style.margin="0 0 6px"; hint.textContent="In these hours "+a+" won't open at all."; ed.appendChild(hint);
+      var list=document.createElement("div"); ed.appendChild(list);
+      function drawList(){ list.innerHTML=""; draft.forEach(function(w,i){
+        var wb=document.createElement("div"); wb.className="win";
+        var line=document.createElement("div"); line.className="sline";
+        var f1=document.createElement("input"); f1.type="time"; f1.value=w.from; f1.oninput=function(){ w.from=this.value; };
+        var f2=document.createElement("input"); f2.type="time"; f2.value=w.to; f2.oninput=function(){ w.to=this.value; };
+        var l1=document.createElement("span"); l1.textContent="From"; var l2=document.createElement("span"); l2.textContent="to";
+        var rx=document.createElement("button"); rx.className="x"; rx.textContent="×"; rx.setAttribute("aria-label","Remove these hours"); rx.onclick=function(){ draft.splice(i,1); drawList(); };
+        line.append(l1,f1,l2,f2,rx);
+        var dd=document.createElement("div"); dd.className="days";
+        "SMTWTFS".split("").forEach(function(ch,d){ var b=document.createElement("button"); b.textContent=ch; b.setAttribute("aria-label",DN[d]); b.classList.toggle("sel", w.days.indexOf(d)>=0);
+          b.onclick=function(){ var k=w.days.indexOf(d); if(k>=0) w.days.splice(k,1); else w.days.push(d); b.classList.toggle("sel", k<0); }; dd.appendChild(b); });
+        wb.append(line,dd); list.appendChild(wb); }); }
+      drawList();
+      var add=document.createElement("button"); add.className="copy"; add.style.padding="10px 0"; add.textContent="+ Add closed hours";
+      add.onclick=function(){ draft.push({from:"22:00",to:"10:00",days:ALL.slice()}); drawList(); }; ed.appendChild(add);
+      var cap2=document.createElement("div"); cap2.style.cssText="font-size:15px;font-weight:500;padding:8px 0 0;border-top:1px solid var(--line)"; cap2.textContent="How hard to change"; ed.appendChild(cap2);
+      var seg=document.createElement("div"); seg.className="seg lvl";
+      var lh=document.createElement("div"); lh.className="help"; lh.style.margin="0 0 12px";
+      var LH={normal:"Change it any time outside a block.", hard:"To loosen it, type a 150-letter code from the screen, only "+t12(S.hardFrom)+" to "+t12(S.hardTo)+". The change then waits "+S.hardCool+" min. Making it stricter is instant.", strict:"Its closed hours can only get longer, and it can't be removed or made easier here. No undo."};
+      ["normal","hard","strict"].forEach(function(v){ var b=document.createElement("button"); b.textContent=v.charAt(0).toUpperCase()+v.slice(1); b.dataset.v=v; b.onclick=function(){ lvl=v; paintSeg(); }; seg.appendChild(b); });
+      function paintSeg(){ [].forEach.call(seg.children,function(b){ b.classList.toggle("sel", b.dataset.v===lvl); }); lh.textContent=LH[lvl]; }
+      paintSeg(); ed.append(seg,lh);
+      var go=document.createElement("button"); go.className="small"; go.style.width="100%"; go.textContent="Save";
+      go.onclick=function(){
+        for(var i=0;i<draft.length;i++){ var w=draft[i]; if(!w.from||!w.to||w.from===w.to) return toast("Pick two different times"); if(!w.days.length) return toast("Pick at least one day"); }
+        var looser = RANK[lvl]<RANK[L] || !coversAll(draft, cl);
+        var setOp={k:"set", key:key, closed:draft, level:lvl};
+        function apply(){ applyOp(setOp); save(); renderApps(); toast("Saved"); }
+        if(lvl==="strict" && L!=="strict"){
+          if(!confirm("Make "+a+" Strict?\n\n"+(draft.length? "In its closed hours it won't open at all. ":"")+"You won't be able to shorten or remove its closed hours, make it easier or remove "+a+" in this app. You can only make the hours longer. There is no undo.")) return;
+        }
+        if(!looser) return apply();
+        if(L==="strict") return toast(RANK[lvl]<RANK[L] ? "Strict can't be made easier" : "Strict: closed hours can only get longer");
+        itemLoosen(key, a, "Type this to loosen "+a, apply, setOp);
+      };
+      ed.appendChild(go);
+    }
+    r.append(ic,col,st,x);
+    var wrap=document.createElement("div"); wrap.append(r,ed); return wrap;
+  }
+
+  function renderHard(){
+    [].forEach.call($("cool").children,function(b){ b.classList.toggle("sel", +b.dataset.m===+S.hardCool); b.onclick=function(){ var v=+b.dataset.m;
+      if(v<S.hardCool) return hardGate("Type this to shorten the Hard wait to "+v+" min", {k:"hardCfg", cool:v, from:S.hardFrom, to:S.hardTo});
+      S.hardCool=v; save(); renderHard(); }; });
+    $("hFrom").value=S.hardFrom; $("hTo").value=S.hardTo;
+    $("hSave").onclick=function(){ var f=$("hFrom").value, t=$("hTo").value; if(!f||!t||f===t) return toast("Pick two different times");
+      var old={from:S.hardFrom,to:S.hardTo}, wider=false;
+      for(var m=0;m<1440;m+=5){ var d=new Date(2000,0,1,0,m), dm=m, inOld=(mins(old.from)<mins(old.to))?(dm>=mins(old.from)&&dm<mins(old.to)):(dm>=mins(old.from)||dm<mins(old.to)), inNew=(mins(f)<mins(t))?(dm>=mins(f)&&dm<mins(t)):(dm>=mins(f)||dm<mins(t)); if(inNew&&!inOld){ wider=true; break; } }
+      if(wider) return hardGate("Type this to allow Hard changes "+t12(f)+" to "+t12(t), {k:"hardCfg", cool:S.hardCool, from:f, to:t});
+      S.hardFrom=f; S.hardTo=t; save(); renderHard(); toast("Saved"); };
+    $("hSub").textContent="Hard apps and sites can be changed "+t12(S.hardFrom)+" to "+t12(S.hardTo)+". Each change waits "+S.hardCool+" min after the code.";
+  }
+  function renderPending(){ var box=$("pend"), list=S.pending||[]; box.innerHTML=""; $("pendWrap").style.display=list.length?"":"none";
+    list.forEach(function(p,i){ var r=document.createElement("div"); r.className="prow";
+      var t=document.createElement("div"); t.className="t"; var a=document.createElement("div"); a.textContent=p.desc.charAt(0).toUpperCase()+p.desc.slice(1);
+      var left=Math.max(0,Math.ceil((p.due-Date.now())/60000)); var b=document.createElement("div"); b.textContent= blockOn()&&left===0 ? "Waits for the block to end" : "Happens in "+left+" min"; t.append(a,b);
+      var c=document.createElement("button"); c.className="small ghost"; c.style.height="34px"; c.textContent="Cancel"; c.onclick=function(){ S.pending.splice(i,1); save(); renderPending(); };
+      r.append(t,c); box.appendChild(r); }); }
+
+  function renderLet(){ [].forEach.call($("letin").children,function(b){ b.classList.toggle("sel", +b.dataset.m===+S.letin); b.onclick=function(){ var v=+b.dataset.m; if(v>S.letin){ globalLoosen(function(){ S.letin=v; }); renderLet(); return; } S.letin=v; save(); renderLet(); }; }); }
+
+  function renderLen(){ [].forEach.call($("len").children,function(b){ b.classList.toggle("sel", +b.dataset.s===S.seconds); b.onclick=function(){ var v=+b.dataset.s; if(v<S.seconds){ globalLoosen(function(){ S.seconds=v; }); renderLen(); return; } S.seconds=v; save(); renderLen(); }; }); }
+
+  function startBlock(){
+    var v=$("blkTime").value; if(!v) return;
+    var hm=v.split(":"), now=new Date(), u=new Date(); u.setHours(+hm[0],+hm[1],0,0);
+    if(u<=now) u.setDate(u.getDate()+1);
+    if(blockOn()){ if(u.getTime()<=S.block.until) return toast("A block can only be made longer"); S.block.until=u.getTime(); save(); renderBlock(); var g=fmt(u); return toast("Now blocked until "+g.t+" "+g.ap); }
+    S.block={from:now.getTime(), until:u.getTime()}; save(); renderBlock();
+    var f=fmt(u); toast("Blocked until "+f.t+" "+f.ap);
+  }
+  function renderBlock(){
+    var on = S.block && Date.now() < S.block.until;
+    if(S.block && !on){ S.block=null; save(); }
+    $("blkStart").textContent = on?"Make it longer":"Start block";
+    if(on){ var f=fmt(new Date(S.block.until)); $("blkSub").textContent="Blocked until "+f.t+" "+f.ap+". It can't end early."; }
+    else $("blkSub").textContent="Pick any time";
+  }
+
+  function renderPic(){ listPics().then(function(list){ var box=$("pics"); box.innerHTML="";
+    list.forEach(function(p){ var t=document.createElement("div"); t.className="thumb has"; t.style.backgroundImage="url("+URL.createObjectURL(p.blob)+")";
+      var x=document.createElement("button"); x.className="del"; x.textContent="×"; x.setAttribute("aria-label","Remove picture"); x.onclick=function(){ delPic(p.key).then(renderPic); };
+      t.appendChild(x); box.appendChild(t); });
+    var a=document.createElement("label"); a.className="thumb"; a.htmlFor="picIn"; a.textContent="+"; box.appendChild(a); }); }
+  function renderMsgs(){ var box=$("msgs"); box.innerHTML="";
+    S.messages.forEach(function(m,i){ var r=document.createElement("div"); r.className="msgrow";
+      var t=document.createElement("textarea"); t.value=m; t.placeholder="Your message"; t.oninput=function(){ S.messages[i]=this.value; save(); };
+      var x=document.createElement("button"); x.className="x"; x.textContent="×"; x.setAttribute("aria-label","Remove message"); x.onclick=function(){ S.messages.splice(i,1); save(); renderMsgs(); };
+      r.append(t,x); box.appendChild(r); }); }
+  function renderShuf(){ $("shuf").classList.toggle("on", !!S.shuffle); }
+
+  // keep phone photos small: max 1600px, jpeg
+  function shrink(file){ return new Promise(function(res){ var img=new Image(), url=URL.createObjectURL(file); img.onload=function(){ var k=Math.min(1,1600/Math.max(img.width,img.height)); var c=document.createElement("canvas"); c.width=Math.round(img.width*k); c.height=Math.round(img.height*k); c.getContext("2d").drawImage(img,0,0,c.width,c.height); c.toBlob(function(b){ res(b||file); },"image/jpeg",0.85); }; img.onerror=function(){ res(file); }; img.src=url; }); }
+})();
+</script>
+</body>
+</html>
