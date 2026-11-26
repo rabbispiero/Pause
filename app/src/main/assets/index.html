@@ -158,6 +158,8 @@
   .sld input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:26px;height:26px;border-radius:50%;background:#fff;border:3px solid var(--glow);margin-top:-9px;box-shadow:0 2px 8px rgba(0,0,0,.2)}
   .sld input[type=range]::-moz-range-track{height:8px;border-radius:4px;background:linear-gradient(90deg,var(--acc) 0,var(--acc) var(--p,50%),var(--seg) var(--p,50%),var(--seg) 75%,var(--trk) 75%)}
   .sld input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid var(--glow)}
+  .sld.plain input[type=range]::-webkit-slider-runnable-track{background:linear-gradient(90deg,var(--acc) 0,var(--acc) var(--p,50%),var(--trk) var(--p,50%))}
+  .sld.plain input[type=range]::-moz-range-track{background:linear-gradient(90deg,var(--acc) 0,var(--acc) var(--p,50%),var(--trk) var(--p,50%))}
   .sld .ticks{position:relative;height:16px;font-size:12px;color:var(--sub);margin-top:2px}
   .sld .ticks span{position:absolute;transform:translateX(-50%);white-space:nowrap} .sld .ticks span:first-child{transform:none} .sld .ticks span:last-child{transform:translateX(-100%)}
   .usedef{background:none;border:0;color:var(--glow);font:inherit;font-size:14px;font-weight:600;padding:8px 0 0;cursor:pointer}
@@ -388,7 +390,7 @@
     <div class="srow flat"><div class="t"><div>Morning</div><div id="qmSub"></div></div><button class="tog" id="qmTog" aria-label="Morning"><i></i></button></div>
     <div class="srow" id="qmRow" style="padding-top:0"><div class="sline" style="font-size:16px"><span>From</span><input type="time" id="qmFrom"><span>to</span><input type="time" id="qmTo"></div></div>
   </div>
-  <div class="card"><div class="srow"><div class="lb">Pause length in quiet times <b class="val" id="qVal"></b></div><div class="sld" id="qSld"><input type="range" id="qSecs" min="5" max="30" step="1" aria-label="Pause length in quiet times, in seconds"><div class="ticks"><span style="left:0%">5 sec</span><span style="left:20%">10 sec</span><span style="left:60%">20 sec</span><span style="left:100%">30 sec</span></div></div><div class="ssub2" id="qHelp"></div></div></div>
+  <div class="card"><div class="srow"><div class="lb">Pause length in quiet times <b class="val" id="qVal"></b></div><div class="sld plain" id="qSld"><input type="range" id="qSecs" min="5" max="30" step="1" aria-label="Pause length in quiet times, in seconds"><div class="ticks"><span style="left:0%">5 sec</span><span style="left:20%">10 sec</span><span style="left:60%">20 sec</span><span style="left:100%">30 sec</span></div></div><div class="ssub2" id="qHelp"></div></div></div>
  </div>
 
  <div class="pg" id="nudgePg">
@@ -449,7 +451,8 @@
 <div class="sheet" id="breakSh"><div class="box">
   <div style="font-size:20px;font-weight:600">Take a break</div>
   <div class="help" style="margin:6px 0 14px" id="blkTitle">All your paused apps stay closed until:</div>
-  <div class="seg" id="blkQuick" style="margin:0 0 12px"><button data-m="5">5 min</button><button data-m="10">10 min</button><button data-m="30">30 min</button><button data-m="60">1 h</button></div>
+  <div class="lb" style="font-size:15px">For <b class="val" id="blkVal"></b></div>
+  <div class="sld plain" style="margin:0 0 14px"><input type="range" id="blkSld" min="0" max="100" step="any" aria-label="Break length"><div class="ticks"><span style="left:0%">5 min</span><span style="left:25%">15 min</span><span style="left:50%">30 min</span><span style="left:75%">1 h</span><span style="left:100%">2 h</span></div></div>
   <input type="time" id="blkTime" value="20:30" style="width:100%;font-size:22px;padding:14px">
   <div class="help" style="margin:10px 0 0" id="blkSub"></div>
   <button class="big acc" id="blkStart">Start break</button>
@@ -751,10 +754,11 @@
     [].forEach.call(document.querySelectorAll("[data-back]"),function(b){ b.onclick=function(){ history.back(); }; });
     $("addApp").onclick=function(){ go("pick"); };
     $("moreBtn").onclick=function(){ go("more"); };
-    $("breakBtn").onclick=function(){ renderBlock(); [].forEach.call($("blkQuick").children,function(b){ b.classList.remove("sel"); }); $("breakSh").classList.add("on"); };
-    [].forEach.call($("blkQuick").children,function(b){ b.onclick=function(){ var u=new Date(Date.now()+(+b.dataset.m)*60000), p2=function(n){ return (n<10?"0":"")+n; };
-      $("blkTime").value=p2(u.getHours())+":"+p2(u.getMinutes()); [].forEach.call($("blkQuick").children,function(x){ x.classList.toggle("sel", x===b); }); }; });
-    $("blkTime").addEventListener("input", function(){ [].forEach.call($("blkQuick").children,function(x){ x.classList.remove("sel"); }); });
+    $("breakBtn").onclick=function(){ renderBlock(); blkSet(30); $("breakSh").classList.add("on"); };
+    $("blkSld").oninput=function(){ var m=posMin(+$("blkSld").value); $("blkSld").style.setProperty("--p", $("blkSld").value+"%"); blkShow(m); };
+    $("blkSld").onchange=function(){ blkSet(posMin(+$("blkSld").value)); };
+    $("blkTime").addEventListener("input", function(){ var v=$("blkTime").value; if(!v) return; var hm=v.split(":"), u=new Date(); u.setHours(+hm[0],+hm[1],0,0); if(u<=new Date()) u.setDate(u.getDate()+1);
+      var m=Math.round((u-Date.now())/60000), f=fmt(u); $("blkVal").textContent=minTxt(m)+" · until "+f.t+" "+f.ap; var q=minPos(Math.min(120,Math.max(5,m))); $("blkSld").value=String(q); $("blkSld").style.setProperty("--p", q+"%"); });
     $("breakX").onclick=function(){ $("breakSh").classList.remove("on"); };
     $("pickDone").onclick=function(){ history.back(); };
     $("pickQ").oninput=drawPick;
@@ -1082,6 +1086,13 @@
   function renderLen(){ var box=$("len"); box.innerHTML="";
     box.appendChild(secSlider(+S.seconds||3, function(v, set){ if(v===S.seconds) return; if(v<S.seconds){ if(!globalLoosen(function(){ S.seconds=v; })) set(S.seconds); return; } S.seconds=v; save(); }, function(v){ $("lenVal").textContent=v+" sec"; })); }
 
+  // break slider: 5 min to 2 h, marks at 5, 15, 30, 60 and 120 evenly spaced
+  var BKM=[5,15,30,60,120];
+  function minPos(m){ for(var i=0;i<4;i++){ if(m<=BKM[i+1]) return i*25+(m-BKM[i])/(BKM[i+1]-BKM[i])*25; } return 100; }
+  function posMin(p){ var i=Math.min(3,Math.floor(p/25)), m=BKM[i]+(p-i*25)/25*(BKM[i+1]-BKM[i]); return Math.max(5,Math.min(120,Math.round(m/5)*5)); }
+  function minTxt(m){ return m<60 ? m+" min" : Math.floor(m/60)+" h"+(m%60?" "+(m%60)+" min":""); }
+  function blkShow(m){ var u=new Date(Date.now()+m*60000), f=fmt(u); $("blkVal").textContent=minTxt(m)+" · until "+f.t+" "+f.ap; return u; }
+  function blkSet(m){ var p=minPos(m), u=blkShow(m), p2=function(n){ return (n<10?"0":"")+n; }; $("blkSld").value=String(p); $("blkSld").style.setProperty("--p", p+"%"); $("blkTime").value=p2(u.getHours())+":"+p2(u.getMinutes()); }
   function startBlock(){
     var v=$("blkTime").value; if(!v) return;
     var hm=v.split(":"), now=new Date(), u=new Date(); u.setHours(+hm[0],+hm[1],0,0);
