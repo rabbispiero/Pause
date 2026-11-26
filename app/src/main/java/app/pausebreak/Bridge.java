@@ -107,6 +107,9 @@ final class Bridge {
     }
 
     @JavascriptInterface
+    public String week() { return Store.week(a); }
+
+    @JavascriptInterface
     public boolean serviceOn() { return on(a); }
 
     @JavascriptInterface

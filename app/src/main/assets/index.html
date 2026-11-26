@@ -34,6 +34,13 @@
   #afterImg{position:absolute;inset:0;background:linear-gradient(160deg,#2A3A6B,#0D1226 70%);background-size:cover;background-position:center}
   #after::before{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(13,18,38,0) 8%,rgba(13,18,38,.9) 34%,rgba(13,18,38,.9) 76%,rgba(13,18,38,.55));z-index:1}
   #after>.inner{position:relative;z-index:2;padding:0 4px}
+  .goal{margin-top:12px;max-width:300px} .goal .bar{height:6px;border-radius:3px;background:rgba(255,255,255,.25);overflow:hidden} .goal .bar i{display:block;height:100%;width:100%;background:#F5C26B;border-radius:3px} .goal span{display:block;font-size:14px;margin-top:7px;opacity:.9}
+  html.day .goal .bar{background:rgba(13,18,38,.1)}
+  .ptag{display:inline-flex;align-items:center;gap:6px;margin-top:14px;padding:6px 12px;border-radius:14px;background:rgba(255,255,255,.08);color:#C9D1E6;font-size:14px} .ptag svg{width:15px;height:15px}
+  html.day .ptag{background:rgba(13,18,38,.06);color:#5B6585}
+  .recapcard{display:flex;align-items:center;gap:14px;width:100%;text-align:left;font:inherit;color:inherit;border:0;cursor:pointer;padding:16px} .recapcard svg{width:22px;height:22px;color:var(--glow);flex:none} .recapcard .tx{flex:1} .recapcard b{display:block;font-size:16px;font-weight:600} .recapcard span.s{font-size:13px;color:var(--sub)}
+  .wk{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)} .wk:last-child{border-bottom:0} .wk .tx{flex:1;min-width:0} .wk .tx b{display:block;font-size:16px;font-weight:500} .wk .bars{margin-top:7px} .wk .bars i{display:block;height:6px;border-radius:3px;background:linear-gradient(90deg,#34D399,#3B82F6);min-width:3px} .wk .bars i+i{background:var(--line);margin-top:4px} .wk .d{font-size:13px;color:var(--sub);text-align:right;min-width:78px} .wk .d b{display:block;font-size:15px;color:var(--fg);font-weight:600}
+  .wkbig{font-size:34px;font-weight:300;line-height:1.1}
   #msg{font-size:36px;line-height:1.12;margin:0 0 14px;white-space:pre-wrap;word-wrap:break-word}
   .row{display:flex;gap:14px;margin-top:26px}
   .row .pill{flex:1}
@@ -232,7 +239,6 @@
   html.day #after::before{background:linear-gradient(to bottom,rgba(244,246,251,0) 8%,rgba(244,246,251,.93) 34%,rgba(244,246,251,.93) 76%,rgba(244,246,251,.6))}
   html.day .white{background:#141A2E;color:#fff}
   html.day .glass{background:rgba(255,255,255,.7);color:#141A2E;border-color:rgba(20,26,46,.25)}
-  html.day #askA{background:#fff!important;border-color:var(--line)!important;color:var(--fg)}
   html.day .dim{background:rgba(20,26,46,.07)}
   html.day .stars{display:none}
   html.day .warn{color:#D64545}
@@ -255,6 +261,7 @@
   </div>
   <div class="breath serif">One slow breath</div>
   <div class="muted" id="before">before Instagram</div>
+  <div class="ptag" id="pTag" style="display:none"></div>
 </section>
 
 <!-- 2. after the pause -->
@@ -263,11 +270,8 @@
   <div class="inner">
     <p id="msg" class="serif"></p>
     <div class="today" id="today" style="display:none"><b id="todayN"></b><span id="todayL"></span></div>
+    <div class="goal" id="goal" style="display:none"><div class="bar"><i></i></div><span id="goalT"></span></div>
     <div class="idea" id="idea" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c0-8 6-14 15-14 0 9-6 15-14 15"/><path d="M5 19l7-7"/></svg><span id="ideaT"></span></div>
-    <div id="askBox" style="display:none;margin-top:22px">
-      <div id="askQ" style="font-size:16px;font-weight:600;margin-bottom:10px"></div>
-      <input id="askA" placeholder="Type your answer" autocomplete="off" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.35)">
-    </div>
     <button class="pill glass wide" id="never">Never mind</button>
     <div class="optl" id="openL">Or open it for</div>
     <div class="times" id="times"><button class="pill glass" data-m="5">5 min</button><button class="pill glass" data-m="10">10 min</button><button class="pill glass" data-m="15">15 min</button><button class="pill glass" data-m="30">30 min</button></div>
@@ -297,6 +301,7 @@
     <div class="t"><div>Pause is off</div><div>Turn it on so your apps get paused.</div></div>
     <button class="small" id="natOn">Turn on</button>
   </div>
+  <button class="card recapcard" id="weekCard" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><div class="tx"><b>Your week is ready</b><span class="s" id="weekCardS"></span></div><span class="chev">›</span></button>
   <div class="card hero" id="hero">
     <svg class="ring2" viewBox="0 0 64 64"><defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34D399"/><stop offset="1" stop-color="#3B82F6"/></linearGradient></defs><circle cx="32" cy="32" r="28" style="fill:var(--trk)"/><path d="M32 32V4a28 28 0 1 1-28 28z" fill="url(#hg)"/><circle cx="32" cy="32" r="7" style="fill:var(--heroc)"/></svg>
     <div class="nums"><div><div class="n" id="heroN">0</div><div class="l" id="heroL">pauses</div></div><div><div class="n" id="heroS">0 min</div><div class="l">time saved</div></div></div>
@@ -338,8 +343,12 @@
   <div class="card">
     <div class="srow"><div class="lb">Pause length <b class="val" id="lenVal"></b></div>
       <div id="len"></div></div>
-    <div class="srow flat"><div class="t"><div>Ask a question first</div><div>You answer before you can open the app</div></div><button class="tog" id="askTog" aria-label="Ask a question"><i></i></button></div>
-    <div class="srow" id="askRow"><div class="lb">Your question <span>Use {app} for the app’s name</span></div><input id="askIn" placeholder="Why are you going on {app} now?"></div>
+    <div class="srow flat"><div class="t"><div>Longer when you keep coming back</div><div>From your 3rd open of an app in an hour, 2 sec more each time</div></div><button class="tog" id="growTog" aria-label="Longer when you keep coming back"><i></i></button></div>
+  </div>
+  <div class="cap">Gentle reminders</div>
+  <div class="card">
+    <button class="srow flat" id="navQuiet" data-go="quiet"><span class="sicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg></span><div class="t"><div>Quiet times</div><div id="navQuietSub"></div></div><span class="chev">›</span></button>
+    <button class="srow flat" id="navNudge" data-go="nudge"><span class="sicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div class="t"><div>Long-stay note</div><div id="navNudgeSub"></div></div><span class="chev">›</span></button>
   </div>
   <div class="cap">More</div>
   <div class="card">
@@ -349,7 +358,7 @@
   </div>
 
   <div id="pendWrap" style="display:none">
-    <div class="cap">Waiting to happen</div>
+    <div class="cap">Changes coming</div>
     <div class="card" id="pend"></div>
   </div>
 
@@ -365,6 +374,38 @@
     <div class="help" style="margin:10px 0 0">Lets "Open it" open the app and "Never mind" go to your home screen.</div>
   </div>
   </div>
+ </div>
+
+ <div class="pg" id="quietPg">
+  <div class="top"><button class="back" data-back>‹ Back</button></div>
+  <div class="ttl">Quiet times</div>
+  <div class="grp">A longer pause at the times you pick, for every app you pause. Apps still open after it.</div>
+  <div class="card">
+    <div class="srow flat"><div class="t"><div>Night</div><div id="qnSub"></div></div><button class="tog" id="qnTog" aria-label="Night"><i></i></button></div>
+    <div class="srow" id="qnRow" style="padding-top:0"><div class="sline" style="font-size:16px"><span>From</span><input type="time" id="qnFrom"><span>to</span><input type="time" id="qnTo"></div></div>
+    <div class="srow flat"><div class="t"><div>Morning</div><div id="qmSub"></div></div><button class="tog" id="qmTog" aria-label="Morning"><i></i></button></div>
+    <div class="srow" id="qmRow" style="padding-top:0"><div class="sline" style="font-size:16px"><span>From</span><input type="time" id="qmFrom"><span>to</span><input type="time" id="qmTo"></div></div>
+  </div>
+  <div class="card"><div class="srow"><div class="lb">Pause length in quiet times</div><div class="seg sm" id="qSecs"><button data-v="5">5 sec</button><button data-v="10">10 sec</button><button data-v="15">15 sec</button><button data-v="20">20 sec</button></div><div class="ssub2" id="qHelp"></div></div></div>
+ </div>
+
+ <div class="pg" id="nudgePg">
+  <div class="top"><button class="back" data-back>‹ Back</button></div>
+  <div class="ttl">Long-stay note</div>
+  <div class="grp">A small note at the top when you’ve been in a paused app for a while, like “20 min on Instagram”. It goes away by itself, with no buttons, and nothing closes.</div>
+  <div class="card"><div class="srow"><div class="lb">Show it after</div><div class="seg sm" id="nSeg"><button data-v="0">Off</button><button data-v="15">15 min</button><button data-v="20">20 min</button><button data-v="30">30 min</button><button data-v="45">45 min</button></div><div class="ssub2" id="nHelp"></div></div></div>
+ </div>
+
+ <div class="pg" id="weekPg">
+  <div class="top"><button class="back" data-back>‹ Back</button></div>
+  <div class="ttl">Your week</div>
+  <div class="grp" id="wkDates"></div>
+  <div class="card" style="padding:18px 20px"><div class="wkbig" id="wkTotal"></div><div style="font-size:13px;color:var(--sub);margin-top:6px">on your paused apps</div></div>
+  <div class="grp" id="wkCmp" style="margin:4px 8px 14px"></div>
+  <div class="cap">Each app</div>
+  <div class="card" id="wkApps"></div>
+  <div class="help" style="margin:8px 8px 0">Top bar this week, grey bar the week before.</div>
+  <div class="card appnums" style="margin-top:14px"><div><div class="n" id="wkP">0</div><div class="l">pauses</div></div><div><div class="n" id="wkS">0 min</div><div class="l">time saved</div></div></div>
  </div>
 
  <div class="pg" id="picsPg">
@@ -423,9 +464,10 @@
 <script>
 (function(){
   var KEY = "pause.v1";
+  var MOON_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg>', CLOCK_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
   var LVN={normal:"Easy", hard:"Hard", strict:"Locked"}, ICONS={}, ALLAPPS=null;
   var NAT = !!(window.Android && window.Android.save);
-  var DEF = {apps:NAT?[]:["Instagram","YouTube"], sites:[], allow:{}, seconds:3, letin:10, log:{}, shuffle:true, askOn:false, askQ:"Why are you going on {app} now?", messages:["Remember why\nyou put it down."], block:null, hook:"", closed:{}, level:{}, hardCool:15, hardFrom:"09:00", hardTo:"21:00", pending:[], pkgs:{}, per:{}, parts:{}, pauseOff:false, delay:0, ideasOn:true, hist:{}, total:{p:0,nm:0}, lastPick:{}};
+  var DEF = {apps:NAT?[]:["Instagram","YouTube"], sites:[], allow:{}, seconds:3, letin:10, log:{}, shuffle:true, grow:true, quiet:{night:{on:false,from:"22:00",to:"06:00"},morning:{on:false,from:"07:00",to:"07:30"},secs:10}, nudge:20, opens:{}, weekSeen:"", messages:["Remember why\nyou put it down."], block:null, hook:"", closed:{}, level:{}, hardCool:15, hardFrom:"09:00", hardTo:"21:00", pending:[], pkgs:{}, per:{}, parts:{}, pauseOff:false, delay:0, ideasOn:true, hist:{}, total:{p:0,nm:0}, lastPick:{}};
   function load(){ try{ var s=JSON.parse(localStorage.getItem(KEY)); return Object.assign({},DEF,s||{}); }catch(e){ return Object.assign({},DEF); } }
   function save(){ var j=JSON.stringify(S); try{ localStorage.setItem(KEY, j); }catch(e){} if(NAT){ try{ Android.save(j); }catch(e){} } }
   var S = load();
@@ -437,6 +479,8 @@
   if(S.strict){ Object.keys(S.strict).forEach(function(k){ var w=S.strict[k]; if(w&&w.from){ S.closed[k]=(S.closed[k]||[]).concat([{from:w.from,to:w.to,days:[0,1,2,3,4,5,6]}]); } if(w) S.level[k]="strict"; }); delete S.strict; }
   if(S.pending && S.pending.some(function(p){ return !p.op || !p.op.k || ["rm","set","hardCfg","per"].indexOf(p.op.k)<0; })) S.pending=[];
   S.pending=(S.pending||[]).filter(function(p){ return p.op.k!=="hardCfg"; }); delete S.waitH;
+  delete S.askOn; delete S.askQ; Object.keys(S.per).forEach(function(k){ delete S.per[k].askOn; delete S.per[k].askQ; if(!Object.keys(S.per[k]).length) delete S.per[k]; });
+  S.opens=S.opens||{}; S.quiet=S.quiet||JSON.parse(JSON.stringify(DEF.quiet));
   S.hardCool=15; S.hardFrom="09:00"; S.hardTo="21:00"; save();
   function slug(n){ return String(n).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""); }
   function toast(t){ var e=$("toast"); e.textContent=t; e.classList.add("on"); setTimeout(function(){e.classList.remove("on")},1600); }
@@ -466,7 +510,6 @@
   function setPer(key, f, v){ var p=S.per[key]||(S.per[key]={}); if(v===undefined||v===null) delete p[f]; else p[f]=v; if(!Object.keys(p).length) delete S.per[key]; }
   function ownPics(key){ return !!per(key).own; }
   function effMsgs(key){ return ownPics(key) ? (per(key).messages||[]) : (S.messages||[]); }
-  function effQ(key){ var q=per(key).askQ; return (q && q.trim()) ? q : S.askQ; }
   function mins(t){ var p=String(t).split(":"); return (+p[0])*60+(+p[1]); }
   function inW(w, d){ var m=d.getHours()*60+d.getMinutes(), dow=d.getDay(), a=mins(w.from), b=mins(w.to), ds=w.days||ALL;
     if(a===b) return false;
@@ -500,6 +543,11 @@
   function hist(){ var k=dayKey(), keep=[]; for(var i=0;i<8;i++) keep.push(dayKey(Date.now()-i*864e5));
     Object.keys(S.hist).forEach(function(d){ if(keep.indexOf(d)<0) delete S.hist[d]; });
     return S.hist[k]||(S.hist[k]={n:{},nm:{}}); }
+  function goalOf(key){ return +per(key).goal||0; }
+  function goalTxt(m){ return m>=60 ? (m===60?"1 hour":(m/60)+" hours") : m+" min"; }
+  function quietNow(d){ d=d||new Date(); var q=S.quiet||{}; return ["night","morning"].some(function(k){ var w=q[k]; return w && w.on && inW({from:w.from,to:w.to,days:ALL}, d); }); }
+  function opensInHour(id){ var now=Date.now(); return ((S.opens||{})[id]||[]).filter(function(t){ return now-t<3600e3; }).length; }
+  function nth(n){ var s=["th","st","nd","rd"], v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); }
   function weekOf(id){ var p=0,nm=0; for(var i=0;i<7;i++){ var h=S.hist[dayKey(Date.now()-i*864e5)]; if(h){ p+=h.n[id]||0; nm+=h.nm[id]||0; } } return {p:p, saved:nm*SAVED_MIN}; }
   function markNever(id){ var h=hist(); h.nm[id]=(h.nm[id]||0)+1; S.total.nm=(S.total.nm||0)+1; save(); }
   function durTxt(m){ m=Math.max(0,Math.round(m)); if(m<60) return m+" min"; var h=m/60; return (h>=10?Math.round(h):Math.round(h*10)/10)+" h"; }
@@ -565,7 +613,7 @@
   // count every time the pause page opens for an app or site, per day
   function countOpen(id){
     var L=S.log||{}; if(L.day!==today()) L={day:today(), n:{}, last:{}};
-    if(!(L.last[id] && Date.now()-L.last[id] < 4000)){ L.n[id]=(L.n[id]||0)+1; var h=hist(); h.n[id]=(h.n[id]||0)+1; S.total.p=(S.total.p||0)+1; }
+    if(!(L.last[id] && Date.now()-L.last[id] < 4000)){ L.n[id]=(L.n[id]||0)+1; var O=S.opens||(S.opens={}), now=Date.now(); O[id]=(O[id]||[]).filter(function(t){ return now-t<3600e3; }).concat([now]); var h=hist(); h.n[id]=(h.n[id]||0)+1; S.total.p=(S.total.p||0)+1; }
     L.last[id]=Date.now(); S.log=L; save(); return L.n[id];
   }
   function ord(n){ var s=["th","st","nd","rd"], v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); }
@@ -591,7 +639,11 @@
     if(closedAt(cl, new Date())){ return showBlocked(name, span(cl), lv(key)==="strict" ? "Locked" : "Closed hours"); }
     if(S.block && Date.now() < S.block.until){ return showBlocked(name, S.block); }
     $("before").textContent = "before "+name;
-    var n = Math.max(1, Math.min(10, eff(key,"seconds")|0)), arc=$("arc"), C=2*Math.PI*60;
+    var n = Math.max(1, Math.min(10, eff(key,"seconds")|0)), arc=$("arc"), C=2*Math.PI*60, tags=[];
+    if(quietNow() && (+S.quiet.secs||0) > n){ n=+S.quiet.secs; tags.push("Quiet time"); }
+    if(S.grow!==false && !params.get("up") && !params.get("free") && !site){ var c=opensInHour(id); if(c>=3){ n+=2*(c-2); tags.push(nth(c)+" time this hour"); } }
+    n=Math.min(30,n);
+    if(tags.length){ $("pTag").innerHTML=(tags[0]==="Quiet time"?MOON_SVG:CLOCK_SVG); $("pTag").appendChild(document.createTextNode(tags.join(" · "))); $("pTag").style.display=""; }
     arc.style.strokeDasharray = C; arc.style.strokeDashoffset = C; arc.style.transitionDuration = n+"s";
     $("count").textContent = n;
     show("pause");
@@ -606,16 +658,11 @@
                          : up ? (last ? "Your "+last+" minutes\nare up." : "Your time\nis up.") : (pick(msgs) || "");
     var spent = parseInt(params.get("spent"),10);
     if(!site && spent>=0){ $("todayN").textContent=spentTxt(spent); $("todayL").textContent="on "+name+" today"; $("today").style.display=""; }
+    var gl=goalOf(key); if(!site && spent>=0 && gl && spent>=gl){ $("goalT").textContent="You’re past your "+goalTxt(gl)+" today"; $("goal").style.display=""; }
     if(S.ideasOn!==false && !up && !free){ $("ideaT").textContent="Instead: "+IDEAS[Math.floor(Math.random()*IDEAS.length)].replace(/^./,function(c){return c.toLowerCase();}); $("idea").style.display=""; }
     $("never").textContent = (up||free) ? "Close "+name : "Never mind";
     $("openL").textContent = (up||free) ? "Or stay for" : "Or open "+name+" for";
     var chips=[].slice.call($("times").children);
-    if(eff(key,"askOn") && !up && !free){
-      $("askBox").style.display="";
-      $("askQ").textContent = (effQ(key)||"Why are you opening {app} now?").replace(/\{app\}/g, name);
-      chips.forEach(function(c){ c.disabled=true; });
-      $("askA").oninput = function(){ var ok=this.value.trim().length >= 3; chips.forEach(function(c){ c.disabled=!ok; }); };
-    }
     listPics(ownPics(key)?key:"").then(function(list){ var p=pick(list); if(p){ $("afterImg").style.backgroundImage = "url("+URL.createObjectURL(p.blob)+")"; } show("after"); });
     var saidNo=false;
     $("never").onclick = function(){ if(!saidNo){ saidNo=true; markNever(id); } if(fire("pause-home")) { $("afterNote").textContent = "Good choice."; } else { $("afterNote").textContent = "Good choice. You can close this page."; } };
@@ -647,7 +694,7 @@
     $("bLeft").textContent = (h? h+" h ":"") + m + " min left";
     $("bApp").innerHTML = "";
     if(part){ $("bLbl").textContent=part.lbl; $("bApp").append(part.txt[0], document.createElement("br"), part.txt[1]); $("bHome").textContent=part.btn; }
-    else $("bApp").append(name+" has no open button", document.createElement("br"), "until then.");
+    else { $("bLbl").textContent = auto ? name+" closed until" : "On a break until"; $("bApp").append(name+" has no open button", document.createElement("br"), "until then."); }
     var st=$("stars"); [[15,12],[82,18],[28,26],[74,10],[52,16],[10,36],[90,33]].forEach(function(p){ var i=document.createElement("i"); i.style.left=p[0]+"%"; i.style.top=p[1]+"%"; st.appendChild(i); });
     $("bHome").onclick = part ? part.go : function(){ if(!fire("pause-home")) $("bNote").textContent = "You can close this page."; };
     if(auto){ $("bNote").textContent = auto+". Going back home…"; setTimeout(function(){ if(!fire("pause-home")) $("bNote").textContent = auto+". You can close this page."; }, 4000); }
@@ -666,6 +713,7 @@
     if(cl.length) out.push(cl.length===1 ? "Closed "+t12(cl[0].from)+" to "+t12(cl[0].to)+(cl[0].days&&cl[0].days.length<7?", "+daysTxt(cl[0].days):"") : "Closed hours: "+cl.length+" times");
     else if(pOff(key)) out.push("No pause when it opens");
     else out.push(delayOf(key) ? "Pauses after "+delayOf(key)+" min" : "Pauses "+eff(key,"seconds")+" sec first");
+    if(goalOf(key) && !pOff(key)) out.push("Goal "+goalTxt(goalOf(key))+" a day");
     var cp=closedParts(key); if(cp.length) out.push(cp.map(function(x){ return x[1].replace(/ \(.*\)$/,""); }).join(" and ")+" closed now");
     if(L!=="normal") out.push(LVN[L]);
     return out.join(" · "); }
@@ -676,11 +724,12 @@
     if(NAT && !S.setupDone && h.indexOf("setup/")!==0) h="setup/0";
     if(h==="more"){ pg="morePg"; drawMore(); } else if(h==="pick") pg="pickPg";
     else if(h==="pics"||h.indexOf("pics/")===0){ pg="picsPg"; drawPics(h==="pics"?"":decodeURIComponent(h.slice(5))); }
+    else if(h==="quiet"){ pg="quietPg"; drawQuiet(); } else if(h==="nudge"){ pg="nudgePg"; drawNudge(); } else if(h==="week"){ pg="weekPg"; drawWeek(); }
     else if(h==="sites") pg="sitesPg"; else if(h.indexOf("app/")===0){ pg="appPg"; drawApp(decodeURIComponent(h.slice(4))); }
     else if(h.indexOf("setup/")===0){ pg="setupPg"; drawSetup(+h.slice(6)||0); }
     if(pg==="pickPg") drawPick();
     if(pg==="home") renderApps();
-    ["home","setupPg","pickPg","appPg","morePg","picsPg","sitesPg"].forEach(function(x){ $(x).classList.toggle("on", x===pg); });
+    ["home","setupPg","pickPg","appPg","morePg","picsPg","sitesPg","quietPg","nudgePg","weekPg"].forEach(function(x){ $(x).classList.toggle("on", x===pg); });
     window.scrollTo(0,0); }
   function go(h){ location.hash=h; }
 
@@ -701,9 +750,7 @@
     $("addMsg").onclick = function(){ msgList(true).push(""); save(); renderMsgs(); var t=$("msgs").querySelectorAll("textarea"); t[t.length-1].focus(); };
     [].forEach.call(document.querySelectorAll("[data-go]"),function(b){ b.onclick=function(){ go(b.dataset.go); }; });
     $("ownTog").onclick = function(){ if(!PSCOPE) return; setPer(PSCOPE,"own", ownPics(PSCOPE)?undefined:true); if(ownPics(PSCOPE) && !per(PSCOPE).messages) setPer(PSCOPE,"messages",[]); save(); drawPics(PSCOPE); };
-    $("askIn").value = S.askQ; $("askIn").oninput = function(){ S.askQ=this.value; save(); };
-    function askPaint(){ $("askTog").classList.toggle("on", !!S.askOn); $("askRow").style.display = S.askOn ? "" : "none"; }
-    askPaint(); $("askTog").onclick = function(){ if(S.askOn){ globalLoosen(function(){ S.askOn=false; }); askPaint(); return; } S.askOn=true; save(); askPaint(); };
+    $("growTog").onclick = function(){ S.grow = S.grow===false; save(); renderGrow(); }; renderGrow();
     $("shuf").onclick = function(){ S.shuffle=!S.shuffle; save(); renderShuf(); };
     $("ideaTog").onclick = function(){ S.ideasOn = S.ideasOn===false; save(); renderShuf(); };
     // the pause screen counts pauses in its own page: pick those up when you come back here
@@ -735,7 +782,7 @@
     S.apps.forEach(function(a){ var key="app:"+slug(a); box.appendChild(itemRow(a, key, pkgOf(key))); });
     var hr=new Date().getHours(); $("hello").textContent = hr<5?"Good night":hr<12?"Good morning":hr<17?"Good afternoon":hr<21?"Good evening":"Good night";
     var tp=+S.total.p||0; $("heroN").textContent=tp; $("heroL").textContent=tp===1?"pause":"pauses"; $("heroS").textContent=durTxt((+S.total.nm||0)*SAVED_MIN);
-    renderClosedBar();
+    renderClosedBar(); renderWeekCard();
     var all=S.apps.concat(S.sites||[]);
     $("blkTitle").textContent = (all.length? "Your paused apps" : "All your paused apps")+" stay closed until:";
   }
@@ -913,7 +960,7 @@
 
     var c2=document.createElement("div"); c2.className="cap"; c2.textContent="How locked?"; body.appendChild(c2);
     var k2=document.createElement("div"); k2.className="card";
-    var OPT={normal:["Easy","You can change it any time."], hard:["Hard","To change it, you type a long code from the screen. Then it waits "+S.hardCool+" min."], strict:["Locked","It can never be made easier, only stricter. No undo."]};
+    var OPT={normal:["Easy","Change anything any time."], hard:["Hard","Type a code, then wait "+S.hardCool+" min."], strict:["Locked","Can only get stricter."]};
     var opts={};
     ["normal","hard","strict"].forEach(function(v){ var o=document.createElement("button"); o.className="opt"; var dt=document.createElement("span"); dt.className="dot"; var tx=document.createElement("div"); tx.className="tx"; var x1=document.createElement("div"); x1.textContent=OPT[v][0]; var x2=document.createElement("div"); x2.textContent=OPT[v][1]; tx.append(x1,x2); o.append(dt,tx); o.onclick=function(){ lvl=v; paint(); }; opts[v]=o; k2.appendChild(o); });
     function paint(){ for(var v in opts) opts[v].classList.toggle("sel", v===lvl); }
@@ -959,14 +1006,14 @@
       if(off){ var nv0=el("div","ssub2","You can still close parts of "+name+" below."); nv0.style.margin="0 0 12px"; if(partsOf(key).length) k.appendChild(nv0); return; }
       var d=delayOf(key), wr=row("When it pauses", null, [["Right away",0],["After 1 min",1],["3 min",3],["5 min",5]], d, "delay");
       wr.appendChild(el("div","ssub2", d ? "Use "+name+" freely for "+d+" min each hour, then the pause shows." : "The pause shows as soon as "+name+" opens."));
+      var gv=goalOf(key), gr=row("Daily goal", null, [["Off",0],["15 min",15],["30 min",30],["1 h",60]], gv, "goal");
+      gr.appendChild(el("div","ssub2", gv ? "Once you pass "+goalTxt(gv)+" in a day, the pause tells you. You can still open "+name+"." : "Pick a time and the pause tells you when you pass it. Nothing closes."));
     }
     var lr=el("div","srow"), ll=el("div","lb","Pause length "), lv=el("b","val"); ll.appendChild(lv); lr.appendChild(ll);
     var own=p.seconds!==undefined;
     lr.appendChild(secSlider(own?p.seconds:S.seconds, function(v, set){ if(v===eff(key,"seconds") && own) return; change(key, name, "seconds", v); if(eff(key,"seconds")!==v) set(eff(key,"seconds")); }, function(v){ lv.textContent = (!own && v===+S.seconds) ? v+" sec · your default" : v+" sec"; }));
     if(own){ var ud=el("button","usedef","Use your default ("+S.seconds+" sec)"); ud.onclick=function(){ change(key, name, "seconds", undefined); }; lr.appendChild(ud); }
     k.appendChild(lr);
-    var qr=row("Ask a question first", S.askOn?"on":"off", [["Default",undefined],["On",true],["Off",false]], p.askOn, "askOn");
-    if(p.askOn===true){ var qi=el("input"); qi.style.marginTop="10px"; qi.placeholder=String(S.askQ||"").replace(/\{app\}/g,name); qi.value=p.askQ||""; qi.oninput=function(){ setPer(key,"askQ", this.value.trim()?this.value:undefined); save(); }; qr.appendChild(qi); }
     var nv=el("button","srow flat"), tx=el("div","t"), t1=el("div",null,"Pictures and messages"), t2=el("div",null, ownPics(key) ? "You gave it its own" : "Uses your default pictures and messages");
     tx.append(t1,t2); nv.append(tx, el("span","chev","›")); nv.onclick=function(){ go("pics/"+encodeURIComponent(key)); }; k.appendChild(nv);
     if(ownPics(key)){ var m=(per(key).messages||[]).filter(function(x){ return x.trim(); }).length; listPics(key).then(function(l){ t2.textContent="You gave it its own: "+plural(l.length,"picture")+", "+plural(m,"message"); }); }
@@ -976,6 +1023,7 @@
     var before=eff(key,f), after=(v===undefined?S[f]:v);
     if(f==="delay"){ before=delayOf(key); after=v||0; v=v||undefined; }
     if(f==="pauseOff"){ before=pOff(key); after=!!v; }
+    if(f==="goal"){ setPer(key,"goal", v||undefined); save(); var b0=$("ownBox"); if(b0){ b0.innerHTML=""; drawOwn(key, name, b0); } return; }
     var looser = f==="seconds" ? after<before : f==="letin"||f==="delay" ? after>before : f==="pauseOff" ? (after && !before) : (!!before && !after);
     var op={k:"per", key:key, f:f, v:v};
     function redo(){ var b=$("ownBox"); if(b){ b.innerHTML=""; drawOwn(key, name, b); } }
@@ -985,7 +1033,7 @@
              : f==="letin" ? "let you into "+name+" for "+(v===undefined?"your default time":v+" min")
              : f==="delay" ? "let you use "+name+" for "+after+" min before the pause"
              : f==="pauseOff" ? "turn off the pause for "+name
-             : "stop asking a question before "+name;
+             : "change "+name;
     itemLoosen(key, name, "Type this to "+what, apply, op);
   }
 
@@ -1046,7 +1094,7 @@
     renderShuf(); renderPic(); renderMsgs();
   }
   function plural(n, w){ return n+" "+w+(n===1?"":"s"); }
-  function drawMore(){
+  function drawMore(){ $("navQuietSub").textContent=quietSummary(); $("navNudgeSub").textContent=nudgeSummary();
     var m=(S.messages||[]).filter(function(x){ return x.trim(); }).length;
     listPics("").then(function(l){ $("navPicsSub").textContent = plural(l.length,"picture")+" · "+plural(m,"message")+" · Shuffle "+(S.shuffle?"on":"off"); });
     var st=S.sites||[]; $("navSitesSub").textContent = !st.length ? "None yet" : st.length<=2 ? st.join(", ") : plural(st.length,"website");
@@ -1062,6 +1110,43 @@
       var t=document.createElement("textarea"); t.value=m; t.placeholder="Your message"; t.oninput=function(){ msgList(true)[i]=this.value; save(); };
       var x=document.createElement("button"); x.className="x"; x.textContent="×"; x.setAttribute("aria-label","Remove message"); x.onclick=function(){ msgList(true).splice(i,1); save(); renderMsgs(); };
       r.append(t,x); box.appendChild(r); }); }
+  function renderGrow(){ $("growTog").classList.toggle("on", S.grow!==false); }
+  // quiet times: a longer pause at night and in the morning
+  function qSub(w){ return w.on ? t12(w.from)+" to "+t12(w.to) : "Off"; }
+  function drawQuiet(){ var q=S.quiet;
+    [["n","night"],["m","morning"]].forEach(function(x){ var w=q[x[1]], tg=$("q"+x[0]+"Tog"), rw=$("q"+x[0]+"Row"), sb=$("q"+x[0]+"Sub"), f=$("q"+x[0]+"From"), t=$("q"+x[0]+"To");
+      function paint(){ tg.classList.toggle("on", !!w.on); rw.style.display=w.on?"":"none"; sb.textContent=qSub(w); }
+      f.value=w.from; t.value=w.to; paint();
+      tg.onclick=function(){ w.on=!w.on; save(); paint(); };
+      f.onchange=function(){ if(this.value){ w.from=this.value; save(); paint(); } }; t.onchange=function(){ if(this.value){ w.to=this.value; save(); paint(); } }; });
+    function pl(){ [].forEach.call($("qSecs").children,function(b){ b.classList.toggle("sel", +b.dataset.v===+q.secs); b.onclick=function(){ q.secs=+b.dataset.v; save(); pl(); }; });
+      $("qHelp").textContent="In these times, every pause is "+q.secs+" sec instead of "+S.seconds+". Apps still open after it."; }
+    pl(); }
+  function quietSummary(){ var q=S.quiet||{}, on=["night","morning"].filter(function(k){ return q[k]&&q[k].on; });
+    return !on.length ? "Off" : (on.length===2 ? "Night and morning" : on[0]==="night" ? "Night" : "Morning")+", "+q.secs+" sec pause"; }
+  // the long-stay note
+  function drawNudge(){ function pl(){ [].forEach.call($("nSeg").children,function(b){ b.classList.toggle("sel", +b.dataset.v===+S.nudge); b.onclick=function(){ S.nudge=+b.dataset.v; save(); pl(); }; });
+      $("nHelp").textContent = +S.nudge ? "After "+S.nudge+" min in a row in a paused app, and again every "+S.nudge+" min after that." : "Off: no note while you use your apps."; } pl(); }
+  function nudgeSummary(){ return +S.nudge ? "After "+S.nudge+" min in a row" : "Off"; }
+  // your week: time on each paused app, last 7 days next to the 7 before
+  function weekData(){ var d={}; if(NAT){ try{ d=JSON.parse(Android.week()||"{}"); }catch(e){ d={}; } } return d; }
+  function weekSums(data, from, to){ var out={}; S.apps.forEach(function(a){ var pk=(S.pkgs||{})[slug(a)]||"", ms=0; for(var i=from;i<=to;i++){ var day=data[dayKey(Date.now()-i*864e5)]; if(day && pk && day[pk]) ms+=day[pk]; } out[a]=Math.round(ms/60000); }); return out; }
+  function sumOf(o){ return Object.keys(o).reduce(function(t,k){ return t+o[k]; },0); }
+  function renderWeekCard(){ var c=$("weekCard"); if(!c) return; var show=false;
+    if(new Date().getDay()===0 && S.weekSeen!==dayKey()){ var tot=sumOf(weekSums(weekData(),1,7)); if(tot>0){ show=true; $("weekCardS").textContent=spentTxt(tot)+" on your paused apps"; } }
+    c.style.display=show?"":"none"; c.onclick=function(){ S.weekSeen=dayKey(); save(); go("week"); }; }
+  function drawWeek(){ var data=weekData(), now=weekSums(data,1,7), was=weekSums(data,8,14), a=sumOf(now), b=sumOf(was);
+    var d1=new Date(Date.now()-7*864e5), d2=new Date(Date.now()-864e5), M=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    $("wkDates").textContent=M[d1.getMonth()]+" "+d1.getDate()+" to "+(d1.getMonth()===d2.getMonth()?"":M[d2.getMonth()]+" ")+d2.getDate();
+    $("wkTotal").textContent=spentTxt(a);
+    var df=a-b; $("wkCmp").textContent = !b ? "No numbers from the week before yet." : df===0 ? "The same as the week before." : spentTxt(Math.abs(df))+(df<0?" less":" more")+" than the week before.";
+    var box=$("wkApps"); box.innerHTML=""; var mx=Math.max(1, Math.max.apply(null, S.apps.map(function(x){ return Math.max(now[x]||0, was[x]||0); }).concat([1])));
+    S.apps.slice().sort(function(x,y){ return (now[y]||0)-(now[x]||0); }).forEach(function(x){ var key="app:"+slug(x), r=el("div","wk"), tx=el("div","tx"), bars=el("div","bars"), i1=el("i"), i2=el("i");
+      i1.style.width=Math.round((now[x]||0)/mx*100)+"%"; i2.style.width=Math.round((was[x]||0)/mx*100)+"%"; bars.append(i1,i2); tx.append(el("b",null,x), bars);
+      var dd=el("div","d"), dv=(now[x]||0)-(was[x]||0); dd.append(el("b",null,spentTxt(now[x]||0)), document.createTextNode(!was[x]&&!now[x] ? "" : dv===0 ? "same" : spentTxt(Math.abs(dv))+(dv<0?" less":" more")));
+      r.append(iconFor(x, pkgOf(key)), tx, dd); box.appendChild(r); });
+    var p=0, nm=0; for(var i=1;i<=7;i++){ var h=S.hist[dayKey(Date.now()-i*864e5)]; if(h){ Object.keys(h.n).forEach(function(k){ p+=h.n[k]; }); Object.keys(h.nm).forEach(function(k){ nm+=h.nm[k]; }); } }
+    $("wkP").textContent=p; $("wkS").textContent=durTxt(nm*SAVED_MIN); }
   function renderShuf(){ $("shuf").classList.toggle("on", !!S.shuffle); $("ideaTog").classList.toggle("on", S.ideasOn!==false); }
 
   // keep phone photos small: max 1600px, jpeg

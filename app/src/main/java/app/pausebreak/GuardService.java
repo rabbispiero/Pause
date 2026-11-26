@@ -2,7 +2,15 @@ package app.pausebreak;
 
 import android.accessibilityservice.AccessibilityService;
 import android.content.Intent;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
+import android.os.PowerManager;
+import android.util.TypedValue;
+import android.view.Gravity;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.TextView;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.accessibility.AccessibilityEvent;
@@ -31,6 +39,8 @@ public class GuardService extends AccessibilityService {
     private final Set<String> skip = new HashSet<>();
     private String fg = "";
     private long fgSince = 0;
+    private int nudged = 0;
+    private View note;
     private String lastShownKey = "";
     private long lastShownAt = 0;
     private long lastUrlCheck = 0;
@@ -128,6 +138,7 @@ public class GuardService extends AccessibilityService {
             }
             fg = pkg;
             fgSince = now;
+            nudged = 0;
         }
         if (pkg.equals(getPackageName())) return;
         String sl = Store.guardedApps(this).get(pkg);
@@ -280,6 +291,16 @@ public class GuardService extends AccessibilityService {
 
     /** While an app is open: pause again when the time you picked runs out, or when its free minutes are used. */
     private void checkTimeUp() {
+        if (!fg.isEmpty() && !screenOn()) {
+            // the phone is locked: stop counting until an app is in front again
+            long now = System.currentTimeMillis();
+            Store.addSpent(this, fg, now - fgSince);
+            Store.addHour(this, fg, fgSince, now);
+            fg = "";
+            nudged = 0;
+            return;
+        }
+        checkNudge();
         if (fg.isEmpty() || PauseActivity.showing) return;
         String sl = Store.guardedApps(this).get(fg);
         if (sl == null) return;
@@ -294,6 +315,64 @@ public class GuardService extends AccessibilityService {
         }
         int d = Store.delay(this, sl);
         if (d > 0 && now >= until && hourUsed(fg) >= d * 60000L) guardApp(fg, sl, FREE_USED);
+    }
+
+    private boolean screenOn() {
+        try {
+            PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+            return pm == null || pm.isInteractive();
+        } catch (Exception e) {
+            return true;
+        }
+    }
+
+    /** After a while in a row in a paused app, a small note at the top that fades away. */
+    private void checkNudge() {
+        if (fg.isEmpty() || PauseActivity.showing) return;
+        String sl = Store.guardedApps(this).get(fg);
+        if (sl == null) return;
+        int n = Store.nudge(this);
+        if (n <= 0) return;
+        long mins = (System.currentTimeMillis() - fgSince) / 60000L;
+        if (mins < (long) n * (nudged + 1)) return;
+        nudged = (int) (mins / n);
+        showNote(nudged * n + " min on " + Store.appName(this, sl));
+    }
+
+    private void showNote(String text) {
+        try {
+            final WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
+            if (wm == null) return;
+            if (note != null) { try { wm.removeView(note); } catch (Exception ignored) { } note = null; }
+            float dp = getResources().getDisplayMetrics().density;
+            TextView t = new TextView(this);
+            t.setText(text);
+            t.setTextColor(0xFFFFFFFF);
+            t.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
+            int px = (int) (18 * dp), py = (int) (10 * dp);
+            t.setPadding(px, py, px, py);
+            GradientDrawable bg = new GradientDrawable();
+            bg.setColor(0xEB141A2E);
+            bg.setCornerRadius(22 * dp);
+            t.setBackground(bg);
+            WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                            | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
+                    PixelFormat.TRANSLUCENT);
+            lp.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+            lp.y = (int) (48 * dp);
+            t.setAlpha(0f);
+            wm.addView(t, lp);
+            note = t;
+            t.animate().alpha(1f).setDuration(250).start();
+            final View v = t;
+            h.postDelayed(() -> v.animate().alpha(0f).setDuration(400).withEndAction(() -> {
+                try { wm.removeView(v); } catch (Exception ignored) { }
+                if (note == v) note = null;
+            }).start(), 4000);
+        } catch (Exception ignored) { }
     }
 
     private boolean show(String key, String q) {

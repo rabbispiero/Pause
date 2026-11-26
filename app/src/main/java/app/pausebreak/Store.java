@@ -92,9 +92,49 @@ final class Store {
         String k = "spent:" + day() + ":" + pkg;
         SharedPreferences p = prefs(c);
         SharedPreferences.Editor e = p.edit().putLong(k, p.getLong(k, 0) + ms);
-        String today = "spent:" + day() + ":";
-        for (String old : p.getAll().keySet()) if (old.startsWith("spent:") && !old.startsWith(today)) e.remove(old);
+        // keep about two weeks, for "Your week"
+        java.util.Set<String> keep = new java.util.HashSet<>();
+        Calendar d = Calendar.getInstance();
+        for (int i = 0; i < 16; i++) {
+            keep.add(d.get(Calendar.YEAR) + "-" + (d.get(Calendar.MONTH) + 1) + "-" + d.get(Calendar.DAY_OF_MONTH));
+            d.add(Calendar.DAY_OF_MONTH, -1);
+        }
+        for (String old : p.getAll().keySet()) {
+            if (!old.startsWith("spent:")) continue;
+            int j = old.indexOf(':', 6);
+            if (j < 0 || !keep.contains(old.substring(6, j))) e.remove(old);
+        }
         e.apply();
+    }
+
+    /** Time per app per day, as {"Y-M-D":{"pkg":ms}}. */
+    static String week(Context c) {
+        JSONObject out = new JSONObject();
+        try {
+            for (Map.Entry<String, ?> en : prefs(c).getAll().entrySet()) {
+                String k = en.getKey();
+                if (!k.startsWith("spent:") || !(en.getValue() instanceof Long)) continue;
+                int j = k.indexOf(':', 6);
+                if (j < 0) continue;
+                String dk = k.substring(6, j), pkg = k.substring(j + 1);
+                JSONObject day = out.optJSONObject(dk);
+                if (day == null) { day = new JSONObject(); out.put(dk, day); }
+                day.put(pkg, (Long) en.getValue());
+            }
+        } catch (Exception ignored) { }
+        return out.toString();
+    }
+
+    /** The name you see for an app, from its short name. */
+    static String appName(Context c, String sl) {
+        JSONArray apps = state(c).optJSONArray("apps");
+        if (apps != null) for (int i = 0; i < apps.length(); i++) if (slug(apps.optString(i)).equals(sl)) return apps.optString(i);
+        return sl.isEmpty() ? sl : Character.toUpperCase(sl.charAt(0)) + sl.substring(1);
+    }
+
+    /** Minutes in a row before the long-stay note. 0 is off. */
+    static int nudge(Context c) {
+        return Math.max(0, state(c).optInt("nudge", 20));
     }
 
     static long spentMs(Context c, String pkg) {
