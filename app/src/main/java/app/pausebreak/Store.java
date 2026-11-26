@@ -61,6 +61,43 @@ final class Store {
         return out;
     }
 
+    /** The website of a well-known app, so it can close when the app is closed. Keep in step with SITE_OF in index.html. */
+    static final Map<String, String[]> SITE_OF = new HashMap<>();
+    static {
+        SITE_OF.put("com.amazon.mShop.android.shopping", new String[]{"amazon.com"});
+        SITE_OF.put("com.instagram.android", new String[]{"instagram.com"});
+        SITE_OF.put("com.facebook.katana", new String[]{"facebook.com"});
+        SITE_OF.put("com.google.android.youtube", new String[]{"youtube.com"});
+        SITE_OF.put("com.zhiliaoapp.musically", new String[]{"tiktok.com"});
+        SITE_OF.put("com.ss.android.ugc.trill", new String[]{"tiktok.com"});
+        SITE_OF.put("com.twitter.android", new String[]{"x.com", "twitter.com"});
+        SITE_OF.put("com.reddit.frontpage", new String[]{"reddit.com"});
+        SITE_OF.put("com.snapchat.android", new String[]{"snapchat.com"});
+        SITE_OF.put("com.pinterest", new String[]{"pinterest.com"});
+        SITE_OF.put("com.linkedin.android", new String[]{"linkedin.com"});
+        SITE_OF.put("com.netflix.mediaclient", new String[]{"netflix.com"});
+        SITE_OF.put("com.ebay.mobile", new String[]{"ebay.com"});
+        SITE_OF.put("com.walmart.android", new String[]{"walmart.com"});
+        SITE_OF.put("com.einnovation.temu", new String[]{"temu.com"});
+        SITE_OF.put("com.zzkko", new String[]{"shein.com"});
+        SITE_OF.put("tv.twitch.android.app", new String[]{"twitch.tv"});
+        SITE_OF.put("com.discord", new String[]{"discord.com"});
+    }
+
+    /** Website host -> slug of the paused app it belongs to, unless that app's "close the website too" is off. */
+    static Map<String, String> linkedSites(Context c) {
+        Map<String, String> out = new HashMap<>();
+        JSONObject per = state(c).optJSONObject("per");
+        for (Map.Entry<String, String> e : guardedApps(c).entrySet()) {
+            String[] hs = SITE_OF.get(e.getKey());
+            if (hs == null) continue;
+            JSONObject p = per == null ? null : per.optJSONObject("app:" + e.getValue());
+            if (p != null && p.optBoolean("siteOff", false)) continue;
+            for (String h : hs) out.put(h, e.getValue());
+        }
+        return out;
+    }
+
     static String[] sites(Context c) {
         JSONArray a = state(c).optJSONArray("sites");
         if (a == null) return new String[0];

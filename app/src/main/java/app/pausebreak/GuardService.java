@@ -269,7 +269,8 @@ public class GuardService extends AccessibilityService {
 
     private void checkSite(String barId) {
         String[] sites = Store.sites(this);
-        if (sites.length == 0) return;
+        Map<String, String> linked = Store.linkedSites(this);
+        if (sites.length == 0 && linked.isEmpty()) return;
         AccessibilityNodeInfo root = getRootInActiveWindow();
         if (root == null) return;
         List<AccessibilityNodeInfo> nodes = root.findAccessibilityNodeInfosByViewId(barId);
@@ -284,6 +285,14 @@ public class GuardService extends AccessibilityService {
             if (host.equals(s) || host.endsWith("." + s)) {
                 if (System.currentTimeMillis() < Store.allowed(this, "site:" + s)) return;
                 show("site:" + s, "?site=" + Uri.encode(s));
+                return;
+            }
+        }
+        // the website of a paused app closes while the app is closed (closed hours or a break)
+        for (Map.Entry<String, String> e : linked.entrySet()) {
+            String s = e.getKey();
+            if (host.equals(s) || host.endsWith("." + s)) {
+                if (Store.appClosed(this, e.getValue())) show("site:" + s, "?app=" + Uri.encode(e.getValue()) + "&via=" + Uri.encode(s));
                 return;
             }
         }

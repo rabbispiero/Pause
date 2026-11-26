@@ -643,7 +643,7 @@
   function appName(p){ var hit=S.apps.filter(function(a){ return slug(a)===slug(p); })[0]; return hit || p.charAt(0).toUpperCase()+p.slice(1); }
 
   function runPause(p, site){
-    var name = site || appName(p), id = slug(p);
+    var name = site || params.get("via") || appName(p), id = slug(p);
     if(!params.get("up") && !params.get("free")) countOpen(id);
     document.title = "Pause It · "+name;
     var key = (site?"site:":"app:")+(site||slug(p)), cl = S.closed[key];
@@ -717,6 +717,10 @@
     if(NAT && pkg){ var u=ICONS[pkg]; if(u===undefined){ try{ u=ICONS[pkg]=Android.icon(pkg)||""; }catch(e){ u=ICONS[pkg]=""; } }
       if(u){ d.className="aic img"; d.textContent=""; d.style.backgroundImage="url("+u+")"; } }
     return d; }
+  // the website of a well-known app (keep in step with Store.SITE_OF)
+  function siteMap(){ return {"com.amazon.mShop.android.shopping":"amazon.com","com.instagram.android":"instagram.com","com.facebook.katana":"facebook.com","com.google.android.youtube":"youtube.com","com.zhiliaoapp.musically":"tiktok.com","com.ss.android.ugc.trill":"tiktok.com","com.twitter.android":"x.com","com.reddit.frontpage":"reddit.com","com.snapchat.android":"snapchat.com","com.pinterest":"pinterest.com","com.linkedin.android":"linkedin.com","com.netflix.mediaclient":"netflix.com","com.ebay.mobile":"ebay.com","com.walmart.android":"walmart.com","com.einnovation.temu":"temu.com","com.zzkko":"shein.com","tv.twitch.android.app":"twitch.tv","com.discord":"discord.com"}; }
+  function siteOf(key){ return siteMap()[pkgOf(key)]||""; }
+  function siteLinked(key){ return !!siteOf(key) && !(S.per[key]&&S.per[key].siteOff); }
   function pkgOf(key){ return key.indexOf("app:")===0 ? (S.pkgs||{})[key.slice(4)] : ""; }
   function nameOf(key){ if(key.indexOf("site:")===0) return key.slice(5); var sl=key.slice(4); return S.apps.filter(function(a){ return slug(a)===sl; })[0]||sl; }
   function rmOpOf(key){ return key.indexOf("site:")===0 ? {k:"rm", kind:"site", v:key.slice(5), key:key} : {k:"rm", kind:"app", v:nameOf(key), key:key}; }
@@ -810,7 +814,8 @@
     var list=[], now=new Date();
     if(!blockOn()){
       S.apps.forEach(function(a){ var key="app:"+slug(a), cl=S.closed[key];
-        if(closedAt(cl,now)) list.push({t:a+" closed until "+untilWord(span(cl).until), s:a+" too"});
+        var nm2=a+(siteLinked(key)?" and "+siteOf(key):"");
+        if(closedAt(cl,now)) list.push({t:nm2+" closed until "+untilWord(span(cl).until), s:nm2+" too"});
         else closedParts(key,now).forEach(function(x){ var nm=x[1].replace(/ \(.*\)$/,""); list.push({t:a+" "+nm+" closed until "+untilWord(span(partWins(key,x[0])).until), s:a+" "+nm.toLowerCase()+" too"}); }); });
       (S.sites||[]).forEach(function(h){ var cl=S.closed["site:"+h]; if(closedAt(cl,now)) list.push({t:h+" closed until "+untilWord(span(cl).until), s:h+" too"}); });
     }
@@ -981,7 +986,14 @@
       var add=el("button","minibtn","+ Add"); add.setAttribute("aria-label","Add another closed time");
       add.onclick=function(){ ws.push({from:"09:00",to:"17:00",days:[1,2,3,4,5]}); drawWins(); }; hrs.appendChild(add); }
     drawWins();
-    hrs.style.display=hasHours?"":"none"; k1.appendChild(hrs); body.appendChild(k1);
+    hrs.style.display=hasHours?"":"none"; k1.appendChild(hrs);
+    if(siteOf(key)){ var sh=siteOf(key), sr=el("div","srow flat"), stt=el("div","t"); stt.append(el("div",null,"Close "+sh+" too"), el("div",null,"When "+name+" is closed, the website is closed too"));
+      var stg=el("button","tog"+(siteLinked(key)?" on":"")); stg.setAttribute("aria-label","Close "+sh+" too"); stg.innerHTML="<i></i>"; sr.append(stt,stg); sr.style.borderTop="1px solid var(--line)"; k1.appendChild(sr);
+      stg.onclick=function(){ var paint2=function(){ stg.classList.toggle("on", siteLinked(key)); };
+        if(!siteLinked(key)){ setPer(key,"siteOff",undefined); save(); paint2(); return; }
+        var op={k:"per", key:key, f:"siteOff", v:true};
+        itemLoosen(key, name, "Type this to stop closing "+sh, function(){ applyOp(op); save(); paint2(); }, op); }; }
+    body.appendChild(k1);
     tg.onclick=function(){ hasHours=!hasHours; tg.classList.toggle("on",hasHours); hrs.style.display=hasHours?"":"none"; };
 
     var c2=document.createElement("div"); c2.className="cap"; c2.textContent="How easy to change later?"; body.appendChild(c2);
