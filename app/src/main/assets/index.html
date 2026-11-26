@@ -303,9 +303,10 @@
     <button class="small" id="natOn">Turn on</button>
   </div>
   <button class="card recapcard" id="weekCard" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><div class="tx"><b>Your week is ready</b><span class="s" id="weekCardS"></span></div><span class="chev">›</span></button>
-  <div class="card hero" id="hero">
+  <div class="card hero" id="hero" role="button" tabindex="0" aria-label="See your numbers" style="cursor:pointer">
     <svg class="ring2" viewBox="0 0 64 64"><defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34D399"/><stop offset="1" stop-color="#3B82F6"/></linearGradient></defs><circle cx="32" cy="32" r="28" style="fill:var(--trk)"/><path d="M32 32V4a28 28 0 1 1-28 28z" fill="url(#hg)"/><circle cx="32" cy="32" r="7" style="fill:var(--heroc)"/></svg>
     <div class="nums"><div><div class="n" id="heroN">0</div><div class="l" id="heroL">pauses</div></div><div><div class="n" id="heroS">0 min</div><div class="l">time saved</div></div></div>
+    <span class="chev" style="margin-left:auto">›</span>
   </div>
   <div class="card" id="breakOn" style="display:none;padding:16px;margin-bottom:6px;border:1px solid var(--glow)">
     <div style="font-size:18px;font-weight:600">On a break until <span id="breakTxt"></span></div>
@@ -387,7 +388,7 @@
     <div class="srow flat"><div class="t"><div>Morning</div><div id="qmSub"></div></div><button class="tog" id="qmTog" aria-label="Morning"><i></i></button></div>
     <div class="srow" id="qmRow" style="padding-top:0"><div class="sline" style="font-size:16px"><span>From</span><input type="time" id="qmFrom"><span>to</span><input type="time" id="qmTo"></div></div>
   </div>
-  <div class="card"><div class="srow"><div class="lb">Pause length in quiet times</div><div class="seg sm" id="qSecs"><button data-v="5">5 sec</button><button data-v="10">10 sec</button><button data-v="15">15 sec</button><button data-v="20">20 sec</button></div><div class="ssub2" id="qHelp"></div></div></div>
+  <div class="card"><div class="srow"><div class="lb">Pause length in quiet times <b class="val" id="qVal"></b></div><div class="sld" id="qSld"><input type="range" id="qSecs" min="5" max="30" step="1" aria-label="Pause length in quiet times, in seconds"><div class="ticks"><span style="left:0%">5 sec</span><span style="left:20%">10 sec</span><span style="left:60%">20 sec</span><span style="left:100%">30 sec</span></div></div><div class="ssub2" id="qHelp"></div></div></div>
  </div>
 
  <div class="pg" id="nudgePg">
@@ -399,7 +400,10 @@
 
  <div class="pg" id="weekPg">
   <div class="top"><button class="back" data-back>‹ Back</button></div>
-  <div class="ttl">Your week</div>
+  <div class="ttl">Your numbers</div>
+  <div class="cap">Today</div>
+  <div class="card appnums"><div><div class="n" id="tdM">0 min</div><div class="l">on paused apps</div></div><div><div class="n" id="tdP">0</div><div class="l">pauses</div></div><div><div class="n" id="tdS">0 min</div><div class="l">time saved</div></div></div>
+  <div class="cap" style="margin-top:14px">Last 7 days</div>
   <div class="grp" id="wkDates"></div>
   <div class="card" style="padding:18px 20px"><div class="wkbig" id="wkTotal"></div><div style="font-size:13px;color:var(--sub);margin-top:6px">on your paused apps</div></div>
   <div class="grp" id="wkCmp" style="margin:4px 8px 14px"></div>
@@ -407,6 +411,8 @@
   <div class="card" id="wkApps"></div>
   <div class="help" style="margin:8px 8px 0">Top bar this week, grey bar the week before.</div>
   <div class="card appnums" style="margin-top:14px"><div><div class="n" id="wkP">0</div><div class="l">pauses</div></div><div><div class="n" id="wkS">0 min</div><div class="l">time saved</div></div></div>
+  <div class="cap" style="margin-top:14px">Since you started</div>
+  <div class="card appnums"><div><div class="n" id="atP">0</div><div class="l">pauses</div></div><div><div class="n" id="atS">0 min</div><div class="l">time saved</div></div></div>
  </div>
 
  <div class="pg" id="picsPg">
@@ -788,7 +794,7 @@
     (S.sites||[]).forEach(function(h){ box.appendChild(itemRow(h, "site:"+h, "")); });
     $("appsCap").textContent = (S.sites||[]).length ? "Paused apps and websites" : "Paused apps";
     var hr=new Date().getHours(); $("hello").textContent = hr<5?"Good night":hr<12?"Good morning":hr<17?"Good afternoon":hr<21?"Good evening":"Good night";
-    var tp=+S.total.p||0; $("heroN").textContent=tp; $("heroL").textContent=tp===1?"pause":"pauses"; $("heroS").textContent=durTxt((+S.total.nm||0)*SAVED_MIN);
+    var tp=+S.total.p||0; $("heroN").textContent=tp; $("heroL").textContent=tp===1?"pause":"pauses"; $("heroS").textContent=durTxt((+S.total.nm||0)*SAVED_MIN); $("hero").onclick=function(){ go("week"); }; $("hero").onkeydown=function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); go("week"); } };
     renderClosedBar(); renderWeekCard();
     var all=S.apps.concat(S.sites||[]);
     var what = (S.sites||[]).length ? "Your paused apps and websites" : "Your paused apps";
@@ -1135,9 +1141,12 @@
       f.value=w.from; t.value=w.to; paint();
       tg.onclick=function(){ w.on=!w.on; save(); paint(); };
       f.onchange=function(){ if(this.value){ w.from=this.value; save(); paint(); } }; t.onchange=function(){ if(this.value){ w.to=this.value; save(); paint(); } }; });
-    function pl(){ [].forEach.call($("qSecs").children,function(b){ b.classList.toggle("sel", +b.dataset.v===+q.secs); b.onclick=function(){ q.secs=+b.dataset.v; save(); pl(); }; });
-      $("qHelp").textContent="In these times, every pause is "+q.secs+" sec instead of "+S.seconds+". Apps still open after it."; }
-    pl(); }
+    var r=$("qSecs");
+    function show(v){ r.style.setProperty("--p", ((v-5)/25*100)+"%"); $("qVal").textContent=v+" sec";
+      $("qHelp").textContent="In these times, every pause is "+v+" sec instead of "+S.seconds+". Apps still open after it."; }
+    q.secs=Math.max(5,Math.min(30,Math.round(+q.secs||10))); r.value=String(q.secs); show(q.secs);
+    r.oninput=function(){ show(+r.value); };
+    r.onchange=function(){ q.secs=+r.value; save(); show(q.secs); }; }
   function quietSummary(){ var q=S.quiet||{}, on=["night","morning"].filter(function(k){ return q[k]&&q[k].on; });
     return !on.length ? "Off" : (on.length===2 ? "Night and morning" : on[0]==="night" ? "Night" : "Morning")+", "+q.secs+" sec pause"; }
   // the long-stay note
@@ -1162,7 +1171,10 @@
       var dd=el("div","d"), dv=(now[x]||0)-(was[x]||0); dd.append(el("b",null,spentTxt(now[x]||0)), document.createTextNode(!was[x]&&!now[x] ? "" : dv===0 ? "same" : spentTxt(Math.abs(dv))+(dv<0?" less":" more")));
       r.append(iconFor(x, pkgOf(key)), tx, dd); box.appendChild(r); });
     var p=0, nm=0; for(var i=1;i<=7;i++){ var h=S.hist[dayKey(Date.now()-i*864e5)]; if(h){ Object.keys(h.n).forEach(function(k){ p+=h.n[k]; }); Object.keys(h.nm).forEach(function(k){ nm+=h.nm[k]; }); } }
-    $("wkP").textContent=p; $("wkS").textContent=durTxt(nm*SAVED_MIN); }
+    $("wkP").textContent=p; $("wkS").textContent=durTxt(nm*SAVED_MIN);
+    var td=S.hist[dayKey()]||{n:{},nm:{}}, tp=0, tn=0; Object.keys(td.n||{}).forEach(function(k){ tp+=td.n[k]; }); Object.keys(td.nm||{}).forEach(function(k){ tn+=td.nm[k]; });
+    $("tdM").textContent=durTxt(sumOf(weekSums(data,0,0))); $("tdP").textContent=tp; $("tdS").textContent=durTxt(tn*SAVED_MIN);
+    $("atP").textContent=+S.total.p||0; $("atS").textContent=durTxt((+S.total.nm||0)*SAVED_MIN); }
   function renderShuf(){ $("shuf").classList.toggle("on", !!S.shuffle); $("ideaTog").classList.toggle("on", S.ideasOn!==false); }
 
   // keep phone photos small: max 1600px, jpeg
