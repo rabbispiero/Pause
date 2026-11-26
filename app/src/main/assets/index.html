@@ -60,10 +60,15 @@
   html.day .idea{background:rgba(255,255,255,.7);border-color:rgba(20,26,46,.15)}
   .hero .nums{display:flex;gap:28px}
   .hero .nums .n{font-size:36px}
-  .closedbar{position:fixed;left:16px;right:16px;bottom:max(18px,env(safe-area-inset-bottom));max-width:488px;margin:0 auto;display:flex;align-items:center;gap:12px;background:#141A2E;color:#fff;border-radius:20px;padding:12px 16px;box-shadow:0 10px 30px rgba(0,0,0,.25);z-index:5}
-  .closedbar svg{width:20px;height:20px;flex:none;color:#3FCFB7}
-  .closedbar b{display:block;font-size:15px;font-weight:600}
-  .closedbar span{font-size:13px;color:#C9D1E6}
+  .closedbar{display:flex;align-items:center;gap:14px;width:100%;text-align:left;font:inherit;color:var(--fg);border:1px solid var(--bdr);cursor:pointer;padding:14px 16px!important}
+  .closedbar .lk{width:40px;height:40px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;background:rgba(63,207,183,.16);color:var(--glow)}
+  .closedbar .lk svg{width:20px;height:20px}
+  .closedbar .tx{flex:1;min-width:0}
+  .closedbar b{display:block;font-size:16px;font-weight:600}
+  .closedbar span.s{display:block;font-size:14px;color:var(--sub);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .clrow{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)} .clrow:last-child{border-bottom:0}
+  .clrow .tx{flex:1;min-width:0} .clrow .tx div:first-child{font-size:16px;font-weight:500} .clrow .tx div+div{font-size:14px;color:var(--sub);margin-top:2px}
+  .seeall{display:block;width:100%;background:none;border:0;border-top:1px solid var(--line);color:var(--glow);font:inherit;font-size:15px;font-weight:600;padding:14px 0 4px;text-align:center}
   .appnums{display:flex;gap:30px;padding:16px 20px!important}
   .appnums .n{font-size:28px;font-weight:300;line-height:1}
   .appnums .l{font-size:13px;color:var(--sub);margin-top:6px}
@@ -314,6 +319,7 @@
     <div style="font-size:18px;font-weight:600">On a break until <span id="breakTxt"></span></div>
     <div class="help" style="margin:6px 0 0" id="breakHelp">Your paused apps stay closed until then.</div>
   </div>
+  <button class="card closedbar" id="closedBar" style="display:none"><span class="lk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span><span class="tx"><b id="cbT"></b><span class="s" id="cbS"></span></span><span class="chev" id="cbC">›</span></button>
   <div class="cap" id="appsCap">Paused apps</div>
   <div class="card" id="apps"></div>
   <button class="big acc" id="addApp">Choose apps to pause</button>
@@ -321,7 +327,6 @@
     <button class="tile" id="breakBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg><b id="breakLbl">Take a break</b></button>
     <button class="tile" id="moreBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg><b>Settings</b></button>
   </div>
-  <div class="closedbar" id="closedBar" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><div><b id="cbT"></b><span id="cbS"></span></div></div>
  </div>
 
  <div class="pg" id="setupPg"><div id="setupBody"></div></div>
@@ -426,6 +431,12 @@
   </div>
  </div>
 
+ <div class="pg" id="allPg">
+  <div class="top"><button class="back" data-back>‹ Back</button></div>
+  <div class="ttl" id="allTtl">Paused apps</div>
+  <div class="card" id="allList"></div>
+ </div>
+
  <div class="pg" id="sitesPg">
   <div class="top"><button class="back" data-back>‹ Back</button></div>
   <div class="ttl">Websites to pause</div>
@@ -440,6 +451,11 @@
 </main>
 
 <div class="toast" id="toast"></div>
+<div class="sheet" id="closedSh"><div class="box">
+  <div style="font-size:20px;font-weight:600">Closed now</div>
+  <div id="clList" style="margin:8px 0 6px"></div>
+  <button class="big ghost" id="closedX" style="margin-top:10px">OK</button>
+</div></div>
 <div class="sheet" id="breakSh"><div class="box">
   <div style="font-size:20px;font-weight:600">Take a break</div>
   <div class="help" style="margin:6px 0 14px" id="blkTitle">All your paused apps stay closed until:</div>
@@ -731,13 +747,13 @@
     if(NAT && !S.setupDone && h.indexOf("setup/")!==0) h="setup/0";
     if(h==="more"){ pg="morePg"; drawMore(); } else if(h==="pick") pg="pickPg";
     else if(h==="pics"||h.indexOf("pics/")===0){ pg="picsPg"; drawPics(h==="pics"?"":decodeURIComponent(h.slice(5))); }
-    else if(h==="quiet"){ pg="quietPg"; drawQuiet(); } else if(h==="week"){ pg="weekPg"; drawWeek(); }
+    else if(h==="quiet"){ pg="quietPg"; drawQuiet(); } else if(h==="week"){ pg="weekPg"; drawWeek(); } else if(h==="all"){ pg="allPg"; renderAll(); }
     else if(h==="sites"){ pg="sitesPg"; renderSites(); } else if(h.indexOf("app/")===0){ pg="appPg"; drawApp(decodeURIComponent(h.slice(4))); }
     else if(h.indexOf("setup/")===0){ pg="setupPg"; drawSetup(+h.slice(6)||0); }
     if(pg==="pickPg") drawPick();
     if(pg==="home") renderApps();
-    ["home","setupPg","pickPg","appPg","morePg","picsPg","sitesPg","quietPg","weekPg"].forEach(function(x){ $(x).classList.toggle("on", x===pg); });
-    window.scrollTo(0,0); }
+    ["home","setupPg","pickPg","appPg","morePg","picsPg","sitesPg","quietPg","weekPg","allPg"].forEach(function(x){ $(x).classList.toggle("on", x===pg); });
+    window.scrollTo(0,0); if(pg==="home"){ fitHome(); setTimeout(fitHome,300); } }
   function go(h){ location.hash=h; }
 
   function runSettings(){
@@ -756,6 +772,7 @@
     $("blkTime").addEventListener("input", function(){ var v=$("blkTime").value; if(!v) return; var hm=v.split(":"), u=new Date(); u.setHours(+hm[0],+hm[1],0,0); if(u<=new Date()) u.setDate(u.getDate()+1);
       var m=Math.round((u-Date.now())/60000), f=fmt(u); $("blkVal").textContent=minTxt(m)+" · until "+f.t+" "+f.ap; var q=minPos(Math.min(120,Math.max(5,m))); $("blkSld").value=String(q); $("blkSld").style.setProperty("--p", q+"%"); });
     $("breakX").onclick=function(){ $("breakSh").classList.remove("on"); };
+    $("closedX").onclick=function(){ $("closedSh").classList.remove("on"); };
     $("pickDone").onclick=function(){ history.back(); };
     $("pickQ").oninput=drawPick;
     $("addMsg").onclick = function(){ msgList(true).push(""); save(); renderMsgs(); var t=$("msgs").querySelectorAll("textarea"); t[t.length-1].focus(); };
@@ -790,12 +807,12 @@
   function renderApps(){
     var box=$("apps"); box.innerHTML="";
     if(!S.apps.length && !(S.sites||[]).length){ var e=document.createElement("div"); e.className="empty"; e.textContent="No apps yet. Tap the button below to choose."; box.appendChild(e); }
-    S.apps.forEach(function(a){ var key="app:"+slug(a); box.appendChild(itemRow(a, key, pkgOf(key))); });
-    (S.sites||[]).forEach(function(h){ box.appendChild(itemRow(h, "site:"+h, "")); });
+    allRows(box);
+    var more=el("button","seeall"); more.id="seeAll"; more.style.display="none"; more.onclick=function(){ go("all"); }; box.appendChild(more);
     $("appsCap").textContent = (S.sites||[]).length ? "Paused apps and websites" : "Paused apps";
     var hr=new Date().getHours(); $("hello").textContent = hr<5?"Good night":hr<12?"Good morning":hr<17?"Good afternoon":hr<21?"Good evening":"Good night";
     var tp=+S.total.p||0; $("heroN").textContent=tp; $("heroL").textContent=tp===1?"pause":"pauses"; $("heroS").textContent=durTxt((+S.total.nm||0)*SAVED_MIN); $("hero").onclick=function(){ go("week"); }; $("hero").onkeydown=function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); go("week"); } };
-    renderClosedBar(); renderWeekCard();
+    renderClosedBar(); renderWeekCard(); fitHome();
     var all=S.apps.concat(S.sites||[]);
     var what = (S.sites||[]).length ? "Your paused apps and websites" : "Your paused apps";
     $("blkTitle").textContent = what+" stay closed until:"; $("breakHelp").textContent = what+" stay closed until then.";
@@ -807,21 +824,34 @@
     if(!blockOn()){
       S.apps.forEach(function(a){ var key="app:"+slug(a), cl=S.closed[key];
         var nm2=a+(siteLinked(key)?" and "+siteOf(key):"");
-        if(closedAt(cl,now)) list.push({t:nm2+" closed until "+untilWord(span(cl).until), s:nm2+" too"});
-        else closedParts(key,now).forEach(function(x){ var nm=x[1].replace(/ \(.*\)$/,""); list.push({t:a+" "+nm+" closed until "+untilWord(span(partWins(key,x[0])).until), s:a+" "+nm.toLowerCase()+" too"}); }); });
-      (S.sites||[]).forEach(function(h){ var cl=S.closed["site:"+h]; if(closedAt(cl,now)) list.push({t:h+" closed until "+untilWord(span(cl).until), s:h+" too"}); });
+        if(closedAt(cl,now)) list.push({n:nm2, u:untilWord(span(cl).until), key:key, short:a});
+        else closedParts(key,now).forEach(function(x){ var nm=x[1].replace(/ \(.*\)$/,""); list.push({n:a+" "+nm, u:untilWord(span(partWins(key,x[0])).until), key:key, short:a+" "+nm}); }); });
+      (S.sites||[]).forEach(function(h){ var cl=S.closed["site:"+h]; if(closedAt(cl,now)) list.push({n:h, u:untilWord(span(cl).until), key:"site:"+h, short:h}); });
     }
-    $("closedBar").style.display=list.length?"":"none"; $("home").style.paddingBottom=list.length?"90px":"";
+    var cb=$("closedBar"); cb.style.display=list.length?"":"none";
     if(!list.length) return;
-    $("cbT").textContent=list[0].t;
-    $("cbS").textContent= list.length===1 ? "" : list.length===2 ? list[1].s : "And "+(list.length-1)+" more";
-    $("cbS").style.display=list.length===1?"none":"";
+    if(list.length===1){ $("cbT").textContent=list[0].n; $("cbS").textContent="Closed until "+list[0].u; }
+    else { $("cbT").textContent=list.length+" closed now"; $("cbS").textContent=list.map(function(x){ return x.short; }).join(", "); }
+    cb.onclick=function(){ var b=$("clList"); b.innerHTML="";
+      list.forEach(function(x){ var r=el("div","clrow"), tx=el("div","tx"); tx.append(el("div",null,x.n), el("div",null,"Until "+x.u)); r.append(iconFor(x.short, pkgOf(x.key)), tx); b.appendChild(r); });
+      $("closedSh").classList.add("on"); };
   }
   function itemRow(name, key, pkg){
     var r=document.createElement("button"); r.className="arow";
     var tx=document.createElement("div"); tx.className="tx"; var n=document.createElement("div"); n.textContent=name; var d=document.createElement("div"); d.textContent=describe(key); tx.append(n,d);
     var c=document.createElement("span"); c.className="chev"; c.textContent="›";
     r.append(iconFor(name,pkg),tx,c); r.onclick=function(){ go("app/"+encodeURIComponent(key)); }; return r; }
+  function allRows(box){ S.apps.forEach(function(a){ var key="app:"+slug(a); box.appendChild(itemRow(a, key, pkgOf(key))); });
+    (S.sites||[]).forEach(function(h){ box.appendChild(itemRow(h, "site:"+h, "")); }); }
+  function renderAll(){ var b=$("allList"); b.innerHTML=""; allRows(b); $("allTtl").textContent=(S.sites||[]).length?"Paused apps and websites":"Paused apps"; }
+  // home fits on one screen: show as many rows as fit, then "See all"
+  function fitHome(){ var box=$("apps"), more=$("seeAll"); if(!more) return;
+    var rows=[].filter.call(box.children,function(x){ return x.classList.contains("arow"); });
+    function fits(){ return document.documentElement.scrollHeight <= window.innerHeight+1; }
+    rows.forEach(function(r){ r.style.display=""; }); more.style.display="none";
+    if(!$("home").classList.contains("on") || fits() || rows.length<=2) return;
+    for(var k=rows.length-1;k>=2;k--){ rows[k].style.display="none"; more.style.display=""; more.textContent="See all "+rows.length; if(fits()) break; } }
+  window.addEventListener("resize", function(){ fitHome(); });
   function renderSites(){ var sb=$("sites"); sb.innerHTML=""; (S.sites||[]).forEach(function(h){ sb.appendChild(itemRow(h, "site:"+h, "")); }); }
 
   // choose apps: every app on the phone, tick to pause
