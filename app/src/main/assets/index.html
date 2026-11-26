@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0D1226">
-<title>Pause</title>
+<title>Pause It</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 108 108%27%3E%3Cdefs%3E%3ClinearGradient id=%27g%27 x1=%2724%27 y1=%2724%27 x2=%2784%27 y2=%2784%27 gradientUnits=%27userSpaceOnUse%27%3E%3Cstop offset=%270%27 stop-color=%27%2334D399%27/%3E%3Cstop offset=%271%27 stop-color=%27%233B82F6%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=%27108%27 height=%27108%27 rx=%2724%27 fill=%27%23F4F6FB%27/%3E%3Ccircle cx=%2754%27 cy=%2754%27 r=%2730%27 fill=%27%23E2E7F2%27/%3E%3Cpath d=%27M54 54V24A30 30 0 1 1 24 54z%27 fill=%27url(%23g)%27/%3E%3Ccircle cx=%2754%27 cy=%2754%27 r=%277%27 fill=%27%23F4F6FB%27/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -296,9 +296,9 @@
  <div class="glowbg"></div>
  <div class="pg" id="home">
   <div class="hello" id="hello"></div>
-  <h1 class="serif">Pause</h1>
+  <h1 class="serif">Pause It</h1>
   <div class="card offcard" id="natOff" style="display:none">
-    <div class="t"><div>Pause is off</div><div>Turn it on so your apps get paused.</div></div>
+    <div class="t"><div>Pause It is off</div><div>Turn it on so your apps get paused.</div></div>
     <button class="small" id="natOn">Turn on</button>
   </div>
   <button class="card recapcard" id="weekCard" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><div class="tx"><b>Your week is ready</b><span class="s" id="weekCardS"></span></div><span class="chev">›</span></button>
@@ -428,7 +428,7 @@
  <div class="pg" id="sitesPg">
   <div class="top"><button class="back" data-back>‹ Back</button></div>
   <div class="ttl">Websites to pause</div>
-  <div class="grp">Pause shows up before these sites too. Tap one to give it its own settings.</div>
+  <div class="grp">Pause It shows up before these sites too. Tap one to give it its own settings.</div>
   <div class="card">
     <div id="sites"></div>
     <div class="add"><input id="newSite" placeholder="Website, like youtube.com" inputmode="url" autocapitalize="off"><button class="small" id="addSite">Add</button></div>
@@ -634,7 +634,7 @@
   function runPause(p, site){
     var name = site || appName(p), id = slug(p);
     if(!params.get("up") && !params.get("free")) countOpen(id);
-    document.title = "Pause · "+name;
+    document.title = "Pause It · "+name;
     var key = (site?"site:":"app:")+(site||slug(p)), cl = S.closed[key];
     if(closedAt(cl, new Date())){ return showBlocked(name, span(cl), lv(key)==="strict" ? "Locked" : "Closed hours"); }
     if(S.block && Date.now() < S.block.until){ return showBlocked(name, S.block); }
@@ -852,21 +852,21 @@
       var v=el("div","sv"); v.innerHTML='<svg width="150" height="150" viewBox="0 0 150 150"><defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34D399"/><stop offset="1" stop-color="#3B82F6"/></linearGradient></defs><circle cx="75" cy="75" r="62" style="fill:var(--trk)"/><path d="M75 75V13a62 62 0 1 1-62 62z" fill="url(#sg)"/><circle cx="75" cy="75" r="14" style="fill:var(--bg)"/></svg>';
       body.appendChild(v);
       body.appendChild(el("div","sbig serif","Take a moment before you scroll"));
-      body.appendChild(el("div","ssub","Pause puts a short breath between you and the apps you open too often. Setup takes about a minute."));
+      body.appendChild(el("div","ssub","Pause It puts a short breath between you and the apps you open too often. Setup takes about a minute."));
       var g=el("button","big acc","Get started"); g.onclick=function(){ to(1); }; body.appendChild(g);
     }
     if(n===1){
-      body.appendChild(el("div","step", again?"Turn on Pause":"Step 1 of 3"));
-      body.appendChild(el("div","sbig serif", svOn?"Pause is on":"Let Pause see when an app opens"));
+      body.appendChild(el("div","step", again?"Turn on Pause It":"Step 1 of 3"));
+      body.appendChild(el("div","sbig serif", svOn?"Pause It is on":"Let Pause It see when an app opens"));
       if(svOn){
         var ok=el("div","sv"); ok.innerHTML='<svg width="96" height="96" viewBox="0 0 96 96"><circle cx="48" cy="48" r="44" fill="rgba(63,207,183,.16)"/><path d="M30 49l12 12 24-26" fill="none" style="stroke:var(--glow)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>'; body.appendChild(ok);
-        body.appendChild(el("div","ssub","Nice. Pause can now step in when you open an app you picked."));
+        body.appendChild(el("div","ssub","Nice. Pause It can now step in when you open an app you picked."));
         var nx=el("button","big acc", again?"Done":"Next"); nx.onclick=function(){ if(again) finish(); else to(2); }; body.appendChild(nx);
         return;
       }
-      var mv=el("div","sv"), mk=el("div","mock"); mk.innerHTML='<div class="r"><span class="mi"><svg width="34" height="34" viewBox="0 0 108 108"><defs><linearGradient id="mg" x1="24" y1="24" x2="84" y2="84" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#34D399"/><stop offset="1" stop-color="#3B82F6"/></linearGradient></defs><rect width="108" height="108" fill="#F4F6FB"/><circle cx="54" cy="54" r="30" fill="#E2E7F2"/><path d="M54 54V24A30 30 0 1 1 24 54z" fill="url(#mg)"/><circle cx="54" cy="54" r="7" fill="#F4F6FB"/></svg></span><b>Pause</b><span class="sw"><i></i></span></div>'; mv.appendChild(mk); body.appendChild(mv);
+      var mv=el("div","sv"), mk=el("div","mock"); mk.innerHTML='<div class="r"><span class="mi"><svg width="34" height="34" viewBox="0 0 108 108"><defs><linearGradient id="mg" x1="24" y1="24" x2="84" y2="84" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#34D399"/><stop offset="1" stop-color="#3B82F6"/></linearGradient></defs><rect width="108" height="108" fill="#F4F6FB"/><circle cx="54" cy="54" r="30" fill="#E2E7F2"/><path d="M54 54V24A30 30 0 1 1 24 54z" fill="url(#mg)"/><circle cx="54" cy="54" r="7" fill="#F4F6FB"/></svg></span><b>Pause It</b><span class="sw"><i></i></span></div>'; mv.appendChild(mk); body.appendChild(mv);
       var c=el("div","card"), nl=el("div","nlist");
-      ["Tap the button below.","Tap Installed apps (or Downloaded apps), then Pause.","Turn it on, tap Allow, then come back here."].forEach(function(t){ nl.appendChild(el("div",null,t)); });
+      ["Tap the button below.","Tap Installed apps (or Downloaded apps), then Pause It.","Turn it on, tap Allow, then come back here."].forEach(function(t){ nl.appendChild(el("div",null,t)); });
       c.appendChild(nl); body.appendChild(c);
       var t=el("button","big acc","Turn it on"); t.onclick=function(){ try{ Android.openAccessibility(); }catch(e){} }; body.appendChild(t);
       var hb=el("button","linkbtn","It says “Restricted setting”?"), hp=el("div","card"); hp.style.display="none"; hp.style.marginTop="8px";
@@ -902,9 +902,9 @@
       var dv=el("div","sv"); dv.innerHTML='<svg width="120" height="120" viewBox="0 0 96 96"><circle cx="48" cy="48" r="44" fill="rgba(63,207,183,.16)"/><path d="M30 49l12 12 24-26" fill="none" style="stroke:var(--glow)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>'; body.appendChild(dv);
       body.appendChild(el("div","sbig serif","You're all set"));
       var first=S.apps[0];
-      body.appendChild(el("div","ssub", first ? "Next time you open "+first+", Pause will be there first. Take a breath." : "Pick your apps any time from the main screen."));
-      if(!svOn) body.appendChild(el("div","ssub warn","Pause is still off. Turn it on from the main screen."));
-      var gd=el("button","big acc","Go to Pause"); gd.onclick=finish; body.appendChild(gd);
+      body.appendChild(el("div","ssub", first ? "Next time you open "+first+", Pause It will be there first. Take a breath." : "Pick your apps any time from the main screen."));
+      if(!svOn) body.appendChild(el("div","ssub warn","Pause It is still off. Turn it on from the main screen."));
+      var gd=el("button","big acc","Go to Pause It"); gd.onclick=finish; body.appendChild(gd);
     }
   }
 
@@ -939,7 +939,7 @@
         hb.append(ln,dd); hb.style.display=D.on?"":"none"; pc.appendChild(hb);
         tg.onclick=function(){ D.on=!D.on; tg.classList.toggle("on",D.on); hb.style.display=D.on?"":"none"; sub(); };
         sub(); });
-      var pn=el("div","help","Pause spots these parts by how the app looks. If "+name+" changes its look in an update, this may stop working until Pause is updated."); pn.style.margin="10px 8px 0"; body.appendChild(pn);
+      var pn=el("div","help","Pause It spots these parts by how the app looks. If "+name+" changes its look in an update, this may stop working until Pause It is updated."); pn.style.margin="10px 8px 0"; body.appendChild(pn);
     }
 
     var c1=document.createElement("div"); c1.className="cap"; c1.textContent="Closed hours"; body.appendChild(c1);

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Pause</string>
-    <string name="service_name">Pause</string>
-    <string name="service_desc">Pause watches which app or website you open, only to show a short pause before the ones you picked. It doesn\'t read, save or send anything else.</string>
+    <string name="app_name">Pause It</string>
+    <string name="service_name">Pause It</string>
+    <string name="service_desc">Pause It watches which app or website you open, only to show a short pause before the ones you picked. It doesn\'t read, save or send anything else.</string>
 </resources>
