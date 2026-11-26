@@ -365,7 +365,6 @@
     <div class="help" style="margin:10px 0 0">Lets "Open it" open the app and "Never mind" go to your home screen.</div>
   </div>
   </div>
-  <div class="help" style="margin-top:18px">Your changes save by themselves.</div>
  </div>
 
  <div class="pg" id="picsPg">
@@ -383,7 +382,6 @@
         <button class="copy" id="addMsg" style="padding:4px 0 0">+ Add a message</button></div>
     </div>
   </div>
-  <div class="help" style="margin-top:18px">Your changes save by themselves.</div>
  </div>
 
  <div class="pg" id="sitesPg">
@@ -542,7 +540,7 @@
   // Hard: type a random code shown on screen, no paste, a typo starts over
   function code(n){ var c="abcdefghjkmnpqrstuvwxyz23456789", o="", r=new Uint32Array(n); (window.crypto||{getRandomValues:function(a){for(var i=0;i<a.length;i++)a[i]=Math.random()*1e9;return a}}).getRandomValues(r); for(var i=0;i<n;i++) o+=c[r[i]%c.length]; return o; }
   function hardType(what, fn){
-    var c=code(150), box=$("hard"), inp=$("hardIn"), P=$("hardP");
+    var c=code(60), box=$("hard"), inp=$("hardIn"), P=$("hardP");
     $("hardT").textContent = what;
     function paint(k){ P.innerHTML=""; for(var i=0;i<c.length;i+=5){ var g=c.slice(i,i+5), sp=document.createElement("span");
       if(i+5<=k){ var b=document.createElement("b"); b.textContent=g; sp.appendChild(b); } else if(i<k){ var b2=document.createElement("b"); b2.textContent=g.slice(0,k-i); sp.append(b2, g.slice(k-i)); } else sp.textContent=g;
