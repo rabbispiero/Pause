@@ -159,7 +159,7 @@
   .sld input[type=range]::-moz-range-track{height:8px;border-radius:4px;background:linear-gradient(90deg,var(--acc) 0,var(--acc) var(--p,50%),var(--seg) var(--p,50%),var(--seg) 75%,var(--trk) 75%)}
   .sld input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid var(--glow)}
   .sld .ticks{position:relative;height:16px;font-size:12px;color:var(--sub);margin-top:2px}
-  .sld .ticks span{position:absolute;transform:translateX(-50%)} .sld .ticks span:first-child{transform:none} .sld .ticks span:last-child{transform:translateX(-100%)}
+  .sld .ticks span{position:absolute;transform:translateX(-50%);white-space:nowrap} .sld .ticks span:first-child{transform:none} .sld .ticks span:last-child{transform:translateX(-100%)}
   .usedef{background:none;border:0;color:var(--glow);font:inherit;font-size:14px;font-weight:600;padding:8px 0 0;cursor:pointer}
   .ttl{font-size:26px;font-weight:600;margin:4px 8px 14px}
   .big{display:block;width:100%;height:60px;border-radius:30px;font-size:18px;font-weight:600;margin-top:14px}
@@ -310,7 +310,7 @@
     <div style="font-size:18px;font-weight:600">On a break until <span id="breakTxt"></span></div>
     <div class="help" style="margin:6px 0 0">Your paused apps stay closed until then.</div>
   </div>
-  <div class="cap">Paused apps</div>
+  <div class="cap" id="appsCap">Paused apps</div>
   <div class="card" id="apps"></div>
   <button class="big acc" id="addApp">Choose apps to pause</button>
   <div class="tiles">
@@ -725,7 +725,7 @@
     if(h==="more"){ pg="morePg"; drawMore(); } else if(h==="pick") pg="pickPg";
     else if(h==="pics"||h.indexOf("pics/")===0){ pg="picsPg"; drawPics(h==="pics"?"":decodeURIComponent(h.slice(5))); }
     else if(h==="quiet"){ pg="quietPg"; drawQuiet(); } else if(h==="nudge"){ pg="nudgePg"; drawNudge(); } else if(h==="week"){ pg="weekPg"; drawWeek(); }
-    else if(h==="sites") pg="sitesPg"; else if(h.indexOf("app/")===0){ pg="appPg"; drawApp(decodeURIComponent(h.slice(4))); }
+    else if(h==="sites"){ pg="sitesPg"; renderSites(); } else if(h.indexOf("app/")===0){ pg="appPg"; drawApp(decodeURIComponent(h.slice(4))); }
     else if(h.indexOf("setup/")===0){ pg="setupPg"; drawSetup(+h.slice(6)||0); }
     if(pg==="pickPg") drawPick();
     if(pg==="home") renderApps();
@@ -778,8 +778,10 @@
   // home: the paused apps
   function renderApps(){
     var box=$("apps"); box.innerHTML="";
-    if(!S.apps.length){ var e=document.createElement("div"); e.className="empty"; e.textContent="No apps yet. Tap the button below to choose."; box.appendChild(e); }
+    if(!S.apps.length && !(S.sites||[]).length){ var e=document.createElement("div"); e.className="empty"; e.textContent="No apps yet. Tap the button below to choose."; box.appendChild(e); }
     S.apps.forEach(function(a){ var key="app:"+slug(a); box.appendChild(itemRow(a, key, pkgOf(key))); });
+    (S.sites||[]).forEach(function(h){ box.appendChild(itemRow(h, "site:"+h, "")); });
+    $("appsCap").textContent = (S.sites||[]).length ? "Paused apps and websites" : "Paused apps";
     var hr=new Date().getHours(); $("hello").textContent = hr<5?"Good night":hr<12?"Good morning":hr<17?"Good afternoon":hr<21?"Good evening":"Good night";
     var tp=+S.total.p||0; $("heroN").textContent=tp; $("heroL").textContent=tp===1?"pause":"pauses"; $("heroS").textContent=durTxt((+S.total.nm||0)*SAVED_MIN);
     renderClosedBar(); renderWeekCard();
