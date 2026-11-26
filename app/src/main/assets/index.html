@@ -468,7 +468,7 @@
   var LVN={normal:"Easy", hard:"Hard", strict:"Locked"}, ICONS={}, ALLAPPS=null;
   var NAT = !!(window.Android && window.Android.save);
   var DEF = {apps:NAT?[]:["Instagram","YouTube"], sites:[], allow:{}, seconds:3, letin:10, log:{}, shuffle:true, grow:true, quiet:{night:{on:false,from:"22:00",to:"06:00"},morning:{on:false,from:"07:00",to:"07:30"},secs:10}, nudge:20, opens:{}, weekSeen:"", messages:["Remember why\nyou put it down."], block:null, hook:"", closed:{}, level:{}, hardCool:15, hardFrom:"09:00", hardTo:"21:00", pending:[], pkgs:{}, per:{}, parts:{}, pauseOff:false, delay:0, ideasOn:true, hist:{}, total:{p:0,nm:0}, lastPick:{}};
-  function load(){ try{ var s=JSON.parse(localStorage.getItem(KEY)); return Object.assign({},DEF,s||{}); }catch(e){ return Object.assign({},DEF); } }
+  function load(){ try{ var raw=localStorage.getItem(KEY); if(!raw && typeof Android!=="undefined" && Android.state){ try{ raw=Android.state()||null; if(raw) localStorage.setItem(KEY, raw); }catch(e){} } var s=JSON.parse(raw); return Object.assign({},DEF,s||{}); }catch(e){ return Object.assign({},DEF); } }
   function save(){ var j=JSON.stringify(S); try{ localStorage.setItem(KEY, j); }catch(e){} if(NAT){ try{ Android.save(j); }catch(e){} } }
   var S = load();
   if(typeof S.message==="string"){ if(S.message && S.messages.indexOf(S.message)<0) S.messages=[S.message]; delete S.message; }

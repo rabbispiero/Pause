@@ -106,6 +106,10 @@ final class Bridge {
         done();
     }
 
+    /** Saved settings, for when the page has none (a new phone, restored from backup). */
+    @JavascriptInterface
+    public String state() { return Store.prefs(a).getString("state", ""); }
+
     @JavascriptInterface
     public String week() { return Store.week(a); }
 
