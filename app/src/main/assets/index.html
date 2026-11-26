@@ -309,7 +309,7 @@
   </div>
   <div class="card" id="breakOn" style="display:none;padding:16px;margin-bottom:6px;border:1px solid var(--glow)">
     <div style="font-size:18px;font-weight:600">On a break until <span id="breakTxt"></span></div>
-    <div class="help" style="margin:6px 0 0">Your paused apps stay closed until then.</div>
+    <div class="help" style="margin:6px 0 0" id="breakHelp">Your paused apps stay closed until then.</div>
   </div>
   <div class="cap" id="appsCap">Paused apps</div>
   <div class="card" id="apps"></div>
@@ -787,7 +787,8 @@
     var tp=+S.total.p||0; $("heroN").textContent=tp; $("heroL").textContent=tp===1?"pause":"pauses"; $("heroS").textContent=durTxt((+S.total.nm||0)*SAVED_MIN);
     renderClosedBar(); renderWeekCard();
     var all=S.apps.concat(S.sites||[]);
-    $("blkTitle").textContent = (all.length? "Your paused apps" : "All your paused apps")+" stay closed until:";
+    var what = (S.sites||[]).length ? "Your paused apps and websites" : "Your paused apps";
+    $("blkTitle").textContent = what+" stay closed until:"; $("breakHelp").textContent = what+" stay closed until then.";
   }
   // a strip at the bottom of home, only while something is closed (not during a break, which has its own card)
   function untilWord(t){ var u=new Date(t), f=fmt(u), tm=u.toDateString()!==new Date().toDateString(); return f.t+" "+f.ap+(tm?" tomorrow":""); }
