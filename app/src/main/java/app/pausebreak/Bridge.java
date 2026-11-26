@@ -79,6 +79,18 @@ final class Bridge {
         done();
     }
 
+    /** Back to an app without changing how long it's let in (after a closed part like Reels). */
+    @JavascriptInterface
+    public void launch(String slug) {
+        String pkg = Store.pkgFor(a, slug);
+        Intent i = pkg.isEmpty() ? null : a.getPackageManager().getLaunchIntentForPackage(pkg);
+        if (i != null) {
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            a.startActivity(i);
+        }
+        done();
+    }
+
     @JavascriptInterface
     public void openSite(String host, double until) {
         Store.allow(a, "site:" + host, (long) until);

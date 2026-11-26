@@ -35,12 +35,24 @@ public class GuardService extends AccessibilityService {
     private long lastShownAt = 0;
     private long lastUrlCheck = 0;
     private long lastFrontCheck = 0;
+    private long lastPartCheck = 0;
+
+    /** Parts of apps you can close on their own, and how Pause spots each one on screen:
+     *  bits of the screen's view names, and a bottom tab name that counts when that tab is selected. */
+    private static final String[][] PARTS = {
+            // package, part, view name bits (comma separated), tab name
+            {"com.instagram.android", "reels", "clips_viewer,clips_video,root_clips_layout", "Reels"},
+            {"com.instagram.android", "stories", "reel_viewer", ""},
+            {"com.whatsapp", "status", "status_playback,status_viewer", "Updates"},
+            {"com.whatsapp.w4b", "status", "status_playback,status_viewer", "Updates"},
+            {"com.google.android.youtube", "shorts", "reel_recycler,reel_player,reel_watch,shorts_player", "Shorts"},
+    };
 
     private final Runnable tick = new Runnable() {
         @Override
         public void run() {
             checkTimeUp();
-            h.postDelayed(this, 15000);
+            h.postDelayed(this, 5000);
         }
     };
 
@@ -54,7 +66,7 @@ public class GuardService extends AccessibilityService {
             List<InputMethodInfo> list = im.getInputMethodList();
             for (InputMethodInfo i : list) skip.add(i.getPackageName());
         } catch (Exception ignored) { }
-        h.postDelayed(tick, 15000);
+        h.postDelayed(tick, 5000);
     }
 
     @Override
@@ -84,6 +96,15 @@ public class GuardService extends AccessibilityService {
             }
         }
 
+        if ((type == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED || type == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED)
+                && hasParts(pkg)) {
+            long now = System.currentTimeMillis();
+            if (type == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED || now - lastPartCheck > 400) {
+                lastPartCheck = now;
+                checkParts(pkg);
+            }
+        }
+
         if (type == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED || type == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) {
             String bar = urlBarId(pkg);
             if (bar != null) {
@@ -101,13 +122,16 @@ public class GuardService extends AccessibilityService {
         boolean changed = !pkg.equals(fg);
         if (changed) {
             long now = System.currentTimeMillis();
-            if (!fg.isEmpty()) Store.addSpent(this, fg, now - fgSince);
+            if (!fg.isEmpty()) {
+                Store.addSpent(this, fg, now - fgSince);
+                Store.addHour(this, fg, fgSince, now);
+            }
             fg = pkg;
             fgSince = now;
         }
         if (pkg.equals(getPackageName())) return;
         String sl = Store.guardedApps(this).get(pkg);
-        if (sl != null) guardApp(pkg, sl);
+        if (sl != null) guardApp(pkg, sl, OPENED);
     }
 
     /** The app that owns the window you're using now. */
@@ -128,9 +152,102 @@ public class GuardService extends AccessibilityService {
         return null;
     }
 
-    private void guardApp(String pkg, String sl) {
-        if (System.currentTimeMillis() < Store.allowed(this, "app:" + sl)) return;
-        show("app:" + sl, "?app=" + Uri.encode(sl) + "&spent=" + Store.spentMin(this, pkg));
+    private static final int OPENED = 0, TIME_UP = 1, FREE_USED = 2;
+
+    /** Pause an app: when it opens, when the time you picked runs out, or when its free minutes are used. */
+    private boolean guardApp(String pkg, String sl, int why) {
+        long now = System.currentTimeMillis();
+        boolean closed = Store.appClosed(this, sl);
+        if (!closed && now < Store.allowed(this, "app:" + sl)) return false;
+        if (!closed && why == OPENED) {
+            if (Store.pauseOff(this, sl)) return false;
+            int d = Store.delay(this, sl);
+            if (d > 0 && hourUsed(pkg) < d * 60000L) return false; // free minutes left this hour
+        }
+        String q = "?app=" + Uri.encode(sl) + "&spent=" + spentNow(pkg) / 60000;
+        if (!closed && why == TIME_UP) q += "&up=1";
+        if (!closed && why == FREE_USED) q += "&free=" + Store.delay(this, sl);
+        return show("app:" + sl, q);
+    }
+
+    /** Time in this app today, counting the visit going on now. */
+    private long spentNow(String pkg) {
+        long ms = Store.spentMs(this, pkg);
+        if (pkg.equals(fg)) ms += System.currentTimeMillis() - fgSince;
+        return ms;
+    }
+
+    /** Time in this app this hour, counting the visit going on now. */
+    private long hourUsed(String pkg) {
+        long ms = Store.hourMs(this, pkg);
+        if (pkg.equals(fg)) {
+            long now = System.currentTimeMillis();
+            ms += now - Math.max(fgSince, Store.hourStart(now));
+        }
+        return ms;
+    }
+
+    private static boolean hasParts(String pkg) {
+        for (String[] p : PARTS) if (p[0].equals(pkg)) return true;
+        return false;
+    }
+
+    /** A closed part (like Reels) is on screen: go back out of it and say until when. */
+    private void checkParts(String pkg) {
+        if (PauseActivity.showing) return;
+        String sl = Store.guardedApps(this).get(pkg);
+        if (sl == null) return;
+        AccessibilityNodeInfo root = null;
+        for (String[] p : PARTS) {
+            if (!p[0].equals(pkg) || !Store.closedNow(Store.partTimes(this, sl, p[1]))) continue;
+            if (root == null) {
+                root = getRootInActiveWindow();
+                if (root == null || root.getPackageName() == null || !pkg.equals(root.getPackageName().toString())) return;
+            }
+            if (onScreen(root, p[2].split(","), p[3])) {
+                performGlobalAction(GLOBAL_ACTION_BACK);
+                show("part:" + sl + ":" + p[1], "?app=" + Uri.encode(sl) + "&part=" + p[1]);
+                return;
+            }
+        }
+    }
+
+    private int seen;
+
+    private boolean onScreen(AccessibilityNodeInfo root, String[] bits, String tab) {
+        seen = 0;
+        return look(root, bits, tab, 0);
+    }
+
+    private boolean look(AccessibilityNodeInfo n, String[] bits, String tab, int depth) {
+        if (n == null || depth > 45 || ++seen > 2500) return false;
+        String id = n.getViewIdResourceName();
+        if (id != null && n.isVisibleToUser()) {
+            int k = id.indexOf(":id/");
+            String nm = k >= 0 ? id.substring(k + 4) : id;
+            for (String b : bits) if (!b.isEmpty() && nm.contains(b)) return true;
+        }
+        if (!tab.isEmpty() && n.isVisibleToUser()) {
+            CharSequence d = n.getContentDescription(), t = n.getText();
+            boolean named = (d != null && startsWord(d.toString(), tab)) || (t != null && t.toString().trim().equalsIgnoreCase(tab));
+            if (named) {
+                AccessibilityNodeInfo up = n.getParent();
+                if (n.isSelected() || (up != null && up.isSelected())) return true;
+            }
+        }
+        for (int i = 0; i < n.getChildCount(); i++) {
+            if (look(n.getChild(i), bits, tab, depth + 1)) return true;
+        }
+        return false;
+    }
+
+    /** "Reels" or "Reels, tab 4 of 5", but not "Reels you might like". */
+    private static boolean startsWord(String s, String w) {
+        s = s.trim();
+        if (!s.regionMatches(true, 0, w, 0, w.length())) return false;
+        if (s.length() == w.length()) return true;
+        char c = s.charAt(w.length());
+        return c == ',' || c == '.' || c == ';';
     }
 
     private void checkSite(String barId) {
@@ -155,19 +272,28 @@ public class GuardService extends AccessibilityService {
         }
     }
 
-    /** When the let-in time runs out while the app is still open, pause again. */
+    /** While an app is open: pause again when the time you picked runs out, or when its free minutes are used. */
     private void checkTimeUp() {
         if (fg.isEmpty() || PauseActivity.showing) return;
         String sl = Store.guardedApps(this).get(fg);
         if (sl == null) return;
+        long now = System.currentTimeMillis();
+        if (Store.appClosed(this, sl)) { guardApp(fg, sl, OPENED); return; }
+        if (Store.pauseOff(this, sl)) return;
         long until = Store.allowed(this, "app:" + sl);
-        if (until > 0 && System.currentTimeMillis() >= until) guardApp(fg, sl);
+        if (until > 0 && now >= until) {
+            // the picked time is used up: it counts once, so free minutes work again next hour
+            if (guardApp(fg, sl, TIME_UP)) Store.allow(this, "app:" + sl, 0);
+            return;
+        }
+        int d = Store.delay(this, sl);
+        if (d > 0 && now >= until && hourUsed(fg) >= d * 60000L) guardApp(fg, sl, FREE_USED);
     }
 
-    private void show(String key, String q) {
+    private boolean show(String key, String q) {
         long now = System.currentTimeMillis();
-        if (PauseActivity.showing) return;
-        if (key.equals(lastShownKey) && now - lastShownAt < 1200 && PauseActivity.closedAt < lastShownAt) return;
+        if (PauseActivity.showing) return false;
+        if (key.equals(lastShownKey) && now - lastShownAt < 1200 && PauseActivity.closedAt < lastShownAt) return false;
         lastShownKey = key;
         lastShownAt = now;
         Intent i = new Intent(this, PauseActivity.class)
@@ -175,6 +301,7 @@ public class GuardService extends AccessibilityService {
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK
                         | Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         startActivity(i);
+        return true;
     }
 
     private static String urlBarId(String pkg) {

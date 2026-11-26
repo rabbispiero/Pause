@@ -41,6 +41,26 @@
   .pill:disabled{opacity:.35}
   .glass{background:rgba(255,255,255,.16);color:#fff;border:1px solid #fff}
   .note{text-align:center;font-size:12px;opacity:.55;margin-top:14px;min-height:15px}
+  .wide{width:100%;margin-top:24px}
+  .optl{font-size:15px;opacity:.85;margin:18px 2px 10px;text-align:center}
+  .times{display:flex;gap:8px}
+  .times .pill{flex:1;font-size:16px;padding:0}
+  .today{margin:4px 0 0}
+  .today b{display:block;font-size:44px;font-weight:300;line-height:1}
+  .today span{font-size:15px;opacity:.8}
+  .idea{display:inline-flex;align-items:center;gap:8px;margin:16px 0 0;padding:9px 14px;border-radius:16px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);font-size:15px}
+  .idea svg{width:18px;height:18px;flex:none}
+  html.day .idea{background:rgba(255,255,255,.7);border-color:rgba(20,26,46,.15)}
+  .hero .nums{display:flex;gap:28px}
+  .hero .nums .n{font-size:36px}
+  .closedbar{position:fixed;left:16px;right:16px;bottom:max(18px,env(safe-area-inset-bottom));max-width:488px;margin:0 auto;display:flex;align-items:center;gap:12px;background:#141A2E;color:#fff;border-radius:20px;padding:12px 16px;box-shadow:0 10px 30px rgba(0,0,0,.25);z-index:5}
+  .closedbar svg{width:20px;height:20px;flex:none;color:#3FCFB7}
+  .closedbar b{display:block;font-size:15px;font-weight:600}
+  .closedbar span{font-size:13px;color:#C9D1E6}
+  .appnums{display:flex;gap:30px;padding:16px 20px!important}
+  .appnums .n{font-size:28px;font-weight:300;line-height:1}
+  .appnums .l{font-size:13px;color:var(--sub);margin-top:6px}
+  .ssub2{font-size:13px;color:var(--sub);margin-top:8px}
   /* blocked */
   #blocked .lbl{letter-spacing:3px;opacity:.6;font-size:18px;font-weight:500}
   #bTime{font-size:120px;font-weight:200;line-height:1;margin:10px 0 6px}
@@ -242,23 +262,23 @@
   <div id="afterImg"></div>
   <div class="inner">
     <p id="msg" class="serif"></p>
-    <div id="stat" style="font-size:14px;opacity:.7"></div>
+    <div class="today" id="today" style="display:none"><b id="todayN"></b><span id="todayL"></span></div>
+    <div class="idea" id="idea" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c0-8 6-14 15-14 0 9-6 15-14 15"/><path d="M5 19l7-7"/></svg><span id="ideaT"></span></div>
     <div id="askBox" style="display:none;margin-top:22px">
       <div id="askQ" style="font-size:16px;font-weight:600;margin-bottom:10px"></div>
       <input id="askA" placeholder="Type your answer" autocomplete="off" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.35)">
     </div>
-    <div class="row">
-      <button class="pill white" id="never">Never mind</button>
-      <button class="pill glass" id="open">Open it</button>
-    </div>
-    <div class="note" id="afterNote"><span id="letNote"></span></div>
+    <button class="pill glass wide" id="never">Never mind</button>
+    <div class="optl" id="openL">Or open it for</div>
+    <div class="times" id="times"><button class="pill glass" data-m="5">5 min</button><button class="pill glass" data-m="10">10 min</button><button class="pill glass" data-m="15">15 min</button><button class="pill glass" data-m="30">30 min</button></div>
+    <div class="note" id="afterNote"></div>
   </div>
 </section>
 
 <!-- 3. blocked -->
 <section id="blocked" class="screen">
   <div class="stars" id="stars"></div>
-  <div class="lbl">Off until</div>
+  <div class="lbl" id="bLbl">Off until</div>
   <div id="bTime">8:30</div>
   <div id="bAmpm">PM TONIGHT</div>
   <div class="bar"><i id="bBar"></i></div>
@@ -279,7 +299,7 @@
   </div>
   <div class="card hero" id="hero">
     <svg class="ring2" viewBox="0 0 64 64"><defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34D399"/><stop offset="1" stop-color="#3B82F6"/></linearGradient></defs><circle cx="32" cy="32" r="28" style="fill:var(--trk)"/><path d="M32 32V4a28 28 0 1 1-28 28z" fill="url(#hg)"/><circle cx="32" cy="32" r="7" style="fill:var(--heroc)"/></svg>
-    <div><div class="n" id="heroN">0</div><div class="l" id="heroL">pauses today</div></div>
+    <div class="nums"><div><div class="n" id="heroN">0</div><div class="l" id="heroL">pauses</div></div><div><div class="n" id="heroS">0 min</div><div class="l">time saved</div></div></div>
   </div>
   <div class="card" id="breakOn" style="display:none;padding:16px;margin-bottom:6px;border:1px solid var(--glow)">
     <div style="font-size:18px;font-weight:600">On a break until <span id="breakTxt"></span></div>
@@ -292,6 +312,7 @@
     <button class="tile" id="breakBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg><b id="breakLbl">Take a break</b></button>
     <button class="tile" id="moreBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg><b>Settings</b></button>
   </div>
+  <div class="closedbar" id="closedBar" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><div><b id="cbT"></b><span id="cbS"></span></div></div>
  </div>
 
  <div class="pg" id="setupPg"><div id="setupBody"></div></div>
@@ -317,9 +338,7 @@
   <div class="card">
     <div class="srow"><div class="lb">Pause length <b class="val" id="lenVal"></b></div>
       <div id="len"></div></div>
-    <div class="srow"><div class="lb">Open it lets you in for</div>
-      <div class="seg" id="letin"><button data-m="5">5 min</button><button data-m="10">10 min</button><button data-m="15">15 min</button></div></div>
-    <div class="srow flat"><div class="t"><div>Ask a question first</div><div>You answer before Open it works</div></div><button class="tog" id="askTog" aria-label="Ask a question"><i></i></button></div>
+    <div class="srow flat"><div class="t"><div>Ask a question first</div><div>You answer before you can open the app</div></div><button class="tog" id="askTog" aria-label="Ask a question"><i></i></button></div>
     <div class="srow" id="askRow"><div class="lb">Your question <span>Use {app} for the app’s name</span></div><input id="askIn" placeholder="Why are you going on {app} now?"></div>
   </div>
   <div class="cap">More</div>
@@ -355,6 +374,7 @@
   <div class="grp" id="picsGrp">What you see after the pause. You can give one app its own on that app’s page.</div>
   <div class="card">
     <div class="srow flat" id="shufRow"><div class="t"><div>Shuffle</div><div>A different picture and message each time</div></div><button class="tog" id="shuf" aria-label="Shuffle"><i></i></button></div>
+    <div class="srow flat" id="ideaRow"><div class="t"><div>Ideas to do instead</div><div>One small idea after the pause, like a short walk</div></div><button class="tog" id="ideaTog" aria-label="Ideas to do instead"><i></i></button></div>
     <div class="srow flat" id="ownRow"><div class="t"><div>Use its own</div><div>When off, you see your default pictures and messages</div></div><button class="tog" id="ownTog" aria-label="Use its own"><i></i></button></div>
     <div id="picsBody">
       <div class="srow"><div class="lb">Pictures</div><div class="thumbs" id="pics" style="flex-wrap:wrap;padding:0"></div>
@@ -407,7 +427,7 @@
   var KEY = "pause.v1";
   var LVN={normal:"Easy", hard:"Hard", strict:"Locked"}, ICONS={}, ALLAPPS=null;
   var NAT = !!(window.Android && window.Android.save);
-  var DEF = {apps:NAT?[]:["Instagram","YouTube"], sites:[], allow:{}, seconds:3, letin:10, log:{}, shuffle:true, askOn:false, askQ:"Why are you going on {app} now?", messages:["Remember why\nyou put it down."], block:null, hook:"", closed:{}, level:{}, hardCool:15, hardFrom:"09:00", hardTo:"21:00", pending:[], pkgs:{}, per:{}};
+  var DEF = {apps:NAT?[]:["Instagram","YouTube"], sites:[], allow:{}, seconds:3, letin:10, log:{}, shuffle:true, askOn:false, askQ:"Why are you going on {app} now?", messages:["Remember why\nyou put it down."], block:null, hook:"", closed:{}, level:{}, hardCool:15, hardFrom:"09:00", hardTo:"21:00", pending:[], pkgs:{}, per:{}, parts:{}, pauseOff:false, delay:0, ideasOn:true, hist:{}, total:{p:0,nm:0}, lastPick:{}};
   function load(){ try{ var s=JSON.parse(localStorage.getItem(KEY)); return Object.assign({},DEF,s||{}); }catch(e){ return Object.assign({},DEF); } }
   function save(){ var j=JSON.stringify(S); try{ localStorage.setItem(KEY, j); }catch(e){} if(NAT){ try{ Android.save(j); }catch(e){} } }
   var S = load();
@@ -415,7 +435,7 @@
   var $ = function(id){ return document.getElementById(id); };
   function applyLook(){ var day=S.look!=="night"; document.documentElement.classList.toggle("day", day); var m=document.querySelector('meta[name="theme-color"]'); if(m) m.setAttribute("content", day?"#F4F6FB":"#0D1226"); if(NAT){ try{ Android.look(day?"day":"night"); }catch(e){} } }
   applyLook();
-  S.closed=S.closed||{}; S.level=S.level||{}; S.per=S.per||{};
+  S.closed=S.closed||{}; S.level=S.level||{}; S.per=S.per||{}; S.parts=S.parts||{}; S.hist=S.hist||{}; S.total=S.total||{p:0,nm:0}; S.lastPick=S.lastPick||{};
   if(S.strict){ Object.keys(S.strict).forEach(function(k){ var w=S.strict[k]; if(w&&w.from){ S.closed[k]=(S.closed[k]||[]).concat([{from:w.from,to:w.to,days:[0,1,2,3,4,5,6]}]); } if(w) S.level[k]="strict"; }); delete S.strict; }
   if(S.pending && S.pending.some(function(p){ return !p.op || !p.op.k || ["rm","set","hardCfg","per"].indexOf(p.op.k)<0; })) S.pending=[];
   S.pending=(S.pending||[]).filter(function(p){ return p.op.k!=="hardCfg"; }); delete S.waitH;
@@ -466,6 +486,28 @@
   var DN=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
   function daysTxt(ds){ ds=(ds||ALL).slice().sort(); if(ds.length===7) return "every day"; if(ds.join()==="1,2,3,4,5") return "Mon to Fri"; if(ds.join()==="0,6") return "weekends"; return ds.map(function(d){return DN[d]}).join(", "); }
   function winTxt(w){ return t12(w.from)+" to "+t12(w.to)+", "+daysTxt(w.days); }
+  // parts of an app you can close on their own, found by the app's package (or its name on the web)
+  var PARTS={"com.instagram.android":[["reels","Reels","Reels are"],["stories","Stories","Stories are"]],
+    "com.whatsapp":[["status","Status (Updates tab)","Status is"]], "com.whatsapp.w4b":[["status","Status (Updates tab)","Status is"]],
+    "com.google.android.youtube":[["shorts","Shorts","Shorts are"]]};
+  var PARTSBYNAME={instagram:"com.instagram.android", whatsapp:"com.whatsapp", youtube:"com.google.android.youtube"};
+  function partsOf(key){ if(key.indexOf("app:")!==0) return []; var pk=pkgOf(key)||PARTSBYNAME[key.slice(4)]; return PARTS[pk]||[]; }
+  function partWins(key, part){ return ((S.parts[key]||{})[part])||[]; }
+  function closedParts(key, d){ d=d||new Date(); return partsOf(key).filter(function(p){ return closedAt(partWins(key,p[0]), d); }); }
+  function pOff(key){ return key.indexOf("app:")===0 && !!per(key).pauseOff; }
+  function delayOf(key){ return key.indexOf("app:")===0 ? (+per(key).delay||0) : 0; }
+  // counts: pauses and Never minds per app per day, kept for a week, and all-time totals
+  var SAVED_MIN=3;
+  function dayKey(t){ var d=new Date(t||Date.now()); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
+  function hist(){ var k=dayKey(), keep=[]; for(var i=0;i<8;i++) keep.push(dayKey(Date.now()-i*864e5));
+    Object.keys(S.hist).forEach(function(d){ if(keep.indexOf(d)<0) delete S.hist[d]; });
+    return S.hist[k]||(S.hist[k]={n:{},nm:{}}); }
+  function weekOf(id){ var p=0,nm=0; for(var i=0;i<7;i++){ var h=S.hist[dayKey(Date.now()-i*864e5)]; if(h){ p+=h.n[id]||0; nm+=h.nm[id]||0; } } return {p:p, saved:nm*SAVED_MIN}; }
+  function markNever(id){ var h=hist(); h.nm[id]=(h.nm[id]||0)+1; S.total.nm=(S.total.nm||0)+1; save(); }
+  function durTxt(m){ m=Math.max(0,Math.round(m)); if(m<60) return m+" min"; var h=m/60; return (h>=10?Math.round(h):Math.round(h*10)/10)+" h"; }
+  function spentTxt(m){ return m>=60 ? Math.floor(m/60)+" h "+(m%60)+" min" : m+" min"; }
+  function idOf(key){ return key.indexOf("app:")===0 ? key.slice(4) : slug(key.slice(5)); }
+  var IDEAS=["Go for a 5 minute walk","Drink a glass of water","Stretch for one minute","Learn something for 2 minutes","Text someone you love","Read one page of a book","Step outside for fresh air","Tidy one small thing","Write down one thing you’re grateful for","Take three slow breaths"];
   // a global setting getting easier: only blocked during a block
   function globalLoosen(fn){ if(blockOn()){ toast("Locked until "+untilTxt()); return false; } fn(); save(); return true; }
   // an item getting easier, by its level
@@ -489,8 +531,9 @@
     });
   }
   function applyOp(op){
-    if(op.k==="rm"){ if(lv(op.key)==="strict") return; if(op.kind==="app") S.apps=S.apps.filter(function(x){ return slug(x)!==slug(op.v); }); else S.sites=(S.sites||[]).filter(function(x){ return x!==op.v; }); delete S.closed[op.key]; delete S.level[op.key]; delete S.per[op.key]; dropScope(op.key); }
-    if(op.k==="set"){ if(lv(op.key)==="strict") return; if(op.closed.length) S.closed[op.key]=op.closed; else delete S.closed[op.key]; if(op.level==="normal") delete S.level[op.key]; else S.level[op.key]=op.level; }
+    if(op.k==="rm"){ if(lv(op.key)==="strict") return; if(op.kind==="app") S.apps=S.apps.filter(function(x){ return slug(x)!==slug(op.v); }); else S.sites=(S.sites||[]).filter(function(x){ return x!==op.v; }); delete S.closed[op.key]; delete S.level[op.key]; delete S.per[op.key]; delete S.parts[op.key]; dropScope(op.key); }
+    if(op.k==="set"){ if(lv(op.key)==="strict") return; if(op.closed.length) S.closed[op.key]=op.closed; else delete S.closed[op.key]; if(op.level==="normal") delete S.level[op.key]; else S.level[op.key]=op.level;
+      if(op.parts!==undefined){ if(Object.keys(op.parts).length) S.parts[op.key]=op.parts; else delete S.parts[op.key]; } }
     if(op.k==="per"){ if(lv(op.key)==="strict") return; setPer(op.key, op.f, op.v); }
   }
   // due changes happen on their own; they wait while a block is on
@@ -518,18 +561,18 @@
   function show(id){ ["pause","after","blocked"].forEach(function(s){ $(s).classList.toggle("on", s===id); }); }
 
   var params = new URLSearchParams(location.search);
-  var appParam = params.get("app"), siteParam = params.get("site");
+  var appParam = params.get("app"), siteParam = params.get("site"), partParam = params.get("part");
   function host(v){ return String(v||"").trim().toLowerCase().replace(/^[a-z]+:\/\//,"").replace(/^www\./,"").split(/[\/?#\s]/)[0]; }
   function today(){ var d=new Date(); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
   // count every time the pause page opens for an app or site, per day
   function countOpen(id){
     var L=S.log||{}; if(L.day!==today()) L={day:today(), n:{}, last:{}};
-    if(!(L.last[id] && Date.now()-L.last[id] < 4000)) L.n[id]=(L.n[id]||0)+1;
+    if(!(L.last[id] && Date.now()-L.last[id] < 4000)){ L.n[id]=(L.n[id]||0)+1; var h=hist(); h.n[id]=(h.n[id]||0)+1; S.total.p=(S.total.p||0)+1; }
     L.last[id]=Date.now(); S.log=L; save(); return L.n[id];
   }
   function ord(n){ var s=["th","st","nd","rd"], v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); }
 
-  if(siteParam && host(siteParam)){ runSite(host(siteParam)); } else if(appParam){ runPause(appParam); } else { runSettings(); }
+  if(siteParam && host(siteParam)){ runSite(host(siteParam)); } else if(appParam && partParam){ runPart(appParam, partParam); } else if(appParam){ runPause(appParam); } else { runSettings(); }
 
   function runSite(h){
     S.allow = S.allow||{};
@@ -544,43 +587,57 @@
 
   function runPause(p, site){
     var name = site || appName(p), id = slug(p);
-    var times = countOpen(id);
-    var spent = parseInt(params.get("spent"),10);
-    var stat = ord(times)+" time today" + (spent>=0 ? " \u00b7 "+(spent>=60? Math.floor(spent/60)+" h "+(spent%60)+" min" : spent+" min")+" in "+name+" today" : "");
+    if(!params.get("up") && !params.get("free")) countOpen(id);
     document.title = "Pause · "+name;
     var key = (site?"site:":"app:")+(site||slug(p)), cl = S.closed[key];
     if(closedAt(cl, new Date())){ return showBlocked(name, span(cl), lv(key)==="strict" ? "Locked" : "Closed hours"); }
     if(S.block && Date.now() < S.block.until){ return showBlocked(name, S.block); }
     $("before").textContent = "before "+name;
-    $("open").textContent = "Open it";
     var n = Math.max(1, Math.min(10, eff(key,"seconds")|0)), arc=$("arc"), C=2*Math.PI*60;
     arc.style.strokeDasharray = C; arc.style.strokeDashoffset = C; arc.style.transitionDuration = n+"s";
     $("count").textContent = n;
     show("pause");
     requestAnimationFrame(function(){ requestAnimationFrame(function(){ arc.style.strokeDashoffset = 0; }); });
-    var left = n, tick = setInterval(function(){ left--; if(left>0){ $("count").textContent=left; } else { clearInterval(tick); afterPause(name,id,site,stat,key); } }, 1000);
+    var left = n, tick = setInterval(function(){ left--; if(left>0){ $("count").textContent=left; } else { clearInterval(tick); afterPause(name,id,site,key); } }, 1000);
   }
 
-  function afterPause(name,id,site,stat,key){
+  function afterPause(name,id,site,key){
+    var up=!!params.get("up"), free=parseInt(params.get("free"),10)||0, last=+S.lastPick[id]||0;
     var msgs = effMsgs(key).filter(function(m){ return m.trim(); });
-    $("msg").textContent = pick(msgs) || "";
-    $("stat").textContent = stat;
-    var lt=+eff(key,"letin"), mins = [5,10,15].indexOf(lt)>=0 ? lt : 10;
-    if(eff(key,"askOn")){
+    $("msg").textContent = free ? (free===1 ? "Your free minute\nis up." : "Your "+free+" free minutes\nare up.")
+                         : up ? (last ? "Your "+last+" minutes\nare up." : "Your time\nis up.") : (pick(msgs) || "");
+    var spent = parseInt(params.get("spent"),10);
+    if(!site && spent>=0){ $("todayN").textContent=spentTxt(spent); $("todayL").textContent="on "+name+" today"; $("today").style.display=""; }
+    if(S.ideasOn!==false && !up && !free){ $("ideaT").textContent="Instead: "+IDEAS[Math.floor(Math.random()*IDEAS.length)].replace(/^./,function(c){return c.toLowerCase();}); $("idea").style.display=""; }
+    $("never").textContent = (up||free) ? "Close "+name : "Never mind";
+    $("openL").textContent = (up||free) ? "Or stay for" : "Or open "+name+" for";
+    var chips=[].slice.call($("times").children);
+    if(eff(key,"askOn") && !up && !free){
       $("askBox").style.display="";
       $("askQ").textContent = (effQ(key)||"Why are you opening {app} now?").replace(/\{app\}/g, name);
-      $("open").disabled = true;
-      $("askA").oninput = function(){ $("open").disabled = this.value.trim().length < 3; };
+      chips.forEach(function(c){ c.disabled=true; });
+      $("askA").oninput = function(){ var ok=this.value.trim().length >= 3; chips.forEach(function(c){ c.disabled=!ok; }); };
     }
-    $("letNote").textContent = "Lets you in for "+mins+" min";
     listPics(ownPics(key)?key:"").then(function(list){ var p=pick(list); if(p){ $("afterImg").style.backgroundImage = "url("+URL.createObjectURL(p.blob)+")"; } show("after"); });
-    $("never").onclick = function(){ if(fire("pause-home")) { $("afterNote").textContent = "Good choice."; } else { $("afterNote").textContent = "Good choice. You can close this page."; } };
-    if(NAT){ $("open").onclick = function(){ var u=capUntil((site?"site:"+site:"app:"+id), mins); $("afterNote").textContent = "Opening "+name+"…"; if(site){ S.allow[site]=u; save(); Android.openSite(site,u); } else Android.open(id,u); }; return; }
-    if(site){ $("open").onclick = function(){ S.allow[site]=Date.now()+mins*60000; save(); $("afterNote").textContent = "Opening "+site+"…"; location.href="https://"+site; }; return; }
-    $("open").onclick = function(){ if(fire("pause-open-"+id, "?minutes="+mins)) { $("afterNote").textContent = "Opening "+name+"…"; } else { $("afterNote").textContent = "Add your MacroDroid link in settings first."; } };
+    var saidNo=false;
+    $("never").onclick = function(){ if(!saidNo){ saidNo=true; markNever(id); } if(fire("pause-home")) { $("afterNote").textContent = "Good choice."; } else { $("afterNote").textContent = "Good choice. You can close this page."; } };
+    chips.forEach(function(c){ c.onclick=function(){ var mins=+c.dataset.m; S.lastPick[id]=mins; save(); openFor(mins); }; });
+    function openFor(mins){
+      if(NAT){ var u=capUntil((site?"site:"+site:"app:"+id), mins); $("afterNote").textContent = "Opening "+name+" for "+mins+" min…"; if(site){ S.allow[site]=u; save(); Android.openSite(site,u); } else Android.open(id,u); return; }
+      if(site){ S.allow[site]=Date.now()+mins*60000; save(); $("afterNote").textContent = "Opening "+site+"…"; location.href="https://"+site; return; }
+      if(fire("pause-open-"+id, "?minutes="+mins)) { $("afterNote").textContent = "Opening "+name+"…"; } else { $("afterNote").textContent = "Add your MacroDroid link in settings first."; }
+    }
   }
 
-  function showBlocked(name, B, auto){
+  // a closed part of an app (like Reels): say until when, then back to the rest of the app
+  function runPart(a, part){
+    var id=slug(a), key="app:"+id, name=appName(a), P=partsOf(key).filter(function(x){ return x[0]===part; })[0];
+    function back(){ if(NAT){ try{ Android.launch(id); }catch(e){ Android.home(); } } }
+    if(!P || !closedAt(partWins(key,part), new Date())) return back();
+    showBlocked(name, span(partWins(key,part)), null, {lbl:P[2]+" closed until", txt:["The rest of "+name, "is still open."], btn:"Back to "+name, go:back});
+  }
+
+  function showBlocked(name, B, auto, part){
     var u = new Date(B.until), f = fmt(u), now = new Date();
     $("bTime").textContent = f.t;
     var tomorrow = u.toDateString() !== now.toDateString();
@@ -590,9 +647,11 @@
     $("bStart").textContent = fmt(new Date(B.from)).t;
     var mins = Math.ceil((B.until - Date.now())/60000), h = Math.floor(mins/60), m = mins%60;
     $("bLeft").textContent = (h? h+" h ":"") + m + " min left";
-    $("bApp").innerHTML = ""; $("bApp").append(name+" has no open button", document.createElement("br"), "until then.");
+    $("bApp").innerHTML = "";
+    if(part){ $("bLbl").textContent=part.lbl; $("bApp").append(part.txt[0], document.createElement("br"), part.txt[1]); $("bHome").textContent=part.btn; }
+    else $("bApp").append(name+" has no open button", document.createElement("br"), "until then.");
     var st=$("stars"); [[15,12],[82,18],[28,26],[74,10],[52,16],[10,36],[90,33]].forEach(function(p){ var i=document.createElement("i"); i.style.left=p[0]+"%"; i.style.top=p[1]+"%"; st.appendChild(i); });
-    $("bHome").onclick = function(){ if(!fire("pause-home")) $("bNote").textContent = "You can close this page."; };
+    $("bHome").onclick = part ? part.go : function(){ if(!fire("pause-home")) $("bNote").textContent = "You can close this page."; };
     if(auto){ $("bNote").textContent = auto+". Going back home…"; setTimeout(function(){ if(!fire("pause-home")) $("bNote").textContent = auto+". You can close this page."; }, 4000); }
     show("blocked");
   }
@@ -607,7 +666,9 @@
   function rmOpOf(key){ return key.indexOf("site:")===0 ? {k:"rm", kind:"site", v:key.slice(5), key:key} : {k:"rm", kind:"app", v:nameOf(key), key:key}; }
   function describe(key){ var cl=S.closed[key]||[], L=lv(key), out=[];
     if(cl.length) out.push(cl.length===1 ? "Closed "+t12(cl[0].from)+" to "+t12(cl[0].to)+(cl[0].days&&cl[0].days.length<7?", "+daysTxt(cl[0].days):"") : "Closed hours: "+cl.length+" times");
-    else out.push("Pauses "+eff(key,"seconds")+" sec first");
+    else if(pOff(key)) out.push("No pause when it opens");
+    else out.push(delayOf(key) ? "Pauses after "+delayOf(key)+" min" : "Pauses "+eff(key,"seconds")+" sec first");
+    var cp=closedParts(key); if(cp.length) out.push(cp.map(function(x){ return x[1].replace(/ \(.*\)$/,""); }).join(" and ")+" closed now");
     if(L!=="normal") out.push(LVN[L]);
     return out.join(" · "); }
   function ask(text, yes, cb){ $("askTxt").textContent=text; $("askYes").textContent=yes; $("askSh").classList.add("on");
@@ -628,10 +689,10 @@
   function runSettings(){
     $("settings").classList.add("on");
     if(NAT){ var before=S.apps.length; S.apps=S.apps.filter(function(x){ var k="app:"+slug(x); return (S.pkgs||{})[slug(x)] || lv(k)!=="normal"; }); if(S.apps.length!==before) save(); }
-    renderLook(); renderLen(); renderLet(); renderBlock();
+    renderLook(); renderLen(); renderBlock();
     renderMsgs(); renderShuf(); renderPending(); renderSites();
     window.__rerender=function(){ renderApps(); renderSites(); renderPending(); if(location.hash.indexOf("#app/")===0) route(); };
-    setInterval(function(){ if(applyDue()){ window.__rerender(); } renderPending(); renderBlock(); }, 30000);
+    setInterval(function(){ if(applyDue()){ window.__rerender(); } renderPending(); renderBlock(); if(location.hash===""||location.hash==="#") renderApps(); }, 30000);
     [].forEach.call(document.querySelectorAll("[data-back]"),function(b){ b.onclick=function(){ history.back(); }; });
     $("addApp").onclick=function(){ go("pick"); };
     $("moreBtn").onclick=function(){ go("more"); };
@@ -646,6 +707,9 @@
     function askPaint(){ $("askTog").classList.toggle("on", !!S.askOn); $("askRow").style.display = S.askOn ? "" : "none"; }
     askPaint(); $("askTog").onclick = function(){ if(S.askOn){ globalLoosen(function(){ S.askOn=false; }); askPaint(); return; } S.askOn=true; save(); askPaint(); };
     $("shuf").onclick = function(){ S.shuffle=!S.shuffle; save(); renderShuf(); };
+    $("ideaTog").onclick = function(){ S.ideasOn = S.ideasOn===false; save(); renderShuf(); };
+    // the pause screen counts pauses in its own page: pick those up when you come back here
+    document.addEventListener("visibilitychange", function(){ if(document.hidden) return; var f=load(); ["log","hist","total","lastPick"].forEach(function(k){ if(f[k]) S[k]=f[k]; }); if(location.hash===""||location.hash==="#") renderApps(); });
     $("hook").value = S.hook; $("hook").oninput = function(){ S.hook=this.value.trim(); save(); };
     $("addSite").onclick = function(){ var v=host($("newSite").value); if(!v || v.indexOf(".")<0) return toast("Type a website, like youtube.com"); S.sites=S.sites||[]; if(S.sites.indexOf(v)>=0) return toast("Already added"); S.sites.push(v); save(); $("newSite").value=""; renderSites(); };
     $("newSite").onkeydown = function(e){ if(e.key==="Enter") $("addSite").click(); };
@@ -672,10 +736,26 @@
     if(!S.apps.length){ var e=document.createElement("div"); e.className="empty"; e.textContent="No apps yet. Tap the button below to choose."; box.appendChild(e); }
     S.apps.forEach(function(a){ var key="app:"+slug(a); box.appendChild(itemRow(a, key, pkgOf(key))); });
     var hr=new Date().getHours(); $("hello").textContent = hr<5?"Good night":hr<12?"Good morning":hr<17?"Good afternoon":hr<21?"Good evening":"Good night";
-    var L=S.log||{}, n=0; if(L.day===today()) for(var k in L.n) n+=L.n[k];
-    $("heroN").textContent=n; $("heroL").textContent=(n===1?"pause":"pauses")+" today · "+S.apps.length+" app"+(S.apps.length===1?"":"s")+" watched";
+    var tp=+S.total.p||0; $("heroN").textContent=tp; $("heroL").textContent=tp===1?"pause":"pauses"; $("heroS").textContent=durTxt((+S.total.nm||0)*SAVED_MIN);
+    renderClosedBar();
     var all=S.apps.concat(S.sites||[]);
     $("blkTitle").textContent = (all.length? "Your paused apps" : "All your paused apps")+" stay closed until:";
+  }
+  // a strip at the bottom of home, only while something is closed (not during a break, which has its own card)
+  function untilWord(t){ var u=new Date(t), f=fmt(u), tm=u.toDateString()!==new Date().toDateString(); return f.t+" "+f.ap+(tm?" tomorrow":""); }
+  function renderClosedBar(){
+    var list=[], now=new Date();
+    if(!blockOn()){
+      S.apps.forEach(function(a){ var key="app:"+slug(a), cl=S.closed[key];
+        if(closedAt(cl,now)) list.push({t:a+" closed until "+untilWord(span(cl).until), s:a+" too"});
+        else closedParts(key,now).forEach(function(x){ var nm=x[1].replace(/ \(.*\)$/,""); list.push({t:a+" "+nm+" closed until "+untilWord(span(partWins(key,x[0])).until), s:a+" "+nm.toLowerCase()+" too"}); }); });
+      (S.sites||[]).forEach(function(h){ var cl=S.closed["site:"+h]; if(closedAt(cl,now)) list.push({t:h+" closed until "+untilWord(span(cl).until), s:h+" too"}); });
+    }
+    $("closedBar").style.display=list.length?"":"none"; $("home").style.paddingBottom=list.length?"90px":"";
+    if(!list.length) return;
+    $("cbT").textContent=list[0].t;
+    $("cbS").textContent= list.length===1 ? "" : list.length===2 ? list[1].s : "And "+(list.length-1)+" more";
+    $("cbS").style.display=list.length===1?"none":"";
   }
   function itemRow(name, key, pkg){
     var r=document.createElement("button"); r.className="arow";
@@ -791,7 +871,31 @@
     if(!isSite && !S.apps.some(function(a){ return "app:"+slug(a)===key; }) || isSite && (S.sites||[]).indexOf(key.slice(5))<0){ var g=document.createElement("div"); g.className="empty"; g.textContent="This one isn't paused any more."; body.appendChild(g); return; }
     var hd=document.createElement("div"); hd.className="head"; var b=document.createElement("b"); b.textContent=name; hd.append(iconFor(name,pkgOf(key)),b); body.appendChild(hd);
     var w0=cl[0]?JSON.parse(JSON.stringify(cl[0])):{from:"22:00",to:"07:00",days:ALL.slice()}, hasHours=cl.length>0, lvl=L;
+    var wk=weekOf(idOf(key)), nb=el("div","card appnums"), n1=el("div"), n2=el("div");
+    n1.append(el("div","n",String(wk.p)), el("div","l",(wk.p===1?"pause":"pauses")+" this week")); n2.append(el("div","n",durTxt(wk.saved)), el("div","l","time saved")); nb.append(n1,n2); body.appendChild(nb);
     var ob=el("div"); ob.id="ownBox"; body.appendChild(ob); drawOwn(key, name, ob);
+    var PL=partsOf(key), oldParts=S.parts[key]||{}, pd={};
+    PL.forEach(function(x){ var w=(oldParts[x[0]]||[])[0]; pd[x[0]]={on:!!w, w:w?JSON.parse(JSON.stringify(w)):{from:"09:00",to:"21:00",days:ALL.slice()}}; });
+    if(PL.length){
+      body.appendChild(el("div","cap","Close parts of "+name));
+      var pg0=el("div","grp","Close one part at the times you pick. The rest of "+name+" stays open."); pg0.style.marginTop="0"; body.appendChild(pg0);
+      var pc=el("div","card"); body.appendChild(pc);
+      PL.forEach(function(x){ var D=pd[x[0]];
+        var r=el("div","srow flat"), t=el("div","t"), t2=el("div"); t.append(el("div",null,x[1]), t2);
+        var tg=el("button","tog"+(D.on?" on":"")); tg.setAttribute("aria-label","Close "+x[1]); tg.innerHTML="<i></i>"; r.append(t,tg); pc.appendChild(r);
+        var hb=el("div","srow"); hb.style.paddingTop="0";
+        var ln=el("div","sline"); ln.style.fontSize="16px"; var a1=el("input"), a2=el("input"); a1.type=a2.type="time"; a1.value=D.w.from; a2.value=D.w.to;
+        function sub(){ t2.textContent = D.on ? "Closed "+winTxt(D.w) : "Open any time"; }
+        a1.oninput=function(){ D.w.from=this.value; sub(); }; a2.oninput=function(){ D.w.to=this.value; sub(); };
+        ln.append(el("span",null,"From"),a1,el("span",null,"to"),a2);
+        var dd=el("div","days"); dd.style.marginTop="12px";
+        "SMTWTFS".split("").forEach(function(ch,d){ var bb=el("button",null,ch); bb.setAttribute("aria-label",DN[d]); bb.classList.toggle("sel", D.w.days.indexOf(d)>=0);
+          bb.onclick=function(){ var i=D.w.days.indexOf(d); if(i>=0) D.w.days.splice(i,1); else D.w.days.push(d); bb.classList.toggle("sel", i<0); sub(); }; dd.appendChild(bb); });
+        hb.append(ln,dd); hb.style.display=D.on?"":"none"; pc.appendChild(hb);
+        tg.onclick=function(){ D.on=!D.on; tg.classList.toggle("on",D.on); hb.style.display=D.on?"":"none"; sub(); };
+        sub(); });
+      var pn=el("div","help","Pause spots these parts by how the app looks. If "+name+" changes its look in an update, this may stop working until Pause is updated."); pn.style.margin="10px 8px 0"; body.appendChild(pn);
+    }
 
     var c1=document.createElement("div"); c1.className="cap"; c1.textContent="Closed hours"; body.appendChild(c1);
     var k1=document.createElement("div"); k1.className="card";
@@ -824,12 +928,16 @@
     sv.onclick=function(){
       var draft = hasHours ? [w0].concat(cl.slice(1)) : [];
       if(hasHours){ if(!w0.from||!w0.to||w0.from===w0.to) return toast("Pick two different times"); if(!w0.days.length) return toast("Pick at least one day"); }
-      var looser = RANK[lvl]<RANK[L] || !coversAll(draft, cl);
-      var setOp={k:"set", key:key, closed:draft, level:lvl};
+      var np={}, partsLooser=false;
+      for(var pi=0;pi<PL.length;pi++){ var px=PL[pi][0], D=pd[px];
+        if(D.on){ if(!D.w.from||!D.w.to||D.w.from===D.w.to) return toast(PL[pi][1]+": pick two different times"); if(!D.w.days.length) return toast(PL[pi][1]+": pick at least one day"); np[px]=[D.w]; }
+        if(!coversAll(np[px]||[], oldParts[px]||[])) partsLooser=true; }
+      var looser = RANK[lvl]<RANK[L] || !coversAll(draft, cl) || partsLooser;
+      var setOp={k:"set", key:key, closed:draft, level:lvl, parts:np};
       function apply(){ applyOp(setOp); save(); toast("Saved"); history.back(); }
       if(!looser && lvl==="strict" && L!=="strict") return ask("Lock "+name+" for good? You won't be able to make it easier, remove it, or shorten its closed hours. There is no undo.", "Yes, lock it", apply);
       if(!looser) return apply();
-      if(L==="strict") return toast(RANK[lvl]<RANK[L] ? "Locked can't be made easier" : "Locked: closed hours can only get longer");
+      if(L==="strict") return toast(RANK[lvl]<RANK[L] ? "Locked can't be made easier" : "Locked: closed times can only get longer");
       itemLoosen(key, name, "Type this to change "+name, apply, setOp);
     };
   }
@@ -840,18 +948,25 @@
     var g=el("div","grp","Default uses what you picked in Settings. Pick a value to give "+name+" its own."); g.style.marginTop="0"; body.appendChild(g);
     var k=el("div","card"); body.appendChild(k);
     function row(label, defTxt, opts, cur, f){
-      var r=el("div","srow"), lb=el("div","lb",label), sp=el("span",null,"Your default: "+defTxt); lb.appendChild(sp); r.appendChild(lb);
+      var r=el("div","srow"), lb=el("div","lb",label); if(defTxt!=null) lb.appendChild(el("span",null,"Your default: "+defTxt)); r.appendChild(lb);
       var sg=el("div","seg sm");
-      opts.forEach(function(o){ var b=el("button",null,o[0]); b.classList.toggle("sel", o[1]===cur); b.onclick=function(){ change(key, name, f, o[1]); }; sg.appendChild(b); });
+      opts.forEach(function(o){ var b=el("button",null,o[0]); b.classList.toggle("sel", o[1]===cur); b.onclick=function(){ if(o[1]!==cur) change(key, name, f, o[1]); }; sg.appendChild(b); });
       r.appendChild(sg); k.appendChild(r); return r;
     }
-    var p=per(key);
+    var p=per(key), isApp=key.indexOf("app:")===0;
+    if(isApp){
+      var off=pOff(key), pr=el("div","srow flat"), pt=el("div","t"); pt.append(el("div",null,"Pause when it opens"), el("div",null, off ? "Off: "+name+" opens right away" : "You see the pause before "+name+" opens"));
+      var pg=el("button","tog"+(off?"":" on")); pg.setAttribute("aria-label","Pause when it opens"); pg.innerHTML="<i></i>"; pg.onclick=function(){ change(key, name, "pauseOff", off?undefined:true); };
+      pr.append(pt,pg); k.appendChild(pr);
+      if(off){ var nv0=el("div","ssub2","You can still close parts of "+name+" below."); nv0.style.margin="0 0 12px"; if(partsOf(key).length) k.appendChild(nv0); return; }
+      var d=delayOf(key), wr=row("When it pauses", null, [["Right away",0],["After 1 min",1],["3 min",3],["5 min",5]], d, "delay");
+      wr.appendChild(el("div","ssub2", d ? "Use "+name+" freely for "+d+" min each hour, then the pause shows." : "The pause shows as soon as "+name+" opens."));
+    }
     var lr=el("div","srow"), ll=el("div","lb","Pause length "), lv=el("b","val"); ll.appendChild(lv); lr.appendChild(ll);
     var own=p.seconds!==undefined;
     lr.appendChild(secSlider(own?p.seconds:S.seconds, function(v, set){ if(v===eff(key,"seconds") && own) return; change(key, name, "seconds", v); if(eff(key,"seconds")!==v) set(eff(key,"seconds")); }, function(v){ lv.textContent = (!own && v===+S.seconds) ? v+" sec · your default" : v+" sec"; }));
     if(own){ var ud=el("button","usedef","Use your default ("+S.seconds+" sec)"); ud.onclick=function(){ change(key, name, "seconds", undefined); }; lr.appendChild(ud); }
     k.appendChild(lr);
-    row("Open it lets you in for", S.letin+" min", [["Default",undefined],["5 min",5],["10 min",10],["15 min",15]], p.letin, "letin");
     var qr=row("Ask a question first", S.askOn?"on":"off", [["Default",undefined],["On",true],["Off",false]], p.askOn, "askOn");
     if(p.askOn===true){ var qi=el("input"); qi.style.marginTop="10px"; qi.placeholder=String(S.askQ||"").replace(/\{app\}/g,name); qi.value=p.askQ||""; qi.oninput=function(){ setPer(key,"askQ", this.value.trim()?this.value:undefined); save(); }; qr.appendChild(qi); }
     var nv=el("button","srow flat"), tx=el("div","t"), t1=el("div",null,"Pictures and messages"), t2=el("div",null, ownPics(key) ? "You gave it its own" : "Uses your default pictures and messages");
@@ -861,13 +976,17 @@
   // one change to an app's own settings; making it easier goes through its lock
   function change(key, name, f, v){
     var before=eff(key,f), after=(v===undefined?S[f]:v);
-    var looser = f==="seconds" ? after<before : f==="letin" ? after>before : (!!before && !after);
+    if(f==="delay"){ before=delayOf(key); after=v||0; v=v||undefined; }
+    if(f==="pauseOff"){ before=pOff(key); after=!!v; }
+    var looser = f==="seconds" ? after<before : f==="letin"||f==="delay" ? after>before : f==="pauseOff" ? (after && !before) : (!!before && !after);
     var op={k:"per", key:key, f:f, v:v};
     function redo(){ var b=$("ownBox"); if(b){ b.innerHTML=""; drawOwn(key, name, b); } }
     function apply(){ applyOp(op); save(); redo(); }
     if(!looser){ setPer(key,f,v); save(); redo(); return; }
     var what = f==="seconds" ? "change "+name+"’s pause to "+(v===undefined?"your default":v+" sec")
              : f==="letin" ? "let you into "+name+" for "+(v===undefined?"your default time":v+" min")
+             : f==="delay" ? "let you use "+name+" for "+after+" min before the pause"
+             : f==="pauseOff" ? "turn off the pause for "+name
              : "stop asking a question before "+name;
     itemLoosen(key, name, "Type this to "+what, apply, op);
   }
@@ -879,7 +998,6 @@
       var c=document.createElement("button"); c.className="small ghost"; c.style.height="34px"; c.textContent="Cancel"; c.onclick=function(){ S.pending.splice(i,1); save(); renderPending(); };
       r.append(t,c); box.appendChild(r); }); }
 
-  function renderLet(){ [].forEach.call($("letin").children,function(b){ b.classList.toggle("sel", +b.dataset.m===+S.letin); b.onclick=function(){ var v=+b.dataset.m; if(v>S.letin){ globalLoosen(function(){ S.letin=v; }); renderLet(); return; } S.letin=v; save(); renderLet(); }; }); }
 
   function renderLook(){ var cur=S.look==="night"?"night":"day"; [].forEach.call($("look").children,function(b){ b.classList.toggle("sel", b.dataset.v===cur); b.onclick=function(){ S.look=b.dataset.v; save(); applyLook(); renderLook(); }; }); }
   // pause length slider: 1 to 5 sec take most of the track, drag past 5 for up to 10
@@ -922,7 +1040,7 @@
     var app=!!PSCOPE, nm=app?nameOf(PSCOPE):"";
     $("picsTtl").textContent = app ? nm+": pictures and messages" : "Pictures and messages";
     $("picsGrp").textContent = app ? "Turn on Use its own to give "+nm+" different pictures and messages." : "What you see after the pause. You can give one app its own on that app’s page.";
-    $("shufRow").style.display = app ? "none" : "";
+    $("shufRow").style.display = app ? "none" : ""; $("ideaRow").style.display = app ? "none" : "";
     $("ownRow").style.display = app ? "" : "none";
     var on = !app || ownPics(PSCOPE);
     $("ownTog").classList.toggle("on", app && ownPics(PSCOPE));
@@ -946,7 +1064,7 @@
       var t=document.createElement("textarea"); t.value=m; t.placeholder="Your message"; t.oninput=function(){ msgList(true)[i]=this.value; save(); };
       var x=document.createElement("button"); x.className="x"; x.textContent="×"; x.setAttribute("aria-label","Remove message"); x.onclick=function(){ msgList(true).splice(i,1); save(); renderMsgs(); };
       r.append(t,x); box.appendChild(r); }); }
-  function renderShuf(){ $("shuf").classList.toggle("on", !!S.shuffle); }
+  function renderShuf(){ $("shuf").classList.toggle("on", !!S.shuffle); $("ideaTog").classList.toggle("on", S.ideasOn!==false); }
 
   // keep phone photos small: max 1600px, jpeg
   function shrink(file){ return new Promise(function(res){ var img=new Image(), url=URL.createObjectURL(file); img.onload=function(){ var k=Math.min(1,1600/Math.max(img.width,img.height)); var c=document.createElement("canvas"); c.width=Math.round(img.width*k); c.height=Math.round(img.height*k); c.getContext("2d").drawImage(img,0,0,c.width,c.height); c.toBlob(function(b){ res(b||file); },"image/jpeg",0.85); }; img.onerror=function(){ res(file); }; img.src=url; }); }

@@ -97,7 +97,101 @@ final class Store {
         e.apply();
     }
 
-    static long spentMin(Context c, String pkg) {
-        return prefs(c).getLong("spent:" + day() + ":" + pkg, 0) / 60000;
+    static long spentMs(Context c, String pkg) {
+        return prefs(c).getLong("spent:" + day() + ":" + pkg, 0);
+    }
+
+    /** Start of the hour that time t falls in. */
+    static long hourStart(long t) {
+        Calendar d = Calendar.getInstance();
+        d.setTimeInMillis(t);
+        d.set(Calendar.MINUTE, 0);
+        d.set(Calendar.SECOND, 0);
+        d.set(Calendar.MILLISECOND, 0);
+        return d.getTimeInMillis();
+    }
+
+    /** Time in an app this hour, for "use first, pause later". */
+    static void addHour(Context c, String pkg, long start, long end) {
+        long hs = hourStart(end);
+        long ms = end - Math.max(start, hs);
+        if (ms <= 0 || ms > 3600_000L) return;
+        String k = "hour:" + hs + ":" + pkg;
+        SharedPreferences p = prefs(c);
+        SharedPreferences.Editor e = p.edit().putLong(k, p.getLong(k, 0) + ms);
+        String now = "hour:" + hs + ":";
+        for (String old : p.getAll().keySet()) if (old.startsWith("hour:") && !old.startsWith(now)) e.remove(old);
+        e.apply();
+    }
+
+    static long hourMs(Context c, String pkg) {
+        return prefs(c).getLong("hour:" + hourStart(System.currentTimeMillis()) + ":" + pkg, 0);
+    }
+
+    private static JSONObject per(Context c, String slug) {
+        JSONObject p = state(c).optJSONObject("per");
+        return p == null ? null : p.optJSONObject("app:" + slug);
+    }
+
+    /** "Pause when it opens" is off for this app. */
+    static boolean pauseOff(Context c, String slug) {
+        JSONObject p = per(c, slug);
+        return p != null && p.optBoolean("pauseOff", false);
+    }
+
+    /** Free minutes each hour before the pause shows. 0 means right away. */
+    static int delay(Context c, String slug) {
+        JSONObject p = per(c, slug);
+        return p == null ? 0 : Math.max(0, p.optInt("delay", 0));
+    }
+
+    static int mins(String t) {
+        try {
+            String[] p = t.split(":");
+            return Integer.parseInt(p[0]) * 60 + Integer.parseInt(p[1]);
+        } catch (Exception e) { return -1; }
+    }
+
+    /** Same rules as the screens: a window can run past midnight, and its days count from the start day. */
+    static boolean inWindow(JSONObject w, Calendar d) {
+        int a = mins(w.optString("from")), b = mins(w.optString("to"));
+        if (a < 0 || b < 0 || a == b) return false;
+        int m = d.get(Calendar.HOUR_OF_DAY) * 60 + d.get(Calendar.MINUTE);
+        int dow = d.get(Calendar.DAY_OF_WEEK) - 1;
+        JSONArray ds = w.optJSONArray("days");
+        boolean today = has(ds, dow), yesterday = has(ds, (dow + 6) % 7);
+        return a < b ? (today && m >= a && m < b) : ((m >= a && today) || (m < b && yesterday));
+    }
+
+    private static boolean has(JSONArray ds, int v) {
+        if (ds == null) return true;
+        for (int i = 0; i < ds.length(); i++) if (ds.optInt(i, -1) == v) return true;
+        return false;
+    }
+
+    static boolean closedNow(JSONArray list) {
+        if (list == null) return false;
+        Calendar now = Calendar.getInstance();
+        for (int i = 0; i < list.length(); i++) {
+            JSONObject w = list.optJSONObject(i);
+            if (w != null && inWindow(w, now)) return true;
+        }
+        return false;
+    }
+
+    /** On a break, or in this app's closed hours. */
+    static boolean appClosed(Context c, String slug) {
+        JSONObject s = state(c);
+        JSONObject b = s.optJSONObject("block");
+        if (b != null && b.optLong("until") > System.currentTimeMillis()) return true;
+        JSONObject cl = s.optJSONObject("closed");
+        return cl != null && closedNow(cl.optJSONArray("app:" + slug));
+    }
+
+    /** Closed times for one part of an app (like Reels), or null. */
+    static JSONArray partTimes(Context c, String slug, String part) {
+        JSONObject ps = state(c).optJSONObject("parts");
+        JSONObject p = ps == null ? null : ps.optJSONObject("app:" + slug);
+        return p == null ? null : p.optJSONArray(part);
     }
 }
