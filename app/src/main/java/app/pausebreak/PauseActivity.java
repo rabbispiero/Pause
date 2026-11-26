@@ -10,6 +10,7 @@ public class PauseActivity extends Activity {
     static volatile boolean showing;
     static volatile long closedAt;
     private WebView web;
+    private long shownAt;
 
     @Override
     protected void onCreate(Bundle b) {
@@ -24,6 +25,7 @@ public class PauseActivity extends Activity {
     }
 
     private void show(Intent i) {
+        shownAt = System.currentTimeMillis();
         String q = i.getStringExtra("q");
         if (web != null) web.destroy();
         web = Web.make(this, q == null ? "" : q);
@@ -44,6 +46,8 @@ public class PauseActivity extends Activity {
 
     @Override
     public void onBackPressed() {
+        // A back press that lands right as the page opens came from leaving the app, not from you
+        if (System.currentTimeMillis() - shownAt < 800) return;
         // Back means never mind
         startActivity(new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         finish();

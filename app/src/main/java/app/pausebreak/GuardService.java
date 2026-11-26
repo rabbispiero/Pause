@@ -193,8 +193,10 @@ public class GuardService extends AccessibilityService {
     }
 
     /** A closed part (like Reels) is on screen: go back out of it and say until when. */
+    private long partHoldUntil = 0;
+
     private void checkParts(String pkg) {
-        if (PauseActivity.showing) return;
+        if (PauseActivity.showing || System.currentTimeMillis() < partHoldUntil) return;
         String sl = Store.guardedApps(this).get(pkg);
         if (sl == null) return;
         AccessibilityNodeInfo root = null;
@@ -205,8 +207,12 @@ public class GuardService extends AccessibilityService {
                 if (root == null || root.getPackageName() == null || !pkg.equals(root.getPackageName().toString())) return;
             }
             if (onScreen(root, p[2].split(","), p[3])) {
+                // Leave the part first, then show the page once the back has landed in the app.
+                // Showing at once let the back press hit the page (or a second back fire) and the page got lost.
+                partHoldUntil = System.currentTimeMillis() + 1500;
                 performGlobalAction(GLOBAL_ACTION_BACK);
-                show("part:" + sl + ":" + p[1], "?app=" + Uri.encode(sl) + "&part=" + p[1]);
+                final String key = "part:" + sl + ":" + p[1], q = "?app=" + Uri.encode(sl) + "&part=" + p[1];
+                h.postDelayed(new Runnable() { public void run() { lastShownKey = ""; show(key, q); } }, 350);
                 return;
             }
         }
