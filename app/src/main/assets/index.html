@@ -182,6 +182,7 @@
   .opt.sel .dot{border:7px solid var(--acc)}
   .opt .tx div:first-child{font-size:17px;font-weight:600} .opt .tx div+div{font-size:14px;color:var(--sub);margin-top:3px;line-height:1.4}
   .head{display:flex;align-items:center;gap:14px;margin:6px 8px 16px} .head .aic{width:56px;height:56px;border-radius:15px;font-size:22px} .head b{font-size:26px;font-weight:600}
+  .minibtn{display:inline-block;margin:12px 0 0;padding:4px 0;background:none;color:var(--accT,var(--acc));font-size:14px;font-weight:600}
   .stick{position:sticky;bottom:0;padding:10px 0 16px;background:linear-gradient(to bottom,transparent,var(--bg) 30%)}
   .warn{color:#FF8A8A}
   /* modern look */
@@ -949,20 +950,28 @@
     var t1=document.createElement("div"); t1.className="blk"; var tt=document.createElement("div"); tt.className="t"; var ta=document.createElement("div"); ta.textContent="Don't let it open at certain times"; var tb=document.createElement("div"); tb.textContent="Like at night"; tt.append(ta,tb);
     var tg=document.createElement("button"); tg.className="tog"+(hasHours?" on":""); tg.setAttribute("aria-label","Closed hours"); tg.innerHTML="<i></i>"; t1.append(tt,tg); k1.appendChild(t1);
     var hrs=document.createElement("div"); hrs.style.padding="0 0 14px";
-    var line=document.createElement("div"); line.className="sline"; line.style.fontSize="16px";
-    var f1=document.createElement("input"); f1.type="time"; f1.value=w0.from; f1.oninput=function(){ w0.from=this.value; };
-    var f2=document.createElement("input"); f2.type="time"; f2.value=w0.to; f2.oninput=function(){ w0.to=this.value; };
-    var l1=document.createElement("span"); l1.textContent="From"; var l2=document.createElement("span"); l2.textContent="to"; line.append(l1,f1,l2,f2);
-    var dd=document.createElement("div"); dd.className="days"; dd.style.marginTop="12px";
-    "SMTWTFS".split("").forEach(function(ch,d){ var bb=document.createElement("button"); bb.textContent=ch; bb.setAttribute("aria-label",DN[d]); bb.classList.toggle("sel", w0.days.indexOf(d)>=0);
-      bb.onclick=function(){ var k=w0.days.indexOf(d); if(k>=0) w0.days.splice(k,1); else w0.days.push(d); bb.classList.toggle("sel", k<0); }; dd.appendChild(bb); });
-    hrs.append(line,dd); if(cl.length>1){ var more=document.createElement("div"); more.className="help"; more.style.margin="10px 0 0"; more.textContent="Plus "+(cl.length-1)+" more closed time"+(cl.length>2?"s":"")+", kept as they are."; hrs.appendChild(more); }
+    var ws = cl.length ? JSON.parse(JSON.stringify(cl)) : [w0];
+    function drawWins(){ hrs.innerHTML="";
+      ws.forEach(function(w,i){ var bx=el("div","win"); if(i) bx.style.cssText="border-top:1px solid var(--line);margin-top:14px;padding-top:14px";
+        var line=el("div","sline"); line.style.fontSize="16px";
+        var f1=el("input"), f2=el("input"); f1.type=f2.type="time"; f1.value=w.from; f2.value=w.to;
+        f1.oninput=function(){ w.from=this.value; }; f2.oninput=function(){ w.to=this.value; };
+        line.append(el("span",null,"From"),f1,el("span",null,"to"),f2);
+        var dd=el("div","days"); dd.style.marginTop="12px";
+        "SMTWTFS".split("").forEach(function(ch,d){ var bb=el("button",null,ch); bb.setAttribute("aria-label",DN[d]); bb.classList.toggle("sel", w.days.indexOf(d)>=0);
+          bb.onclick=function(){ var k=w.days.indexOf(d); if(k>=0) w.days.splice(k,1); else w.days.push(d); bb.classList.toggle("sel", k<0); }; dd.appendChild(bb); });
+        bx.append(line,dd);
+        if(ws.length>1){ var rmw=el("button","minibtn","Remove this time"); rmw.onclick=function(){ ws.splice(i,1); drawWins(); }; bx.appendChild(rmw); }
+        hrs.appendChild(bx); });
+      var add=el("button","minibtn","+ Add"); add.setAttribute("aria-label","Add another closed time");
+      add.onclick=function(){ ws.push({from:"09:00",to:"17:00",days:[1,2,3,4,5]}); drawWins(); }; hrs.appendChild(add); }
+    drawWins();
     hrs.style.display=hasHours?"":"none"; k1.appendChild(hrs); body.appendChild(k1);
     tg.onclick=function(){ hasHours=!hasHours; tg.classList.toggle("on",hasHours); hrs.style.display=hasHours?"":"none"; };
 
-    var c2=document.createElement("div"); c2.className="cap"; c2.textContent="How locked?"; body.appendChild(c2);
+    var c2=document.createElement("div"); c2.className="cap"; c2.textContent="How easy to change later?"; body.appendChild(c2);
     var k2=document.createElement("div"); k2.className="card";
-    var OPT={normal:["Easy","Change anything any time."], hard:["Hard","Type a code, then wait "+S.hardCool+" min."], strict:["Locked","Can only get stricter."]};
+    var OPT={normal:["Easy","Change anything any time."], hard:["Hard","Type a code, then wait "+S.hardCool+" min."], strict:["Locked","You can add limits, but never remove them."]};
     var opts={};
     ["normal","hard","strict"].forEach(function(v){ var o=document.createElement("button"); o.className="opt"; var dt=document.createElement("span"); dt.className="dot"; var tx=document.createElement("div"); tx.className="tx"; var x1=document.createElement("div"); x1.textContent=OPT[v][0]; var x2=document.createElement("div"); x2.textContent=OPT[v][1]; tx.append(x1,x2); o.append(dt,tx); o.onclick=function(){ lvl=v; paint(); }; opts[v]=o; k2.appendChild(o); });
     function paint(){ for(var v in opts) opts[v].classList.toggle("sel", v===lvl); }
@@ -973,8 +982,8 @@
     rm.onclick=function(){ itemLoosen(key, name, "Type this to stop pausing "+name, function(){ applyOp(rmOpOf(key)); save(); toast(name+" removed"); history.back(); }, rmOpOf(key)); };
 
     sv.onclick=function(){
-      var draft = hasHours ? [w0].concat(cl.slice(1)) : [];
-      if(hasHours){ if(!w0.from||!w0.to||w0.from===w0.to) return toast("Pick two different times"); if(!w0.days.length) return toast("Pick at least one day"); }
+      var draft = hasHours ? ws : [];
+      for(var wi=0; wi<draft.length; wi++){ var ww=draft[wi]; if(!ww.from||!ww.to||ww.from===ww.to) return toast("Pick two different times"); if(!ww.days.length) return toast("Pick at least one day"); }
       var np={}, partsLooser=false;
       for(var pi=0;pi<PL.length;pi++){ var px=PL[pi][0], D=pd[px];
         if(D.on){ if(!D.w.from||!D.w.to||D.w.from===D.w.to) return toast(PL[pi][1]+": pick two different times"); if(!D.w.days.length) return toast(PL[pi][1]+": pick at least one day"); np[px]=[D.w]; }
