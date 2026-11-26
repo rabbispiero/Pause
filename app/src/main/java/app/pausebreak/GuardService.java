@@ -309,7 +309,6 @@ public class GuardService extends AccessibilityService {
             nudged = 0;
             return;
         }
-        checkNudge();
         if (fg.isEmpty() || PauseActivity.showing) return;
         String sl = Store.guardedApps(this).get(fg);
         if (sl == null) return;
@@ -333,19 +332,6 @@ public class GuardService extends AccessibilityService {
         } catch (Exception e) {
             return true;
         }
-    }
-
-    /** After a while in a row in a paused app, a small note at the top that fades away. */
-    private void checkNudge() {
-        if (fg.isEmpty() || PauseActivity.showing) return;
-        String sl = Store.guardedApps(this).get(fg);
-        if (sl == null) return;
-        int n = Store.nudge(this);
-        if (n <= 0) return;
-        long mins = (System.currentTimeMillis() - fgSince) / 60000L;
-        if (mins < (long) n * (nudged + 1)) return;
-        nudged = (int) (mins / n);
-        showNote(nudged * n + " min on " + Store.appName(this, sl));
     }
 
     private void showNote(String text) {

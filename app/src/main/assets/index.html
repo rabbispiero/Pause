@@ -352,7 +352,6 @@
   <div class="cap">Gentle reminders</div>
   <div class="card">
     <button class="srow flat" id="navQuiet" data-go="quiet"><span class="sicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg></span><div class="t"><div>Quiet times</div><div id="navQuietSub"></div></div><span class="chev">›</span></button>
-    <button class="srow flat" id="navNudge" data-go="nudge"><span class="sicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div class="t"><div>Long-stay note</div><div id="navNudgeSub"></div></div><span class="chev">›</span></button>
   </div>
   <div class="cap">Pictures and websites</div>
   <div class="card">
@@ -391,13 +390,6 @@
     <div class="srow" id="qmRow" style="padding-top:0"><div class="sline" style="font-size:16px"><span>From</span><input type="time" id="qmFrom"><span>to</span><input type="time" id="qmTo"></div></div>
   </div>
   <div class="card"><div class="srow"><div class="lb">Pause length in quiet times <b class="val" id="qVal"></b></div><div class="sld plain" id="qSld"><input type="range" id="qSecs" min="5" max="30" step="1" aria-label="Pause length in quiet times, in seconds"><div class="ticks"><span style="left:0%">5 sec</span><span style="left:20%">10 sec</span><span style="left:60%">20 sec</span><span style="left:100%">30 sec</span></div></div><div class="ssub2" id="qHelp"></div></div></div>
- </div>
-
- <div class="pg" id="nudgePg">
-  <div class="top"><button class="back" data-back>‹ Back</button></div>
-  <div class="ttl">Long-stay note</div>
-  <div class="grp">A small note at the top when you’ve been in a paused app for a while, like “20 min on Instagram”. It goes away by itself, with no buttons, and nothing closes.</div>
-  <div class="card"><div class="srow"><div class="lb">Show it after</div><div class="seg sm" id="nSeg"><button data-v="0">Off</button><button data-v="15">15 min</button><button data-v="20">20 min</button><button data-v="30">30 min</button><button data-v="45">45 min</button></div><div class="ssub2" id="nHelp"></div></div></div>
  </div>
 
  <div class="pg" id="weekPg">
@@ -478,7 +470,7 @@
   var MOON_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg>', CLOCK_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
   var LVN={normal:"Easy", hard:"Hard", strict:"Locked"}, ICONS={}, ALLAPPS=null;
   var NAT = !!(window.Android && window.Android.save);
-  var DEF = {apps:NAT?[]:["Instagram","YouTube"], sites:[], allow:{}, seconds:3, letin:10, log:{}, shuffle:true, grow:true, quiet:{night:{on:false,from:"22:00",to:"06:00"},morning:{on:false,from:"07:00",to:"07:30"},secs:10}, nudge:20, opens:{}, weekSeen:"", messages:["Remember why\nyou put it down."], block:null, hook:"", closed:{}, level:{}, hardCool:15, hardFrom:"09:00", hardTo:"21:00", pending:[], pkgs:{}, per:{}, parts:{}, pauseOff:false, delay:0, ideasOn:true, hist:{}, total:{p:0,nm:0}, lastPick:{}};
+  var DEF = {apps:NAT?[]:["Instagram","YouTube"], sites:[], allow:{}, seconds:3, letin:10, log:{}, shuffle:true, grow:true, quiet:{night:{on:false,from:"22:00",to:"06:00"},morning:{on:false,from:"07:00",to:"07:30"},secs:10}, opens:{}, weekSeen:"", messages:["Remember why\nyou put it down."], block:null, hook:"", closed:{}, level:{}, hardCool:15, hardFrom:"09:00", hardTo:"21:00", pending:[], pkgs:{}, per:{}, parts:{}, pauseOff:false, delay:0, ideasOn:true, hist:{}, total:{p:0,nm:0}, lastPick:{}};
   function load(){ try{ var raw=localStorage.getItem(KEY); if(!raw && typeof Android!=="undefined" && Android.state){ try{ raw=Android.state()||null; if(raw) localStorage.setItem(KEY, raw); }catch(e){} } var s=JSON.parse(raw); return Object.assign({},DEF,s||{}); }catch(e){ return Object.assign({},DEF); } }
   function save(){ var j=JSON.stringify(S); try{ localStorage.setItem(KEY, j); }catch(e){} if(NAT){ try{ Android.save(j); }catch(e){} } }
   var S = load();
@@ -739,12 +731,12 @@
     if(NAT && !S.setupDone && h.indexOf("setup/")!==0) h="setup/0";
     if(h==="more"){ pg="morePg"; drawMore(); } else if(h==="pick") pg="pickPg";
     else if(h==="pics"||h.indexOf("pics/")===0){ pg="picsPg"; drawPics(h==="pics"?"":decodeURIComponent(h.slice(5))); }
-    else if(h==="quiet"){ pg="quietPg"; drawQuiet(); } else if(h==="nudge"){ pg="nudgePg"; drawNudge(); } else if(h==="week"){ pg="weekPg"; drawWeek(); }
+    else if(h==="quiet"){ pg="quietPg"; drawQuiet(); } else if(h==="week"){ pg="weekPg"; drawWeek(); }
     else if(h==="sites"){ pg="sitesPg"; renderSites(); } else if(h.indexOf("app/")===0){ pg="appPg"; drawApp(decodeURIComponent(h.slice(4))); }
     else if(h.indexOf("setup/")===0){ pg="setupPg"; drawSetup(+h.slice(6)||0); }
     if(pg==="pickPg") drawPick();
     if(pg==="home") renderApps();
-    ["home","setupPg","pickPg","appPg","morePg","picsPg","sitesPg","quietPg","nudgePg","weekPg"].forEach(function(x){ $(x).classList.toggle("on", x===pg); });
+    ["home","setupPg","pickPg","appPg","morePg","picsPg","sitesPg","quietPg","weekPg"].forEach(function(x){ $(x).classList.toggle("on", x===pg); });
     window.scrollTo(0,0); }
   function go(h){ location.hash=h; }
 
@@ -1139,7 +1131,7 @@
     renderShuf(); renderPic(); renderMsgs();
   }
   function plural(n, w){ return n+" "+w+(n===1?"":"s"); }
-  function drawMore(){ $("navQuietSub").textContent=quietSummary(); $("navNudgeSub").textContent=nudgeSummary();
+  function drawMore(){ $("navQuietSub").textContent=quietSummary();
     var m=(S.messages||[]).filter(function(x){ return x.trim(); }).length;
     listPics("").then(function(l){ $("navPicsSub").textContent = plural(l.length,"picture")+" · "+plural(m,"message")+" · Shuffle "+(S.shuffle?"on":"off"); });
     var st=S.sites||[]; $("navSitesSub").textContent = !st.length ? "None yet" : st.length<=2 ? st.join(", ") : plural(st.length,"website");
@@ -1172,10 +1164,6 @@
     r.onchange=function(){ q.secs=+r.value; save(); show(q.secs); }; }
   function quietSummary(){ var q=S.quiet||{}, on=["night","morning"].filter(function(k){ return q[k]&&q[k].on; });
     return !on.length ? "Off" : (on.length===2 ? "Night and morning" : on[0]==="night" ? "Night" : "Morning")+", "+q.secs+" sec pause"; }
-  // the long-stay note
-  function drawNudge(){ function pl(){ [].forEach.call($("nSeg").children,function(b){ b.classList.toggle("sel", +b.dataset.v===+S.nudge); b.onclick=function(){ S.nudge=+b.dataset.v; save(); pl(); }; });
-      $("nHelp").textContent = +S.nudge ? "After "+S.nudge+" min in a row in a paused app, and again every "+S.nudge+" min after that." : "Off: no note while you use your apps."; } pl(); }
-  function nudgeSummary(){ return +S.nudge ? "After "+S.nudge+" min in a row" : "Off"; }
   // your week: time on each paused app, last 7 days next to the 7 before
   function weekData(){ var d={}; if(NAT){ try{ d=JSON.parse(Android.week()||"{}"); }catch(e){ d={}; } } return d; }
   function weekSums(data, from, to){ var out={}; S.apps.forEach(function(a){ var pk=(S.pkgs||{})[slug(a)]||"", ms=0; for(var i=from;i<=to;i++){ var day=data[dayKey(Date.now()-i*864e5)]; if(day && pk && day[pk]) ms+=day[pk]; } out[a]=Math.round(ms/60000); }); return out; }
