@@ -124,6 +124,16 @@
   .seg.sm button{font-size:14px;height:32px}
   .sicon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(63,207,183,.14);color:var(--glow);flex:none}
   .sicon svg{width:18px;height:18px}
+  .sld{position:relative;padding:4px 0 0}
+  .sld .val{font-size:15px;font-weight:600;color:var(--glow)}
+  .sld input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:30px;background:transparent;margin:0;padding:0;border:0}
+  .sld input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:4px;background:linear-gradient(90deg,var(--acc) 0,var(--acc) var(--p,50%),var(--seg) var(--p,50%),var(--seg) 75%,var(--trk) 75%)}
+  .sld input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:26px;height:26px;border-radius:50%;background:#fff;border:3px solid var(--glow);margin-top:-9px;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+  .sld input[type=range]::-moz-range-track{height:8px;border-radius:4px;background:linear-gradient(90deg,var(--acc) 0,var(--acc) var(--p,50%),var(--seg) var(--p,50%),var(--seg) 75%,var(--trk) 75%)}
+  .sld input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid var(--glow)}
+  .sld .ticks{position:relative;height:16px;font-size:12px;color:var(--sub);margin-top:2px}
+  .sld .ticks span{position:absolute;transform:translateX(-50%)} .sld .ticks span:first-child{transform:none} .sld .ticks span:last-child{transform:translateX(-100%)}
+  .usedef{background:none;border:0;color:var(--glow);font:inherit;font-size:14px;font-weight:600;padding:8px 0 0;cursor:pointer}
   .ttl{font-size:26px;font-weight:600;margin:4px 8px 14px}
   .big{display:block;width:100%;height:60px;border-radius:30px;font-size:18px;font-weight:600;margin-top:14px}
   .big.acc{background:var(--acc);color:#0D1226}
@@ -305,8 +315,8 @@
   <div class="grp">These are your defaults for every app. You can change any of them for one app on that app’s page.</div>
   <div class="cap">Every pause</div>
   <div class="card">
-    <div class="srow"><div class="lb">Pause length</div>
-      <div class="seg" id="len"><button data-s="1">1 sec</button><button data-s="2">2 sec</button><button data-s="3">3 sec</button></div></div>
+    <div class="srow"><div class="lb">Pause length <b class="val" id="lenVal"></b></div>
+      <div id="len"></div></div>
     <div class="srow"><div class="lb">Open it lets you in for</div>
       <div class="seg" id="letin"><button data-m="5">5 min</button><button data-m="10">10 min</button><button data-m="15">15 min</button></div></div>
     <div class="srow flat"><div class="t"><div>Ask a question first</div><div>You answer before Open it works</div></div><button class="tog" id="askTog" aria-label="Ask a question"><i></i></button></div>
@@ -557,7 +567,7 @@
     if(S.block && Date.now() < S.block.until){ return showBlocked(name, S.block); }
     $("before").textContent = "before "+name;
     $("open").textContent = "Open it";
-    var n = Math.max(1, Math.min(3, eff(key,"seconds")|0)), arc=$("arc"), C=2*Math.PI*60;
+    var n = Math.max(1, Math.min(10, eff(key,"seconds")|0)), arc=$("arc"), C=2*Math.PI*60;
     arc.style.strokeDasharray = C; arc.style.strokeDashoffset = C; arc.style.transitionDuration = n+"s";
     $("count").textContent = n;
     show("pause");
@@ -850,7 +860,11 @@
       r.appendChild(sg); k.appendChild(r); return r;
     }
     var p=per(key);
-    row("Pause length", S.seconds+" sec", [["Default",undefined],["1 sec",1],["2 sec",2],["3 sec",3]], p.seconds, "seconds");
+    var lr=el("div","srow"), ll=el("div","lb","Pause length "), lv=el("b","val"); ll.appendChild(lv); lr.appendChild(ll);
+    var own=p.seconds!==undefined;
+    lr.appendChild(secSlider(own?p.seconds:S.seconds, function(v, set){ if(v===eff(key,"seconds") && own) return; change(key, name, "seconds", v); if(eff(key,"seconds")!==v) set(eff(key,"seconds")); }, function(v){ lv.textContent = (!own && v===+S.seconds) ? v+" sec · your default" : v+" sec"; }));
+    if(own){ var ud=el("button","usedef","Use your default ("+S.seconds+" sec)"); ud.onclick=function(){ change(key, name, "seconds", undefined); }; lr.appendChild(ud); }
+    k.appendChild(lr);
     row("Open it lets you in for", S.letin+" min", [["Default",undefined],["5 min",5],["10 min",10],["15 min",15]], p.letin, "letin");
     var qr=row("Ask a question first", S.askOn?"on":"off", [["Default",undefined],["On",true],["Off",false]], p.askOn, "askOn");
     if(p.askOn===true){ var qi=el("input"); qi.style.marginTop="10px"; qi.placeholder=String(S.askQ||"").replace(/\{app\}/g,name); qi.value=p.askQ||""; qi.oninput=function(){ setPer(key,"askQ", this.value.trim()?this.value:undefined); save(); }; qr.appendChild(qi); }
@@ -894,7 +908,19 @@
   function renderLet(){ [].forEach.call($("letin").children,function(b){ b.classList.toggle("sel", +b.dataset.m===+S.letin); b.onclick=function(){ var v=+b.dataset.m; if(v>S.letin){ globalLoosen(function(){ S.letin=v; }); renderLet(); return; } S.letin=v; save(); renderLet(); }; }); }
 
   function renderLook(){ var cur=S.look==="night"?"night":"day"; [].forEach.call($("look").children,function(b){ b.classList.toggle("sel", b.dataset.v===cur); b.onclick=function(){ S.look=b.dataset.v; save(); applyLook(); renderLook(); }; }); }
-  function renderLen(){ [].forEach.call($("len").children,function(b){ b.classList.toggle("sel", +b.dataset.s===S.seconds); b.onclick=function(){ var v=+b.dataset.s; if(v<S.seconds){ globalLoosen(function(){ S.seconds=v; }); renderLen(); return; } S.seconds=v; save(); renderLen(); }; }); }
+  // pause length slider: 1 to 5 sec take most of the track, drag past 5 for up to 10
+  function secPos(v){ v=Math.max(1,Math.min(10,v)); return v<=5 ? (v-1)*18.75 : 75+(v-5)*5; }
+  function posSec(p){ return p<=75 ? Math.round(p/18.75)+1 : Math.round((p-75)/5)+5; }
+  function secSlider(value, onPick, onShow){
+    var w=el("div","sld"), r=el("input"); r.type="range"; r.min="0"; r.max="100"; r.step="any"; r.setAttribute("aria-label","Pause length in seconds");
+    var tk=el("div","ticks"); [["1",0],["5",75],["10",100]].forEach(function(t){ var sp=el("span",null,t[0]+" sec"); sp.style.left=t[1]+"%"; tk.appendChild(sp); });
+    function set(v){ var p=secPos(v); r.value=String(p); r.style.setProperty("--p", p+"%"); if(onShow) onShow(v); }
+    r.oninput=function(){ var v=posSec(+r.value); r.style.setProperty("--p", r.value+"%"); if(onShow) onShow(v); };
+    r.onchange=function(){ var v=posSec(+r.value); set(v); onPick(v, set); };
+    set(value); w.append(r,tk); w.set=set; return w;
+  }
+  function renderLen(){ var box=$("len"); box.innerHTML="";
+    box.appendChild(secSlider(+S.seconds||3, function(v, set){ if(v===S.seconds) return; if(v<S.seconds){ if(!globalLoosen(function(){ S.seconds=v; })) set(S.seconds); return; } S.seconds=v; save(); }, function(v){ $("lenVal").textContent=v+" sec"; })); }
 
   function startBlock(){
     var v=$("blkTime").value; if(!v) return;

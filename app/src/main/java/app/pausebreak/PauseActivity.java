@@ -8,6 +8,7 @@ import android.webkit.WebView;
 /** The breath, the picture and Open it. Shown over a paused app. */
 public class PauseActivity extends Activity {
     static volatile boolean showing;
+    static volatile long closedAt;
     private WebView web;
 
     @Override
@@ -33,7 +34,7 @@ public class PauseActivity extends Activity {
     protected void onResume() { super.onResume(); showing = true; }
 
     @Override
-    protected void onPause() { super.onPause(); showing = false; }
+    protected void onPause() { super.onPause(); showing = false; closedAt = System.currentTimeMillis(); }
 
     @Override
     protected void onDestroy() {

@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
+import android.view.accessibility.AccessibilityWindowInfo;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 
@@ -33,6 +34,7 @@ public class GuardService extends AccessibilityService {
     private String lastShownKey = "";
     private long lastShownAt = 0;
     private long lastUrlCheck = 0;
+    private long lastFrontCheck = 0;
 
     private final Runnable tick = new Runnable() {
         @Override
@@ -57,24 +59,28 @@ public class GuardService extends AccessibilityService {
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent e) {
-        if (e.getPackageName() == null) return;
-        String pkg = e.getPackageName().toString();
         int type = e.getEventType();
+        String pkg = e.getPackageName() == null ? null : e.getPackageName().toString();
+
+        // Some apps open without a clear "new window" event (splash screens, coming back from
+        // recents). So also look at which app is in front when the screen or its windows change.
+        if (type == AccessibilityEvent.TYPE_WINDOWS_CHANGED || pkg == null) {
+            String front = frontPkg();
+            if (front != null) onFront(front);
+            return;
+        }
 
         if (type == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
             if (skip.contains(pkg) && !pkg.equals(getPackageName())) return;
-            if (!pkg.equals(fg)) {
-                long now = System.currentTimeMillis();
-                if (!fg.isEmpty()) Store.addSpent(this, fg, now - fgSince);
-                fg = pkg;
-                fgSince = now;
-            }
-            if (pkg.equals(getPackageName())) return;
-            Map<String, String> apps = Store.guardedApps(this);
-            String sl = apps.get(pkg);
-            if (sl != null) {
-                guardApp(pkg, sl);
-                return;
+            onFront(pkg);
+        } else if (type == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED && !pkg.equals(fg)
+                && !skip.contains(pkg) && Store.guardedApps(this).containsKey(pkg)) {
+            // a paused app drew on screen before we heard it opened: check it's really in front
+            long now = System.currentTimeMillis();
+            if (now - lastFrontCheck > 250) {
+                lastFrontCheck = now;
+                String front = frontPkg();
+                if (pkg.equals(front)) onFront(pkg);
             }
         }
 
@@ -87,6 +93,39 @@ public class GuardService extends AccessibilityService {
                 checkSite(bar);
             }
         }
+    }
+
+    /** An app came to the front: count its time and pause it if it's one you picked. */
+    private void onFront(String pkg) {
+        if (skip.contains(pkg) && !pkg.equals(getPackageName())) return;
+        boolean changed = !pkg.equals(fg);
+        if (changed) {
+            long now = System.currentTimeMillis();
+            if (!fg.isEmpty()) Store.addSpent(this, fg, now - fgSince);
+            fg = pkg;
+            fgSince = now;
+        }
+        if (pkg.equals(getPackageName())) return;
+        String sl = Store.guardedApps(this).get(pkg);
+        if (sl != null) guardApp(pkg, sl);
+    }
+
+    /** The app that owns the window you're using now. */
+    private String frontPkg() {
+        try {
+            AccessibilityNodeInfo root = getRootInActiveWindow();
+            if (root != null && root.getPackageName() != null) {
+                String p = root.getPackageName().toString();
+                if (!skip.contains(p) || p.equals(getPackageName())) return p;
+            }
+            List<AccessibilityWindowInfo> ws = getWindows();
+            if (ws != null) for (AccessibilityWindowInfo w : ws) {
+                if (w.getType() != AccessibilityWindowInfo.TYPE_APPLICATION || !(w.isActive() || w.isFocused())) continue;
+                AccessibilityNodeInfo r = w.getRoot();
+                if (r != null && r.getPackageName() != null) return r.getPackageName().toString();
+            }
+        } catch (Exception ignored) { }
+        return null;
     }
 
     private void guardApp(String pkg, String sl) {
@@ -128,7 +167,7 @@ public class GuardService extends AccessibilityService {
     private void show(String key, String q) {
         long now = System.currentTimeMillis();
         if (PauseActivity.showing) return;
-        if (key.equals(lastShownKey) && now - lastShownAt < 2500) return;
+        if (key.equals(lastShownKey) && now - lastShownAt < 1200 && PauseActivity.closedAt < lastShownAt) return;
         lastShownKey = key;
         lastShownAt = now;
         Intent i = new Intent(this, PauseActivity.class)
