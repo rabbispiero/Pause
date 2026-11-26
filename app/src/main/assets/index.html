@@ -326,7 +326,7 @@
   <div class="card">
     <button class="srow flat" id="navPics" data-go="pics"><span class="sicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg></span><div class="t"><div>Pictures and messages</div><div id="navPicsSub"></div></div><span class="chev">›</span></button>
     <button class="srow flat" id="navSites" data-go="sites"><span class="sicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg></span><div class="t"><div>Websites to pause</div><div id="navSitesSub"></div></div><span class="chev">›</span></button>
-    <button class="srow flat" id="navHard" data-go="hard"><span class="sicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span><div class="t"><div>Hard apps</div><div id="navHardSub"></div></div><span class="chev">›</span></button>
+    
   </div>
 
   <div id="pendWrap" style="display:none">
@@ -377,20 +377,6 @@
   <div class="help" id="siteHelp" style="display:none">You'll see the pause in Chrome, Samsung Internet, Brave, Edge and Firefox once the address shows.</div>
  </div>
 
- <div class="pg" id="hardPg">
-  <div class="top"><button class="back" data-back>‹ Back</button></div>
-  <div class="ttl">Hard apps</div>
-  <div class="grp">For apps you set to Hard. To make one easier, you type a long code, then wait.</div>
-  <div class="card">
-    <div class="srow"><div class="lb">Wait after the code</div>
-      <div class="seg" id="cool"><button data-m="15">15 min</button><button data-m="30">30 min</button><button data-m="60">1 hour</button></div></div>
-    <div class="srow"><div class="lb">Changes allowed</div>
-      <div class="sline" style="font-size:16px"><span>From</span><input type="time" id="hFrom"><span>to</span><input type="time" id="hTo"></div></div>
-  </div>
-  <button class="big ghost" id="hSave">Save hours</button>
-  <div class="help" style="margin-top:12px" id="hSub"></div>
-  <div class="help">To make these easier, you type the code too.</div>
- </div>
 </main>
 
 <div class="toast" id="toast"></div>
@@ -432,7 +418,8 @@
   S.closed=S.closed||{}; S.level=S.level||{}; S.per=S.per||{};
   if(S.strict){ Object.keys(S.strict).forEach(function(k){ var w=S.strict[k]; if(w&&w.from){ S.closed[k]=(S.closed[k]||[]).concat([{from:w.from,to:w.to,days:[0,1,2,3,4,5,6]}]); } if(w) S.level[k]="strict"; }); delete S.strict; }
   if(S.pending && S.pending.some(function(p){ return !p.op || !p.op.k || ["rm","set","hardCfg","per"].indexOf(p.op.k)<0; })) S.pending=[];
-  S.pending=S.pending||[]; delete S.waitH; save();
+  S.pending=(S.pending||[]).filter(function(p){ return p.op.k!=="hardCfg"; }); delete S.waitH;
+  S.hardCool=15; S.hardFrom="09:00"; S.hardTo="21:00"; save();
   function slug(n){ return String(n).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""); }
   function toast(t){ var e=$("toast"); e.textContent=t; e.classList.add("on"); setTimeout(function(){e.classList.remove("on")},1600); }
   function fmt(d){ var h=d.getHours(), m=d.getMinutes(); var ap=h<12?"AM":"PM"; h=h%12||12; return {t:h+":"+(m<10?"0":"")+m, ap:ap}; }
@@ -504,7 +491,6 @@
   function applyOp(op){
     if(op.k==="rm"){ if(lv(op.key)==="strict") return; if(op.kind==="app") S.apps=S.apps.filter(function(x){ return slug(x)!==slug(op.v); }); else S.sites=(S.sites||[]).filter(function(x){ return x!==op.v; }); delete S.closed[op.key]; delete S.level[op.key]; delete S.per[op.key]; dropScope(op.key); }
     if(op.k==="set"){ if(lv(op.key)==="strict") return; if(op.closed.length) S.closed[op.key]=op.closed; else delete S.closed[op.key]; if(op.level==="normal") delete S.level[op.key]; else S.level[op.key]=op.level; }
-    if(op.k==="hardCfg"){ S.hardCool=op.cool; S.hardFrom=op.from; S.hardTo=op.to; }
     if(op.k==="per"){ if(lv(op.key)==="strict") return; setPer(op.key, op.f, op.v); }
   }
   // due changes happen on their own; they wait while a block is on
@@ -631,11 +617,11 @@
     if(NAT && !S.setupDone && h.indexOf("setup/")!==0) h="setup/0";
     if(h==="more"){ pg="morePg"; drawMore(); } else if(h==="pick") pg="pickPg";
     else if(h==="pics"||h.indexOf("pics/")===0){ pg="picsPg"; drawPics(h==="pics"?"":decodeURIComponent(h.slice(5))); }
-    else if(h==="sites") pg="sitesPg"; else if(h==="hard") pg="hardPg"; else if(h.indexOf("app/")===0){ pg="appPg"; drawApp(decodeURIComponent(h.slice(4))); }
+    else if(h==="sites") pg="sitesPg"; else if(h.indexOf("app/")===0){ pg="appPg"; drawApp(decodeURIComponent(h.slice(4))); }
     else if(h.indexOf("setup/")===0){ pg="setupPg"; drawSetup(+h.slice(6)||0); }
     if(pg==="pickPg") drawPick();
     if(pg==="home") renderApps();
-    ["home","setupPg","pickPg","appPg","morePg","picsPg","sitesPg","hardPg"].forEach(function(x){ $(x).classList.toggle("on", x===pg); });
+    ["home","setupPg","pickPg","appPg","morePg","picsPg","sitesPg"].forEach(function(x){ $(x).classList.toggle("on", x===pg); });
     window.scrollTo(0,0); }
   function go(h){ location.hash=h; }
 
@@ -643,8 +629,8 @@
     $("settings").classList.add("on");
     if(NAT){ var before=S.apps.length; S.apps=S.apps.filter(function(x){ var k="app:"+slug(x); return (S.pkgs||{})[slug(x)] || lv(k)!=="normal"; }); if(S.apps.length!==before) save(); }
     renderLook(); renderLen(); renderLet(); renderBlock();
-    renderMsgs(); renderShuf(); renderHard(); renderPending(); renderSites();
-    window.__rerender=function(){ renderApps(); renderSites(); renderHard(); renderPending(); if(location.hash.indexOf("#app/")===0) route(); };
+    renderMsgs(); renderShuf(); renderPending(); renderSites();
+    window.__rerender=function(){ renderApps(); renderSites(); renderPending(); if(location.hash.indexOf("#app/")===0) route(); };
     setInterval(function(){ if(applyDue()){ window.__rerender(); } renderPending(); renderBlock(); }, 30000);
     [].forEach.call(document.querySelectorAll("[data-back]"),function(b){ b.onclick=function(){ history.back(); }; });
     $("addApp").onclick=function(){ go("pick"); };
@@ -886,18 +872,6 @@
     itemLoosen(key, name, "Type this to "+what, apply, op);
   }
 
-  function renderHard(){
-    [].forEach.call($("cool").children,function(b){ b.classList.toggle("sel", +b.dataset.m===+S.hardCool); b.onclick=function(){ var v=+b.dataset.m;
-      if(v<S.hardCool) return hardGate("Type this to shorten the Hard wait to "+v+" min", {k:"hardCfg", cool:v, from:S.hardFrom, to:S.hardTo});
-      S.hardCool=v; save(); renderHard(); }; });
-    $("hFrom").value=S.hardFrom; $("hTo").value=S.hardTo;
-    $("hSave").onclick=function(){ var f=$("hFrom").value, t=$("hTo").value; if(!f||!t||f===t) return toast("Pick two different times");
-      var old={from:S.hardFrom,to:S.hardTo}, wider=false;
-      for(var m=0;m<1440;m+=5){ var d=new Date(2000,0,1,0,m), dm=m, inOld=(mins(old.from)<mins(old.to))?(dm>=mins(old.from)&&dm<mins(old.to)):(dm>=mins(old.from)||dm<mins(old.to)), inNew=(mins(f)<mins(t))?(dm>=mins(f)&&dm<mins(t)):(dm>=mins(f)||dm<mins(t)); if(inNew&&!inOld){ wider=true; break; } }
-      if(wider) return hardGate("Type this to allow Hard changes "+t12(f)+" to "+t12(t), {k:"hardCfg", cool:S.hardCool, from:f, to:t});
-      S.hardFrom=f; S.hardTo=t; save(); renderHard(); toast("Saved"); };
-    $("hSub").textContent="You can change Hard apps and sites from "+t12(S.hardFrom)+" to "+t12(S.hardTo)+". Each change waits "+S.hardCool+" min after the code.";
-  }
   function renderPending(){ var box=$("pend"), list=S.pending||[]; box.innerHTML=""; $("pendWrap").style.display=list.length?"":"none";
     list.forEach(function(p,i){ var r=document.createElement("div"); r.className="prow";
       var t=document.createElement("div"); t.className="t"; var a=document.createElement("div"); a.textContent=p.desc.charAt(0).toUpperCase()+p.desc.slice(1);
@@ -960,7 +934,6 @@
     var m=(S.messages||[]).filter(function(x){ return x.trim(); }).length;
     listPics("").then(function(l){ $("navPicsSub").textContent = plural(l.length,"picture")+" · "+plural(m,"message")+" · Shuffle "+(S.shuffle?"on":"off"); });
     var st=S.sites||[]; $("navSitesSub").textContent = !st.length ? "None yet" : st.length<=2 ? st.join(", ") : plural(st.length,"website");
-    $("navHardSub").textContent = "Changes "+t12(S.hardFrom)+" to "+t12(S.hardTo)+" · waits "+S.hardCool+" min";
   }
   function renderPic(){ var sc=PSCOPE; listPics(sc).then(function(list){ if(sc!==PSCOPE) return; var box=$("pics"); box.innerHTML="";
     list.forEach(function(p){ var t=document.createElement("div"); t.className="thumb has"; t.style.backgroundImage="url("+URL.createObjectURL(p.blob)+")";
