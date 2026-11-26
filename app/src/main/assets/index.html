@@ -30,10 +30,10 @@
   .breath{margin-top:44px;font-size:26px}
   .muted{opacity:.55;font-size:15px;margin-top:10px}
   /* after */
-  #after{justify-content:flex-end;align-items:stretch;background:var(--bg)}
+  #after{justify-content:center;align-items:stretch;background:var(--bg)}
   #afterImg{position:absolute;inset:0;background:linear-gradient(160deg,#2A3A6B,#0D1226 70%);background-size:cover;background-position:center}
-  #after::before{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(13,18,38,0) 30%,rgba(13,18,38,.93));z-index:1}
-  #after>.inner{position:relative;z-index:2;padding:0 4px 8px}
+  #after::before{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(13,18,38,0) 8%,rgba(13,18,38,.9) 34%,rgba(13,18,38,.9) 76%,rgba(13,18,38,.55));z-index:1}
+  #after>.inner{position:relative;z-index:2;padding:0 4px}
   #msg{font-size:36px;line-height:1.12;margin:0 0 14px;white-space:pre-wrap;word-wrap:break-word}
   .row{display:flex;gap:14px;margin-top:26px}
   .row .pill{flex:1}
@@ -229,7 +229,7 @@
   html.day .halo{box-shadow:0 0 60px 6px rgba(63,207,183,.22)}
   html.day #afterImg{background-image:linear-gradient(160deg,#C9F2E8,#F4F6FB 70%)}
   html.day #after{color:var(--fg)}
-  html.day #after::before{background:linear-gradient(to bottom,rgba(244,246,251,0) 30%,rgba(244,246,251,.95))}
+  html.day #after::before{background:linear-gradient(to bottom,rgba(244,246,251,0) 8%,rgba(244,246,251,.93) 34%,rgba(244,246,251,.93) 76%,rgba(244,246,251,.6))}
   html.day .white{background:#141A2E;color:#fff}
   html.day .glass{background:rgba(255,255,255,.7);color:#141A2E;border-color:rgba(20,26,46,.25)}
   html.day #askA{background:#fff!important;border-color:var(--line)!important;color:var(--fg)}
